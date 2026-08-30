@@ -1,0 +1,132 @@
+Cc1ccnc(Nc2ccccc2C(N)=O)c1:
+- 2.2298921818427493
+- 1
+c1ccc2c(-c3ccncc3)c[nH]c2c1:
+- 2.181509871776429
+- 2
+Cc1ccnc(Nc2ccc(F)cc2C(N)=O)c1:
+- 2.1790711306766597
+- 3
+Cc1ccc(NC(=O)c2ccccc2)cc1Nc1nccc(-c2cccnc2)n1:
+- 2.1733135895934446
+- 4
+Cc1ccnc(Nc2ccc(Cl)cc2C(N)=O)c1:
+- 2.1624344692715276
+- 5
+Cc1ccnc(Nc2ccc(C(N)=O)cc2)c1:
+- 2.1578867331248004
+- 6
+Cc1ccnc(Nc2ccc(F)cc2)c1:
+- 2.1520715170090474
+- 7
+CNC(=O)c1ccccc1Nc1cc(C)ccn1:
+- 2.1303928309180487
+- 8
+Cc1ccnc(Nc2cccc(Cl)c2)c1:
+- 2.1155596356034727
+- 9
+Cc1ccnc(Nc2ccc(C(N)=O)cc2F)c1:
+- 2.1128905152920443
+- 10
+C1=CC(Nc2ccccc2)C(Nc2nccc(-c3cccnc3)n2)=C1:
+- 2.109930686373634
+- 11
+Cc1ccnc(Nc2ccc(Cl)cc2)c1:
+- 2.094898097141934
+- 12
+Cc1ccc(NC(=O)c2ccc(CN3CCN(C)CC3)cc2)cc1Nc1nccc(-c2cccnc2)n1:
+- 2.071453966503811
+- 13
+Fc1ccc(NC2CCNCC2)cc1Nc1nccc(-c2cccnc2)n1:
+- 2.063123922687084
+- 14
+Cc1ccnc(Nc2ccccc2)c1:
+- 2.0493708627597895
+- 15
+Cc1ccc(Nc2cc(C)ccn2)cc1:
+- 2.0466928342873145
+- 16
+NC(=O)c1cc(Cl)ccc1Nc1ccccn1:
+- 2.037105535787897
+- 17
+c1cc(Nc2nccc(-c3cccnc3)n2)cc(NC2CCNCC2)c1:
+- 2.0081761376472547
+- 18
+NC(=O)c1cc(Cl)ccc1Nc1ccccc1:
+- 2.006404348596883
+- 19
+Cc1ccnc(Nc2ccc(Cl)cc2C(=O)O)c1:
+- 1.9858385685930209
+- 20
+CNC(=O)c1ccccc1Nc1ccccn1:
+- 1.9790629060587541
+- 21
+NC(=O)c1cc(Nc2ccc(F)cc2)ccn1:
+- 1.962482658701369
+- 22
+NC(=O)c1ccccc1Nc1ccccc1:
+- 1.9512774854237225
+- 23
+Fc1ccc(Nc2ccccn2)cc1:
+- 1.9312158705528484
+- 24
+CNC(=O)c1ccc(NC(=O)c2ccccc2F)cc1:
+- 1.9048525253282453
+- 25
+CNC(=O)c1ccc(NC(=O)c2ccccc2)cc1:
+- 1.8933812159883026
+- 26
+O=C(CCc1cccnc1)Nc1ccccc1Br:
+- 1.880127027139658
+- 27
+Cc1ccc(C(=O)NS(=O)(=O)c2ccccc2)cc1:
+- 1.874168193331799
+- 28
+COc1ccc(C(=O)Nc2ccc(F)cc2F)cc1:
+- 1.8722826103054326
+- 29
+COc1ccc(C(=O)Nc2ccc(F)cc2)cc1:
+- 1.872032252802399
+- 30
+CNC(=O)c1ccccc1Nc1ccccc1:
+- 1.8696310512990668
+- 31
+CC(=O)Nc1ccc(NCc2ccccc2)c(C(F)(F)F)c1:
+- 1.8649064784154237
+- 32
+CC(=O)Nc1ccc(Nc2ccccc2)c(C(F)(F)F)c1:
+- 1.8609553862039094
+- 33
+COc1ccc(C(=O)Nc2ccccc2)cc1:
+- 1.856394314115004
+- 34
+O=C(Cc1ccccn1)Nc1ccc(Cl)cc1:
+- 1.8526083546288306
+- 35
+CC(=O)Nc1ccnc(Nc2ccccc2)c1C(F)(F)F:
+- 1.8388743039802664
+- 36
+Cc1ccccc1C(=O)Nc1ccc(Cl)cc1:
+- 1.830262710870247
+- 37
+O=C(NCc1ccccc1)c1ccccc1:
+- 1.8145825892544474
+- 38
+Cc1ccc(C(=O)Nc2ccccc2)cc1:
+- 1.7958256477779488
+- 39
+O=C(Nc1ccccc1)c1ccccc1:
+- 1.7811081030961722
+- 40
+Fc1ccc(Nc2ccccc2)cc1:
+- 1.7691643170541975
+- 41
+Fc1ccc2oc(C[NH2+]C[C@@H]3CN4CCCC[C@@H]4CO3)cc2c1:
+- 1.6510256225979592
+- 42
+NC(=O)c1ccccc1:
+- 1.578245878657127
+- 43
+Fc1ccccc1:
+- 1.4618403302914613
+- 44

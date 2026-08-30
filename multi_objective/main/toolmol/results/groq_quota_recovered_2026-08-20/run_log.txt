@@ -1,0 +1,85 @@
+﻿python.exe : Found local copy...
+At line:3 char:1
++ & 'C:\Users\gujw\anaconda3\envs\molleo\python.exe' run.py toolmol --m ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Found local copy...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading...
+Done!
+MolFilter is using the following filters:
+Rule_Glaxo: True
+Rule_PAINS: True
+Rule_SureChEMBL: True
+Found local copy...
+Found local copy...
+toolmol
+Optimizing oracle function: ['jnk3', 'qed']
+Optimizing oracle function: ['sa']
+{'population_size': 8, 'offspring_size': 4, 'mutation_rate': 0.0, 'k': 10.0, 'max_steps': 4}
+seed 1
+0/40 | avg_top1: 1.721 | avg_top10: 1.518 | avg_top100: 1.518 | avg_sa: 3.227 | div: 0.882
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5181117349456947, 'avg_top100': 1.5181117349456947, 'auc_top1': 0.17206328269787527, 'auc_top10': 0.15181117349456946, 'auc_top100': 0.15181117349456946, 'avg_sa': 3.2266136740541667, 'diversity_top100': 0.882490323661847, 'n_oracle': 0}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 200000, Requested 2296. Please try again in 16m31.872s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 200000, Requested 1621. Please try again in 11m40.271999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 200000, Requested 1750. Please try again in 12m36s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 8}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199998, Requested 1850. Please try again in 13m18.336s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199997, Requested 1706. Please try again in 12m15.696s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199997, Requested 1720. Please try again in 12m21.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199997, Requested 1744. Please try again in 12m32.112s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+9/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 9}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199995, Requested 2563. Please try again in 18m25.056s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199995, Requested 1730. Please try again in 12m25.2s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199994, Requested 1849. Please try again in 13m16.175999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199994, Requested 1932. Please try again in 13m52.031999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+9/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 9}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199992, Requested 2480. Please try again in 17m47.904s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199992, Requested 1864. Please try again in 13m21.792s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199992, Requested 1766. Please try again in 12m39.455999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199991, Requested 1803. Please try again in 12m55.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+9/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 9}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199990, Requested 1744. Please try again in 12m29.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199990, Requested 2614. Please try again in 18m44.928s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199990, Requested 1849. Please try again in 13m14.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199989, Requested 2402. Please try again in 17m12.912s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+9/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 9}
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199988, Requested 1706. Please try again in 12m11.808s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199987, Requested 2614. Please try again in 18m43.631999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199987, Requested 1835. Please try again in 13m7.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m0dm8vp1eanatn0c68xfc8rw` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199987, Requested 1835. Please try again in 13m7.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+9/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 0.12904746202340647, 'auc_top10': 0.11539263003931896, 'auc_top100': 0.11539263003931896, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 9}
+40/40 | avg_top1: 1.721 | avg_top10: 1.539 | avg_top100: 1.539 | avg_sa: 2.861 | div: 0.852
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5385684005242528, 'avg_top100': 1.5385684005242528, 'auc_top1': 1.5915853649553464, 'auc_top10': 1.4231757704849337, 'auc_top100': 1.4231757704849337, 'avg_sa': 2.8605357263836466, 'diversity_top100': 0.8518857770031432, 'n_oracle': 40}
+convergence criteria met, abort ...... 
+Saving molecules...
+---- The whole process takes 0.02 hours ----

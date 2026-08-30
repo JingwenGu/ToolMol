@@ -20,6 +20,7 @@ from utils import get_fp_scores
 from network import create_and_train_network, obtain_model_pred
 
 MINIMUM = 1e-10
+SNAPSHOT_EVERY = 10  # record the current Pareto front every k generations
 
 def make_mating_pool(population_mol: List[Mol], population_scores, offspring_size: int):
     """
@@ -102,8 +103,10 @@ class GB_GA_Optimizer(BaseOptimizer):
         population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
         patience = 0
+        generation = 0
 
         while True:
+            generation += 1
 
             if len(self.oracle) > 1:
                 self.sort_buffer()
@@ -168,6 +171,9 @@ class GB_GA_Optimizer(BaseOptimizer):
             population_mol = [t[1] for t in population_tuples]
             population_scores = [t[0] for t in population_tuples]
 
+            if generation % SNAPSHOT_EVERY == 0:
+                self.oracle.record_snapshot(generation)
+                self.oracle.save_snapshots(self.oracle.task_label)
 
             ### early stopping
             if len(self.oracle) > 1:
@@ -178,13 +184,17 @@ class GB_GA_Optimizer(BaseOptimizer):
                     patience += 1
                     if patience >= self.args.patience:
                         self.log_intermediate(finish=True)
+                        self.oracle.record_snapshot(generation)
+                        self.oracle.save_snapshots(self.oracle.task_label)
                         print('convergence criteria met, abort ...... ')
                         break
                 else:
                     patience = 0
 
                 old_score = new_score
-                
+
             if self.finish:
+                self.oracle.record_snapshot(generation)
+                self.oracle.save_snapshots(self.oracle.task_label)
                 break
 

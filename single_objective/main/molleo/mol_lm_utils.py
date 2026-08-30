@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
 #from MoleculeSTM.models.mega_molbart.mega_mol_bart import MegaMolBART
 
 #from MoleculeSTM.models import GNN, GNN_graphpred, MLP
@@ -207,6 +206,7 @@ def load_molecule_models(args):
 
 
 def load_language_molecule_and_edit_models(args, load_molmodel=False):
+    from transformers import AutoModel, AutoTokenizer
     pretrained_SciBERT_folder = os.path.join(args.dataspace_path, 'pretrained_SciBERT')
     text_tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased', cache_dir=pretrained_SciBERT_folder)
     text_model = AutoModel.from_pretrained('allenai/scibert_scivocab_uncased', cache_dir=pretrained_SciBERT_folder)

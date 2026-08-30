@@ -1,0 +1,40 @@
+ToolMol run configuration
+==========================================
+Date started:       2026-07-27
+Method:              toolmol (GB_GA_Optimizer, AgentGen tool-calling operator + Pareto GA)
+LLM backend:         gpt-4o (OpenAI API; switched from gpt-4 after hitting its 8192-token
+                     context limit during the smoke test - the per-atom structure dumps
+                     routinely need 9-11k tokens per call)
+Task:                max_obj: jnk3, qed | min_obj: sa  (stand-ins for the paper's real
+                     Boltz-2 affinity + QED + SA objectives - Boltz-2/protein targets
+                     deferred to a later phase per earlier discussion)
+Seed:                1
+population_size:     60   (repo default, main/toolmol/hparams_default.yaml, matches paper)
+offspring_size:      35   (repo default, matches paper)
+mutation_rate:       0.0
+k:                   10.0 (exponential parent-sampling constant, matches paper)
+max_steps:           10   (agentic tool-calling budget per edit, matches paper)
+max_oracle_calls:    500  (cut down from 1000 per user request, to manage cost/time)
+freq_log:            50
+output_dir:          multi_objective/main/toolmol/results/task1_toolmol_seed1_max500_2026-07-27/
+
+Mid-run logging: results_*.yaml and pareto_snapshots_*.yaml are rewritten after every
+single generation (not just at the end) - Oracle.__call__ for list input unconditionally
+calls save_result()/save_snapshots() each generation. This was built in from the start
+because of the buffer-truncation bug found and fixed in molleo_multi_pareto earlier in
+this project (Oracle.all_molecules() merges storing_buffer + mol_buffer before saving).
+Snapshot cadence: every 10 generations (SNAPSHOT_EVERY in main/toolmol/run.py).
+
+Prior validation: smoke test (population=8/offspring=4/budget=40) completed cleanly with
+gpt-4o - 26 generations, 104 real agentic edit_pair() calls, ZERO fallback-to-Graph-GA
+triggers, genuine score improvement (avg_top1 1.721->1.791, avg_SA 3.227->2.597).
+
+Cost/time estimate given to user beforehand (order-of-magnitude, not precise):
+~2-4 hours wall time, ~$90-155 in API cost for the full 1000-call run; this 500-call run
+should be roughly half of both, extrapolating from the smoke test's per-call rate
+(~4.85s/call) and observed token usage (~8.5-11.6k tokens/call from gpt-4 context-limit
+error messages during earlier debugging).
+
+Conda env: molleo (Python 3.9), torch 2.2.2 (conda, cpuonly), numpy 1.26.4,
+scikit-learn 1.2.2, PyTDC 0.4.1, transformers 4.40.0, pymoo 0.6.1.5, networkx 3.2.1,
+openai 2.46.0

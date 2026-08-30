@@ -19,7 +19,11 @@ def main():
     parser.add_argument('--pickle_directory', help='Directory containing pickle files with the distribution statistics', default=None)
     parser.add_argument('--n_jobs', type=int, default=-1)
     parser.add_argument('--output_dir', type=str, default=None)
-    parser.add_argument('--mol_lm', type=str, default=None, choices=[None, "BioT5", "MoleculeSTM", "GPT-4"])
+    parser.add_argument('--mol_lm', type=str, default=None, choices=[None, "BioT5", "MoleculeSTM", "GPT-4", "ToolMol"])
+    parser.add_argument('--llm_model', type=str, default='gpt-4o', help='Model name passed to the OpenAI-compatible client (used by ToolMol\'s agent). Needs a large context window since get_ligand_structure dumps can be verbose - gpt-4\'s 8192-token limit is too small.')
+    parser.add_argument('--llm_base_url', type=str, default=None, help='Override API base URL, e.g. to point at a GPT-OSS-120B-compatible endpoint')
+    parser.add_argument('--llm_api_key_env', type=str, default='OPENAI_API_KEY', help='Env var name holding the API key for --llm_base_url, e.g. DEEPINFRA_API_KEY when pointed at a non-OpenAI provider')
+    parser.add_argument('--llm_extra_body', type=str, default=None, help='JSON string passed as extra_body to the chat completions call, e.g. \'{"provider": {"only": ["groq"]}}\' to pin OpenRouter to a specific underlying provider')
     parser.add_argument('--bin_size', type=int, default=100)
     parser.add_argument('--patience', type=int, default=5)
     parser.add_argument('--max_oracle_calls', type=int, default=10000)
@@ -48,6 +52,8 @@ def main():
         from main.molleo_multi.run import GB_GA_Optimizer as Optimizer
     elif args.method == 'molleo_multi_pareto':
         from main.molleo_multi_pareto.run import GB_GA_Optimizer as Optimizer
+    elif args.method == 'toolmol':
+        from main.toolmol.run import GB_GA_Optimizer as Optimizer
     else:
         raise ValueError("Unrecognized method name.")
 

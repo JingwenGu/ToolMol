@@ -28,7 +28,6 @@ import multiprocessing
 from typing import List
 #from .features import get_mol_info
 from features import get_mol_info
-from transformers import AutoModel, AutoTokenizer
 
 
 from sklearn.metrics import average_precision_score

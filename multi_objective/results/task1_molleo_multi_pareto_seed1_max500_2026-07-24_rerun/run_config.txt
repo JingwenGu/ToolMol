@@ -1,0 +1,44 @@
+MOLLEO multi_objective run configuration (re-run)
+==========================================
+Date started:       2026-07-24
+Method:             molleo_multi_pareto (GB_GA_Optimizer, true Pareto non-dominated selection via pymoo)
+LLM backend:        GPT-4 (OpenAI API, model="gpt-4")
+Task:               task 1  (max_obj: jnk3, qed | min_obj: sa)
+Seed:               1
+population_size:    120  (repo default, main/molleo_multi_pareto/hparams_default.yaml)
+offspring_size:      70   (repo default)
+mutation_rate:       0.067 (repo default)
+max_oracle_calls:   500
+freq_log:           50   (intermediate checkpoint frequency)
+output_dir:         multi_objective/results/task1_molleo_multi_pareto_seed1_max500_2026-07-24_rerun/
+
+This supersedes the 2026-07-23 run of the same config. That run is kept for reference at
+../task1_molleo_multi_pareto_seed1_max500_2026-07-23/ but has two known problems:
+  1. OpenAI account ran out of credit ~40% through the run, so a large fraction of that
+     run's offspring were non-LLM Graph-GA fallback rather than genuine GPT-4 edits.
+  2. main/pareto_optimizer.py's save_result() only ever dumped the current generation's
+     Pareto front (self.mol_buffer), silently discarding every earlier generation's
+     molecules that had already been flushed into self.storing_buffer by clean_buffer().
+     The saved results file for that run only had 44 molecules instead of ~500.
+
+Fixes applied before this re-run:
+  - User topped up OpenAI credit again (checked: this time it was a genuine credit
+    exhaustion on their account, not a rate-limit quirk).
+  - main/pareto_optimizer.py: save_result() now merges storing_buffer + mol_buffer
+    (Oracle.all_molecules()) before dumping, so the full evaluated pool is preserved.
+  - main/pareto_optimizer.py: added Oracle.record_snapshot()/save_snapshots() to
+    additionally dump the current Pareto front every SNAPSHOT_EVERY=10 generations
+    (main/molleo_multi_pareto/run.py) to a separate pareto_snapshots_<suffix>.yaml file,
+    plus one final snapshot at whichever break condition ends the run.
+  - Both fixes verified via a 20-oracle-call smoke test before this real run.
+
+Known remaining caveat (not fixed, flagged to user): the per-molecule "discovery index"
+(second value in each YAML entry) is assigned from len(mol_buffer)+1 at insertion time,
+which resets every generation because clean_buffer() wipes mol_buffer each generation.
+It is therefore NOT a true global chronological order across the whole run, which means
+the auc_top1/10/100 metrics printed during the run (which sort by this index assuming
+global chronological order) may not be fully accurate for this method. Not in scope for
+this fix; revisit if AUC numbers for molleo_multi_pareto specifically matter.
+
+Conda env: molleo (Python 3.9), torch 2.2.2 (conda, cpuonly), numpy 1.26.4,
+scikit-learn 1.2.2, PyTDC 0.4.1, transformers 4.40.0, pymoo 0.6.1.5

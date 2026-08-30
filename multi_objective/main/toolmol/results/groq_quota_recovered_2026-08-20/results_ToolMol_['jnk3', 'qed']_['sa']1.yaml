@@ -1,0 +1,27 @@
+CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+- 1.7206328269787527
+- 1
+COc1cc(-c2noc(C3C[C@@H](C)O[C@@H](C)C3)n2)ccn1:
+- 1.6057105277517754
+- 2
+O=C1N[C@@H](c2ccccc2F)c2c1oc1ccccc1c2=O:
+- 1.5680670684621378
+- 3
+CCC(C)(C)NC(=O)c1ccc(NC(=O)N[C@@H](C)[C@H]2CCCO2)cc1:
+- 1.5301185907853803
+- 6
+Cc1nonc1CC(=O)N1CCC[C@H](C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1:
+- 1.5245409108363548
+- 4
+CN1C(=O)c2oc3ccccc3c(=O)c2[C@@H]1c1ccccc1F:
+- 1.512751770787018
+- 5
+CSCC[C@H](NC(=O)N[C@@H]1CCCCC1(C)C)C(=O)[O-]:
+- 1.4701005721262455
+- 7
+C[C@H]([NH2+][C@H]1CCOC1)c1ccnc(Cl)c1:
+- 1.426016084295433
+- 5
+O=C(CCn1nnc2cc(-c3noc(Cc4ccc(Cl)cc4)n3)ccc21)N1CCCC1:
+- 1.29970729832948
+- 6

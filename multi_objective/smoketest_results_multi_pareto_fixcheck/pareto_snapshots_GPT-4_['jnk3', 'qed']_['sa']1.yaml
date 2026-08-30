@@ -1,0 +1,22 @@
+gen_0010_oracle_21:
+  Cc1ccc(NC(=O)c2ccc(N3CCN(C)CC3)cc2)cc1:
+  - 1.878155348919474
+  - 1
+  CC(=O)Nc1ccc(C(=O)Nc2ccc(C)cc2)cc1:
+  - 1.8554206419649537
+  - 2
+  CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.7206328269787527
+  - 3
+  COc1cc(-c2noc(C3C[C@@H](C)O[C@@H](C)C3)n2)ccn1:
+  - 1.6057105277517754
+  - 4
+  CC(=O)NC1CC(NC(=O)c2ccco2)C1(C)C:
+  - 1.6024032294650778
+  - 5
+  O=C1N[C@@H](c2ccccc2F)c2c1oc1ccccc1c2=O:
+  - 1.5680670684621378
+  - 6
+  Cc1nonc1CC(=O)N1CCC[C@H](C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1:
+  - 1.5245409108363548
+  - 7

@@ -1,0 +1,80 @@
+gen_0010_oracle_18:
+  CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.7206328269787527
+  - 1
+  CC(C)(C)C(O)[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.6512111660963233
+  - 2
+  COc1cc(-c2noc(C3CC(C)OC(C)C3)n2)ccn1:
+  - 1.62493187184536
+  - 3
+  O=C1N[C@@H](c2ccccc2F)c2c1oc1ccccc1c2=O:
+  - 1.5680670684621378
+  - 4
+  Cc1cccc2c(=O)c3c(oc12)C(=O)NC3c1ccccc1Cl:
+  - 1.5651552529232937
+  - 5
+  O=C1NC(c2ncc(F)cc2F)c2c1oc1ccccc1c2=O:
+  - 1.557001399511476
+  - 6
+  O=C1NC(c2ncccc2F)c2c1oc1ccccc1c2=O:
+  - 1.5497478482595795
+  - 7
+  O=C1NC(c2ncccc2Cl)c2c1oc1ccccc1c2=O:
+  - 1.540637045016116
+  - 8
+  Cc1nonc1CC(=O)N1CCC[C@H](C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1:
+  - 1.5245409108363548
+  - 9
+  CN1C(=O)c2oc3ccccc3c(=O)c2C1c1ccccc1Cl:
+  - 1.5056772803429466
+  - 10
+  CC(C)(C)CCS(N)(=O)=O:
+  - 1.5054222043353889
+  - 11
+  Cc1cc(C([NH2+]C2CCOC2)S(=O)(=O)NC2CCN(c3ccc(Cl)c(F)c3)C2=O)ccn1:
+  - 1.3143338654564811
+  - 12
+  O=C(CCn1nnc2cc(-c3noc(Cc4ccc(Cl)cc4)n3)ccc21)N1CCCC1:
+  - 1.29970729832948
+  - 13
+gen_0011_oracle_18:
+  CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.7206328269787527
+  - 1
+  CC(C)(C)C(O)[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.6512111660963233
+  - 2
+  COc1cc(-c2noc(C3CC(C)OC(C)C3)n2)ccn1:
+  - 1.62493187184536
+  - 3
+  O=C1N[C@@H](c2ccccc2F)c2c1oc1ccccc1c2=O:
+  - 1.5680670684621378
+  - 4
+  Cc1cccc2c(=O)c3c(oc12)C(=O)NC3c1ccccc1Cl:
+  - 1.5651552529232937
+  - 5
+  O=C1NC(c2ncc(F)cc2F)c2c1oc1ccccc1c2=O:
+  - 1.557001399511476
+  - 6
+  O=C1NC(c2ncccc2F)c2c1oc1ccccc1c2=O:
+  - 1.5497478482595795
+  - 7
+  O=C1NC(c2ncccc2Cl)c2c1oc1ccccc1c2=O:
+  - 1.540637045016116
+  - 8
+  Cc1nonc1CC(=O)N1CCC[C@H](C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1:
+  - 1.5245409108363548
+  - 9
+  CN1C(=O)c2oc3ccccc3c(=O)c2C1c1ccccc1Cl:
+  - 1.5056772803429466
+  - 10
+  CC(C)(C)CCS(N)(=O)=O:
+  - 1.5054222043353889
+  - 11
+  Cc1cc(C([NH2+]C2CCOC2)S(=O)(=O)NC2CCN(c3ccc(Cl)c(F)c3)C2=O)ccn1:
+  - 1.3143338654564811
+  - 12
+  O=C(CCn1nnc2cc(-c3noc(Cc4ccc(Cl)cc4)n3)ccc21)N1CCCC1:
+  - 1.29970729832948
+  - 13

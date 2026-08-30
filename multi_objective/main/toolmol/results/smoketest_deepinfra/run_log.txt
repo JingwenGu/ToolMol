@@ -1,0 +1,72 @@
+﻿python.exe : Found local copy...
+At line:3 char:1
++ & 'C:\Users\gujw\anaconda3\envs\molleo\python.exe' run.py toolmol --m ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Found local copy...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading...
+Done!
+MolFilter is using the following filters:
+Rule_Glaxo: True
+Rule_PAINS: True
+Rule_SureChEMBL: True
+Found local copy...
+Found local copy...
+toolmol
+Optimizing oracle function: ['jnk3', 'qed']
+Optimizing oracle function: ['sa']
+{'population_size': 8, 'offspring_size': 4, 'mutation_rate': 0.0, 'k': 10.0, 'max_steps': 4}
+seed 1
+0/40 | avg_top1: 1.721 | avg_top10: 1.518 | avg_top100: 1.518 | avg_sa: 3.227 | div: 0.882
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5181117349456947, 'avg_top100': 1.5181117349456947, 'auc_top1': 0.17206328269787527, 'auc_top10': 0.15181117349456946, 'auc_top100': 0.15181117349456946, 'avg_sa': 3.2266136740541667, 'diversity_top100': 0.8824903236618471, 'n_oracle': 0}
+8/40 | avg_top1: 1.721 | avg_top10: 1.555 | avg_top100: 1.555 | avg_sa: 2.983 | div: 0.837
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.555210789764736, 'avg_top100': 1.555210789764736, 'auc_top1': 0.15055537236064087, 'auc_top10': 0.1360809441044144, 'auc_top100': 0.1360809441044144, 'avg_sa': 2.983113765546943, 'diversity_top100': 0.8370615916833479, 'n_oracle': 8}
+10/40 | avg_top1: 1.727 | avg_top10: 1.597 | avg_top100: 1.597 | avg_sa: 2.984 | div: 0.816
+{'avg_top1': 1.7270727541348538, 'avg_top10': 1.59658993589012, 'avg_top100': 1.59658993589012, 'auc_top1': 0.21588409426685673, 'auc_top10': 0.199573741986265, 'auc_top100': 0.199573741986265, 'avg_sa': 2.9835933135638357, 'diversity_top100': 0.816463146563408, 'n_oracle': 10}
+13/40 | avg_top1: 1.808 | avg_top10: 1.611 | avg_top100: 1.611 | avg_sa: 2.494 | div: 0.864
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6114536579782175, 'avg_top100': 1.6114536579782175, 'auc_top1': 0.06778428455513696, 'auc_top10': 0.06042951217418315, 'auc_top100': 0.06042951217418315, 'avg_sa': 2.4935062248589346, 'diversity_top100': 0.8642216117216117, 'n_oracle': 13}
+14/40 | avg_top1: 1.808 | avg_top10: 1.654 | avg_top100: 1.654 | avg_sa: 2.611 | div: 0.754
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6543981298351575, 'avg_top100': 1.6543981298351575, 'auc_top1': 0.11297380759189493, 'auc_top10': 0.10339988311469735, 'auc_top100': 0.10339988311469735, 'avg_sa': 2.610851971366555, 'diversity_top100': 0.7539034441392597, 'n_oracle': 14}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+16/40 | avg_top1: 1.808 | avg_top10: 1.637 | avg_top100: 1.637 | avg_sa: 2.582 | div: 0.789
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6370306960987868, 'avg_top100': 1.6370306960987868, 'auc_top1': 0.13556856911027393, 'auc_top10': 0.12277730220740901, 'auc_top100': 0.12277730220740901, 'avg_sa': 2.582378270271317, 'diversity_top100': 0.7888558487844556, 'n_oracle': 16}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+17/40 | avg_top1: 1.808 | avg_top10: 1.594 | avg_top100: 1.594 | avg_sa: 2.678 | div: 0.755
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.5935112429230796, 'avg_top100': 1.5935112429230796, 'auc_top1': 0.1581633306286529, 'auc_top10': 0.13943223375576946, 'auc_top100': 0.13943223375576946, 'avg_sa': 2.677797623339091, 'diversity_top100': 0.7552842688929241, 'n_oracle': 17}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+18/40 | avg_top1: 1.808 | avg_top10: 1.594 | avg_top100: 1.594 | avg_sa: 2.678 | div: 0.755
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.5935112429230796, 'avg_top100': 1.5935112429230796, 'auc_top1': 0.1581633306286529, 'auc_top10': 0.13943223375576946, 'auc_top100': 0.13943223375576946, 'avg_sa': 2.677797623339091, 'diversity_top100': 0.7552842688929241, 'n_oracle': 18}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+18/40 | avg_top1: 1.808 | avg_top10: 1.594 | avg_top100: 1.594 | avg_sa: 2.678 | div: 0.755
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.5935112429230796, 'avg_top100': 1.5935112429230796, 'auc_top1': 0.1581633306286529, 'auc_top10': 0.13943223375576946, 'auc_top100': 0.13943223375576946, 'avg_sa': 2.677797623339091, 'diversity_top100': 0.7552842688929241, 'n_oracle': 18}
+18/40 | avg_top1: 1.808 | avg_top10: 1.623 | avg_top100: 1.623 | avg_sa: 2.675 | div: 0.746
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6227172656101194, 'avg_top100': 1.6227172656101194, 'auc_top1': 0.20335285366541087, 'auc_top10': 0.18255569238113845, 'auc_top100': 0.18255569238113845, 'avg_sa': 2.675377554779267, 'diversity_top100': 0.74593197627124, 'n_oracle': 18}
+20/40 | avg_top1: 1.808 | avg_top10: 1.659 | avg_top100: 1.659 | avg_sa: 2.594 | div: 0.746
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6594733047466752, 'avg_top100': 1.6594733047466752, 'auc_top1': 0.20335285366541087, 'auc_top10': 0.18669074678400097, 'auc_top100': 0.18669074678400097, 'avg_sa': 2.594029307460732, 'diversity_top100': 0.746368710876053, 'n_oracle': 20}
+RateLimitError Error code: 429 - {'error': {'message': 'Model busy, retry later', 'type': 'invalid_request_error', 'param': None, 'code': 'engine_overloaded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+21/40 | avg_top1: 1.808 | avg_top10: 1.730 | avg_top100: 1.730 | avg_sa: 2.569 | div: 0.689
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.730372541004897, 'avg_top100': 1.730372541004897, 'auc_top1': 0.1807580921470319, 'auc_top10': 0.1730372541004897, 'auc_top100': 0.1730372541004897, 'avg_sa': 2.569249125874654, 'diversity_top100': 0.6892698423860277, 'n_oracle': 21}
+RateLimitError Error code: 429 - {'error': {'message': 'Model busy, retry later', 'type': 'invalid_request_error', 'param': None, 'code': 'engine_overloaded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+23/40 | avg_top1: 1.808 | avg_top10: 1.730 | avg_top100: 1.730 | avg_sa: 2.569 | div: 0.689
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.730372541004897, 'avg_top100': 1.730372541004897, 'auc_top1': 0.1807580921470319, 'auc_top10': 0.1730372541004897, 'auc_top100': 0.1730372541004897, 'avg_sa': 2.569249125874654, 'diversity_top100': 0.6892698423860277, 'n_oracle': 23}
+23/40 | avg_top1: 1.808 | avg_top10: 1.724 | avg_top100: 1.724 | avg_sa: 2.547 | div: 0.691
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.723696938351611, 'avg_top100': 1.723696938351611, 'auc_top1': 0.20335285366541087, 'auc_top10': 0.19391590556455623, 'auc_top100': 0.19391590556455623, 'avg_sa': 2.5472833829945554, 'diversity_top100': 0.6914787560664539, 'n_oracle': 23}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+24/40 | avg_top1: 1.808 | avg_top10: 1.665 | avg_top100: 1.665 | avg_sa: 2.593 | div: 0.691
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.6652298573635669, 'avg_top100': 1.6652298573635669, 'auc_top1': 0.22594761518378986, 'auc_top10': 0.20815373217044586, 'auc_top100': 0.20815373217044586, 'avg_sa': 2.5927517553360033, 'diversity_top100': 0.6911524349449342, 'n_oracle': 24}
+25/40 | avg_top1: 1.808 | avg_top10: 1.702 | avg_top100: 1.651 | avg_sa: 2.579 | div: 0.680
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.702196851329015, 'avg_top100': 1.650999512887393, 'auc_top1': 0.2711371382205478, 'auc_top10': 0.25024656602910317, 'auc_top100': 0.24960659929858284, 'avg_sa': 2.5790302645355188, 'diversity_top100': 0.6804274308958795, 'n_oracle': 25}
+RateLimitError Error code: 429 - {'error': {'message': 'Model busy, retry later', 'type': 'invalid_request_error', 'param': None, 'code': 'engine_overloaded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+APIConnectionError Connection error.
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+26/40 | avg_top1: 1.808 | avg_top10: 1.702 | avg_top100: 1.651 | avg_sa: 2.579 | div: 0.680
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.702196851329015, 'avg_top100': 1.650999512887393, 'auc_top1': 0.2711371382205478, 'auc_top10': 0.25532952769935224, 'auc_top100': 0.254689560968832, 'avg_sa': 2.5790302645355188, 'diversity_top100': 0.6804274308958795, 'n_oracle': 26}
+40/40 | avg_top1: 1.808 | avg_top10: 1.702 | avg_top100: 1.651 | avg_sa: 2.579 | div: 0.680
+{'avg_top1': 1.807580921470319, 'avg_top10': 1.702196851329015, 'avg_top100': 1.650999512887393, 'auc_top1': 1.581633306286529, 'auc_top10': 1.4894222449128882, 'auc_top100': 1.451664207812192, 'avg_sa': 2.5790302645355188, 'diversity_top100': 0.6804274308958795, 'n_oracle': 40}
+convergence criteria met, abort ...... 
+Saving molecules...
+---- The whole process takes 10.28 hours ----

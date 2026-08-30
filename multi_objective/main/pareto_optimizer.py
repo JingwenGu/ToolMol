@@ -64,6 +64,7 @@ class Oracle:
             self.freq_log = args.freq_log
         self.mol_buffer = mol_buffer
         self.storing_buffer = {}
+        self.snapshots = {}
         self.sa_scorer = tdc.Oracle(name = 'SA')
         self.diversity_evaluator = tdc.Evaluator(name = 'Diversity')
         self.last_log = 0
@@ -102,16 +103,42 @@ class Oracle:
         self.storing_buffer = self.storing_buffer | self.mol_buffer
         self.mol_buffer = {}
 
+    def all_molecules(self):
+        # storing_buffer holds every molecule flushed out of mol_buffer by clean_buffer()
+        # from earlier generations; mol_buffer holds the current generation's Pareto front.
+        # Neither on its own is the full history, so merge them for anything meant to
+        # reflect everything evaluated so far.
+        combined = dict(self.storing_buffer)
+        combined.update(self.mol_buffer)
+        return dict(sorted(combined.items(), key=lambda kv: kv[1][0], reverse=True))
+
     def save_result(self, suffix=None):
-        
+
         if suffix is None:
             output_file_path = os.path.join(self.args.output_dir, 'results.yaml')
         else:
             output_file_path = os.path.join(self.args.output_dir, 'results_' + suffix + '.yaml')
 
-        self.sort_buffer()
         with open(output_file_path, 'w') as f:
-            yaml.dump(self.mol_buffer, f, sort_keys=False)
+            yaml.dump(self.all_molecules(), f, sort_keys=False)
+
+    def record_snapshot(self, generation):
+        # len(storing_buffer) + len(mol_buffer) would double count molecules that
+        # persist across generations (re-scored into mol_buffer while still present
+        # in storing_buffer), so count the deduplicated union instead.
+        n_oracle = len(self.all_molecules())
+        key = f'gen_{generation:04d}_oracle_{n_oracle}'
+        self.sort_buffer()
+        self.snapshots[key] = dict(self.mol_buffer)
+
+    def save_snapshots(self, suffix=None):
+        if suffix is None:
+            output_file_path = os.path.join(self.args.output_dir, 'pareto_snapshots.yaml')
+        else:
+            output_file_path = os.path.join(self.args.output_dir, 'pareto_snapshots_' + suffix + '.yaml')
+
+        with open(output_file_path, 'w') as f:
+            yaml.dump(self.snapshots, f, sort_keys=False)
 
     def log_intermediate(self, mols=None, scores=None, finish=False):
 
@@ -295,37 +322,12 @@ class BaseOptimizer:
 
         print(f"Logging final results...")
 
-        # import ipdb; ipdb.set_trace()
+        assert len(self.mol_buffer) > 0
 
-        log_num_oracles = [100, 500, 1000, 3000, 5000, 10000]
-        assert len(self.mol_buffer) > 0 
-
-        results = list(sorted(self.mol_buffer.items(), key=lambda kv: kv[1][1], reverse=False))
-        if len(results) > 10000:
-            results = results[:10000]
-        
-        results_all_level = []
-        for n_o in log_num_oracles:
-            results_all_level.append(sorted(results[:n_o], key=lambda kv: kv[1][0], reverse=True))
-        
-
-        # Log batch metrics at various oracle calls
-        data = [[log_num_oracles[i]] + self._analyze_results(r) for i, r in enumerate(results_all_level)]
-        columns = ["#Oracle", "avg_top100", "avg_top10", "avg_top1", "Diversity", "avg_SA", "%Pass", "Top-1 Pass"]
-        
     def save_result(self, suffix=None):
-
         print(f"Saving molecules...")
-        
-        if suffix is None:
-            output_file_path = os.path.join(self.args.output_dir, 'results.yaml')
-        else:
-            output_file_path = os.path.join(self.args.output_dir, 'results_' + suffix + '.yaml')
-
-        self.sort_buffer()
-        with open(output_file_path, 'w') as f:
-            yaml.dump(self.mol_buffer, f, sort_keys=False)
-    
+        self.oracle.save_result(suffix)
+        self.oracle.save_snapshots(suffix)
 
 
     def reset(self):

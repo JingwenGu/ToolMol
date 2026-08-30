@@ -1,0 +1,429 @@
+﻿python.exe : Found local copy...
+At line:3 char:1
++ & 'C:\Users\gujw\anaconda3\envs\molleo\python.exe' run.py toolmol --m ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Found local copy...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading...
+Done!
+MolFilter is using the following filters:
+Rule_Glaxo: True
+Rule_PAINS: True
+Rule_SureChEMBL: True
+Found local copy...
+Found local copy...
+toolmol
+Optimizing oracle function: ['jnk3', 'qed']
+Optimizing oracle function: ['sa']
+{'population_size': 60, 'offspring_size': 35, 'mutation_rate': 0.0, 'k': 10.0, 'max_steps': 10}
+seed 1
+0/500 | avg_top1: 1.876 | avg_top10: 1.770 | avg_top100: 1.559 | avg_sa: 2.752 | div: 0.865
+{'avg_top1': 1.8758209979676095, 'avg_top10': 1.7701669095768664, 'avg_top100': 1.5591859412981381, 'auc_top1': 0.13130746985773264, 'auc_top10': 0.12347581775954225, 'auc_top100': 0.1087584044128549, 'avg_sa': 2.752448088142524, 'diversity_top100': 0.8645787343674809, 'n_oracle': 0}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+60/500 | avg_top1: 1.876 | avg_top10: 1.769 | avg_top100: 1.741 | avg_sa: 2.252 | div: 0.841
+{'avg_top1': 1.8758209979676095, 'avg_top10': 1.7689743957575508, 'avg_top100': 1.740800540515856, 'auc_top1': 0.024385672973578923, 'auc_top10': 0.02299666714484816, 'auc_top100': 0.02263040702670613, 'avg_sa': 2.2523955330909677, 'diversity_top100': 0.8405558442686106, 'n_oracle': 60}
+62/500 | avg_top1: 1.876 | avg_top10: 1.784 | avg_top100: 1.724 | avg_sa: 2.209 | div: 0.831
+{'avg_top1': 1.8758209979676095, 'avg_top10': 1.7840425546259986, 'avg_top100': 1.7240034032060998, 'auc_top1': 0.03001313596748175, 'auc_top10': 0.028544680874015977, 'auc_top100': 0.027584054451297597, 'avg_sa': 2.209425504248473, 'diversity_top100': 0.8308410168948813, 'n_oracle': 62}
+66/500 | avg_top1: 1.876 | avg_top10: 1.805 | avg_top100: 1.746 | avg_sa: 2.076 | div: 0.820
+{'avg_top1': 1.8758209979676095, 'avg_top10': 1.8046930538518136, 'avg_top100': 1.7455062955544405, 'auc_top1': 0.03001313596748175, 'auc_top10': 0.02887508886162902, 'auc_top100': 0.027928100728871048, 'avg_sa': 2.07581361647025, 'diversity_top100': 0.8197767005971162, 'n_oracle': 66}
+70/500 | avg_top1: 1.906 | avg_top10: 1.824 | avg_top100: 1.767 | avg_sa: 2.006 | div: 0.764
+{'avg_top1': 1.90579344728736, 'avg_top10': 1.8235984352434087, 'avg_top100': 1.7668453043984662, 'auc_top1': 0.02668110826202304, 'auc_top10': 0.025530378093407722, 'auc_top100': 0.024735834261578528, 'avg_sa': 2.0061966108713327, 'diversity_top100': 0.7644617614278362, 'n_oracle': 70}
+76/500 | avg_top1: 1.932 | avg_top10: 1.858 | avg_top100: 1.782 | avg_sa: 1.982 | div: 0.776
+{'avg_top1': 1.9320819072386435, 'avg_top10': 1.8583689298267085, 'avg_top100': 1.7819970764010449, 'auc_top1': 0.03670955623753423, 'auc_top10': 0.03530900966670746, 'auc_top100': 0.033857944451619854, 'avg_sa': 1.9824179985175199, 'diversity_top100': 0.7755759408851942, 'n_oracle': 76}
+83/500 | avg_top1: 1.932 | avg_top10: 1.858 | avg_top100: 1.764 | avg_sa: 1.972 | div: 0.784
+{'avg_top1': 1.9320819072386435, 'avg_top10': 1.8583689298267085, 'avg_top100': 1.7643477428077328, 'auc_top1': 0.04057372005201151, 'auc_top10': 0.03902574752636088, 'auc_top100': 0.03705130259896239, 'avg_sa': 1.9718788248716546, 'diversity_top100': 0.7840145807158088, 'n_oracle': 83}
+85/500 | avg_top1: 1.932 | avg_top10: 1.858 | avg_top100: 1.768 | avg_sa: 1.983 | div: 0.782
+{'avg_top1': 1.9320819072386435, 'avg_top10': 1.8583689298267085, 'avg_top100': 1.76801869981402, 'auc_top1': 0.0444378838664888, 'auc_top10': 0.042742485386014294, 'auc_top100': 0.04066443009572246, 'avg_sa': 1.9831232936488816, 'diversity_top100': 0.7819933608720641, 'n_oracle': 85}
+88/500 | avg_top1: 1.943 | avg_top10: 1.873 | avg_top100: 1.763 | avg_sa: 1.899 | div: 0.778
+{'avg_top1': 1.9430108130701447, 'avg_top10': 1.872645615384231, 'avg_top100': 1.7628623247503887, 'auc_top1': 0.04857527032675362, 'auc_top10': 0.04681614038460578, 'auc_top100': 0.04407155811875972, 'avg_sa': 1.899323872162391, 'diversity_top100': 0.7779624883738955, 'n_oracle': 88}
+94/500 | avg_top1: 2.062 | avg_top10: 1.903 | avg_top100: 1.766 | avg_sa: 1.915 | div: 0.789
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9032666600216532, 'avg_top100': 1.7664374081890701, 'auc_top1': 0.05566947695439849, 'auc_top10': 0.05138819982058464, 'auc_top100': 0.04769381002110489, 'avg_sa': 1.9148571463890613, 'diversity_top100': 0.7892123489460117, 'n_oracle': 94}
+98/500 | avg_top1: 2.062 | avg_top10: 1.904 | avg_top100: 1.760 | avg_sa: 1.961 | div: 0.787
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.903654897901136, 'avg_top100': 1.7603653059393782, 'auc_top1': 0.0618549743937761, 'auc_top10': 0.05710964693703408, 'auc_top100': 0.05281095917818135, 'avg_sa': 1.9609012313273013, 'diversity_top100': 0.7874943828494859, 'n_oracle': 98}
+102/500 | avg_top1: 2.062 | avg_top10: 1.939 | avg_top100: 1.791 | avg_sa: 1.941 | div: 0.801
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.938796141922331, 'avg_top100': 1.7911052403870051, 'auc_top1': 0.05154581199481342, 'auc_top10': 0.048469903548058274, 'auc_top100': 0.04477763100967513, 'avg_sa': 1.9413319681100463, 'diversity_top100': 0.8006256159156091, 'n_oracle': 102}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+105/500 | avg_top1: 2.062 | avg_top10: 1.947 | avg_top100: 1.780 | avg_sa: 1.852 | div: 0.798
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9468707627677007, 'avg_top100': 1.7802994244469377, 'auc_top1': 0.05566947695439849, 'auc_top10': 0.052565510594727916, 'auc_top100': 0.04806808446006732, 'avg_sa': 1.851832521743855, 'diversity_top100': 0.7983920115680125, 'n_oracle': 105}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+109/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 109}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+115/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 115}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+115/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 115}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+115/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 115}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+115/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 115}
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+115/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 0.059793141913983563, 'auc_top10': 0.05700144335908503, 'auc_top100': 0.052166443897615745, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 115}
+500/500 | avg_top1: 2.062 | avg_top10: 1.966 | avg_top100: 1.799 | avg_sa: 1.832 | div: 0.794
+{'avg_top1': 2.0618324797925367, 'avg_top10': 1.9655670123822424, 'avg_top100': 1.7988428930212326, 'auc_top1': 2.002039337878553, 'auc_top10': 1.9085655690231573, 'auc_top100': 1.7466764491236169, 'avg_sa': 1.831604567399256, 'diversity_top100': 0.7938604798370583, 'n_oracle': 500}
+convergence criteria met, abort ...... 
+Saving molecules...
+---- The whole process takes 5.47 hours ----

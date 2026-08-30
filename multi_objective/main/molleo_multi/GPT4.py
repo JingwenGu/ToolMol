@@ -1,11 +1,10 @@
-import openai
+import os
 import re
 from rdkit import Chem
 import main.molleo_multi.crossover as co, main.molleo_multi.mutate as mu
-openai.api_type = "azure"
-openai.api_base = 
-openai.api_version = "2023-07-01-preview"
-openai.api_key = 
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 import random
 MINIMUM = 1e-10
 
@@ -16,15 +15,16 @@ def query_LLM(question, model="gpt-4", temperature=0.0):
     message.append({"role": "user", "content": prompt1})
 
     params = {
-        "engine": , #OPENAI_engine, Please use your own
+        "model": model,
         "max_tokens": 2048,
         "temperature": temperature,
         "messages": message
     }
 
+    response = None
     for retry in range(3):
         try:
-            response = openai.ChatCompletion.create(**params)["choices"][0]["message"]["content"]
+            response = client.chat.completions.create(**params).choices[0].message.content
             message.append({"role": "assistant", "content": response})
             break
         except Exception as e:

@@ -1,0 +1,84 @@
+﻿python.exe : Found local copy...
+At line:3 char:1
++ & 'C:\Users\gujw\anaconda3\envs\molleo\python.exe' run.py toolmol --m ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Found local copy...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading...
+Done!
+MolFilter is using the following filters:
+Rule_Glaxo: True
+Rule_PAINS: True
+Rule_SureChEMBL: True
+Found local copy...
+Found local copy...
+toolmol
+Optimizing oracle function: ['jnk3', 'qed']
+Optimizing oracle function: ['sa']
+{'population_size': 8, 'offspring_size': 4, 'mutation_rate': 0.0, 'k': 10.0, 'max_steps': 4}
+seed 1
+0/40 | avg_top1: 1.721 | avg_top10: 1.518 | avg_top100: 1.518 | avg_sa: 3.227 | div: 0.882
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5181117349456947, 'avg_top100': 1.5181117349456947, 'auc_top1': 0.17206328269787527, 'auc_top10': 0.15181117349456946, 'auc_top100': 0.15181117349456946, 'avg_sa': 3.2266136740541667, 'diversity_top100': 0.882490323661847, 'n_oracle': 0}
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 11642 tokens (10875 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9087 tokens (8320 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9816 tokens (9049 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 8734 tokens (7967 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10644 tokens (9877 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10575 tokens (9808 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9419 tokens (8652 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9405 tokens (8638 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10550 tokens (9783 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 8502 tokens (7735 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4 in organization org-AECKAJchZ1ZwyCgEklsdGR37 on tokens per min (TPM): Limit 80000, Used 78393, Requested 3649. Please try again in 1.531s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10269 tokens (9502 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4 in organization org-AECKAJchZ1ZwyCgEklsdGR37 on tokens per min (TPM): Limit 80000, Used 74695, Requested 5373. Please try again in 51ms. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9447 tokens (8680 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10234 tokens (9467 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10269 tokens (9502 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 10856 tokens (10089 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 8896 tokens (8129 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9570 tokens (8803 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+BadRequestError Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 9264 tokens (8497 in the messages, 767 in the functions). Please reduce the length of the messages or functions.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+RateLimitError Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4 in organization org-AECKAJchZ1ZwyCgEklsdGR37 on tokens per min (TPM): Limit 80000, Used 79095, Requested 2824. Please try again in 1.439s. Visit https://platform.openai.com/account/rate-limits to learn more.', 'type': 'tokens', 'param': None, 'code': 'rate_limit_exceeded'}}
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+8/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 0.10753955168617205, 'auc_top10': 0.09648323290448126, 'auc_top100': 0.09648323290448126, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 8}
+40/40 | avg_top1: 1.721 | avg_top10: 1.544 | avg_top100: 1.544 | avg_sa: 2.907 | div: 0.876
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5437317264717, 'avg_top100': 1.5437317264717, 'auc_top1': 1.6130932752925808, 'auc_top10': 1.4472484935672187, 'auc_top100': 1.4472484935672187, 'avg_sa': 2.9067423265503765, 'diversity_top100': 0.875612291235709, 'n_oracle': 40}
+convergence criteria met, abort ...... 
+Saving molecules...
+---- The whole process takes 0.06 hours ----

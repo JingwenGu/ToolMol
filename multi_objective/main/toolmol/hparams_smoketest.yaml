@@ -1,0 +1,5 @@
+population_size: 8
+offspring_size: 4
+mutation_rate: 0.0
+k: 10.0
+max_steps: 4

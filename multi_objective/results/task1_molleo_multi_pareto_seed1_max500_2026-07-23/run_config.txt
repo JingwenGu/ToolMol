@@ -1,0 +1,25 @@
+MOLLEO multi_objective run configuration
+==========================================
+Date started:      2026-07-23
+Method:             molleo_multi_pareto (GB_GA_Optimizer, true Pareto non-dominated selection via pymoo)
+LLM backend:        GPT-4 (OpenAI API, model="gpt-4")
+Task:               task 1  (max_obj: jnk3, qed | min_obj: sa)
+Seed:               1
+population_size:    120  (repo default, main/molleo_multi_pareto/hparams_default.yaml)
+offspring_size:      70   (repo default)
+mutation_rate:       0.067 (repo default)
+max_oracle_calls:   500
+freq_log:           50   (intermediate checkpoint frequency)
+output_dir:         multi_objective/results/task1_molleo_multi_pareto_seed1_max500_2026-07-23/
+
+Notes:
+- Repo patched to fix Windows-specific issues before this run (mirrors the single_objective patches):
+  - main/molleo_multi_pareto/GPT4.py: rewritten to use standard OpenAI client (was broken Azure stub)
+  - main/molleo_multi_pareto/network.py, biot5.py, mol_lm_utils.py: made transformers
+    AutoModel/AutoTokenizer/T5 imports lazy (native crash on Windows otherwise)
+  - installed missing `pymoo` dependency (needed for NonDominatedSorting / Pareto front selection)
+  - oracle/fpscores.pkl: re-extracted from git blob to fix autocrlf corruption
+- Smoke-tested successfully beforehand (20 oracle calls, includes Pareto-front + patience early-stop
+  code paths) before committing to this real run.
+- Conda env: molleo (Python 3.9), torch 2.2.2 (conda, cpuonly), numpy 1.26.4,
+  scikit-learn 1.2.2, PyTDC 0.4.1, transformers 4.40.0, pymoo 0.6.1.5

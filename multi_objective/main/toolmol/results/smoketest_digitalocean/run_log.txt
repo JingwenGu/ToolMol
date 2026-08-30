@@ -1,0 +1,2854 @@
+﻿toolmol
+Optimizing oracle function: ['jnk3', 'qed']
+Optimizing oracle function: ['sa']
+python.exe : Found local copy...
+At line:3 char:1
++ & 'C:\Users\gujw\anaconda3\envs\molleo\python.exe' -u run.py toolmol  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Found local copy...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Loading...
+Done!
+MolFilter is using the following filters:
+Rule_Glaxo: True
+Rule_PAINS: True
+Rule_SureChEMBL: True
+{'population_size': 8, 'offspring_size': 4, 'mutation_rate': 0.0, 'k': 10.0, 'max_steps': 4}
+seed 1
+Found local copy...
+Found local copy...
+0/40 | avg_top1: 1.721 | avg_top10: 1.518 | avg_top100: 1.518 | avg_sa: 3.227 | div: 0.882
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5181117349456947, 'avg_top100': 1.5181117349456947, 'auc_top1': 0.17206328269787527, 'auc_top10': 0.15181117349456946, 'auc_top100': 0.15181117349456946, 'avg_sa': 3.2266136740541667, 'diversity_top100': 0.882490323661847, 'n_oracle': 0}
+generation 1: population=8, oracle_calls=8, generating 4 offspring...
+  generation 1 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 17.6s
+  agent step 1: tool call -> replace_atom({"element": "Cl", "idx": 10})
+  agent step 1: tool result success=True: replaced atom 10 with Cl
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 8.9s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 9})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 4 5 6 7 8
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 18.1s
+  agent step 3: tool call -> replace_atom({"element": "O", "idx": 10})
+  agent step 3: tool result success=True: replaced atom 10 with O
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 32.6s
+  agent step 4: tool call -> replace_atom({"element": "F", "idx": 10})
+  agent step 4: tool result success=True: replaced atom 10 with F
+  generation 1 pair 1/4: edit_pair done
+  generation 1 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 13.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 8})
+  agent step 1: tool result success=True: attached '[1*]c1ccccc1' to atom 8 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 10.8s
+  agent step 2: tool call -> remove_substructure({"idx": 8, "substructure": "c1ccccc1"})
+  agent step 2: tool result success=False: substructure removal must leave exactly one attachment point (found 3); only terminal substructures are supported
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 14.9s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 24})
+  agent step 3: tool result success=True: attached '[1*]O' to atom 24 (bond=single)
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 9.3s
+  agent step 4: tool call -> replace_atom({"element": "O", "idx": 16})
+  agent step 4: tool result success=True: replaced atom 16 with O
+  generation 1 pair 2/4: edit_pair done
+  generation 1 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 32.1s
+  agent step 1: tool call -> replace_atom({"element": "O", "idx": 15})
+  agent step 1: tool result success=True: replaced atom 15 with O
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 15.8s
+  agent step 2: tool call -> replace_atom({"element": "F", "idx": 15})
+  agent step 2: tool result success=True: replaced atom 15 with F
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 17.7s
+  agent step 3: tool call -> replace_atom({"element": "N", "idx": 14})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 12 16
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 10.0s
+  agent step 4: tool call -> replace_atom({"element": "O", "idx": 13})
+  agent step 4: tool result success=True: replaced atom 13 with O
+  generation 1 pair 3/4: edit_pair done
+  generation 1 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 34.8s
+  agent step 1: tool call -> replace_atom({"element": "N", "idx": 13})
+  agent step 1: tool result success=True: replaced atom 13 with N
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 19.9s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 14})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 12 16
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 12.4s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 12})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 14 16
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 17.9s
+  agent step 4: tool call -> replace_atom({"element": "C", "idx": 13})
+  agent step 4: tool result success=True: replaced atom 13 with C
+  generation 1 pair 4/4: edit_pair done
+8/40 | avg_top1: 1.721 | avg_top10: 1.572 | avg_top100: 1.572 | avg_sa: 2.859 | div: 0.808
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5723101611265622, 'avg_top100': 1.5723101611265622, 'auc_top1': 0.15055537236064087, 'auc_top10': 0.1375771390985742, 'auc_top100': 0.1375771390985742, 'avg_sa': 2.858507521146182, 'diversity_top100': 0.8081042695824119, 'n_oracle': 8}
+generation 2: population=7, oracle_calls=7, generating 4 offspring...
+  generation 2 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 34.9s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 2})
+  agent step 1: tool result success=True: attached '[1*]O' to atom 2 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 19.3s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 19})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 19 F, 2, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 22.4s
+  agent step 3: tool call -> replace_substructure({"idx": 9, "old_substructure": "S(=O)(=O)C", "new_substructure": "[*]C(=O)C"})
+  agent step 3: tool result success=False: no substructure match for 'S(=O)(=O)C' contains atom index 9
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 18.2s
+  agent step 4: tool call -> replace_substructure({"idx": 9, "old_substructure": "S(=O)(=O)C", "new_substructure": "[*]C(=O)C"})
+  agent step 4: tool result success=False: no substructure match for 'S(=O)(=O)C' contains atom index 9
+  generation 2 pair 1/4: edit_pair done
+  generation 2 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 25.8s
+  agent step 1: tool call -> replace_substructure({"idx": 8, "old_substructure": "c1ccc(Cl)c(F)c1", "new_substructure": "[*]c1ccccc1"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccc(Cl)c(F)c1' contains atom index 8
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 15.6s
+  agent step 2: tool call -> replace_substructure({"idx": 8, "old_substructure": "c2ccc(Cl)c(F)c2", "new_substructure": "[*]c1ccccc1"})
+  agent step 2: tool result success=False: no substructure match for 'c2ccc(Cl)c(F)c2' contains atom index 8
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 33.3s
+  agent step 3: tool call -> remove_substructure({"idx": 13, "substructure": "Cl"})
+  agent step 3: tool result success=True: removed substructure matching 'Cl'
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 11.5s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 11})
+  agent step 4: tool result success=True: attached '[1*]C' to atom 11 (bond=single)
+  generation 2 pair 2/4: edit_pair done
+  generation 2 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 23.7s
+  agent step 1: tool call -> replace_atom({"element": "O", "idx": 10})
+  agent step 1: tool result success=True: replaced atom 10 with O
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 8.1s
+  agent step 2: tool call -> replace_atom({"element": "C", "idx": 13})
+  agent step 2: tool result success=True: replaced atom 13 with C
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 13.3s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 16})
+  agent step 3: tool result success=True: replaced atom 16 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 8.7s
+  agent step 4: no tool call, no FINAL ANSWER - nudging
+  generation 2 pair 3/4: edit_pair done
+  generation 2 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 33.2s
+  agent step 1: tool call -> replace_atom({"element": "C", "idx": 13})
+  agent step 1: tool result success=True: replaced atom 13 with C
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 10.4s
+  agent step 2: tool call -> crossover_molecules({"idx1": 5, "idx2": 5})
+  agent step 2: tool result success=True: crossover between atom 5 (mol1) and atom 5 (mol2)
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 24.7s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 14})
+  agent step 3: tool result success=True: replaced atom 14 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 5.6s
+  agent step 4: FINAL ANSWER, no tool call
+  generation 2 pair 4/4: edit_pair done
+10/40 | avg_top1: 1.721 | avg_top10: 1.572 | avg_top100: 1.572 | avg_sa: 2.859 | div: 0.808
+{'avg_top1': 1.7206328269787527, 'avg_top10': 1.5723101611265622, 'avg_top100': 1.5723101611265622, 'auc_top1': 0.15055537236064087, 'auc_top10': 0.1375771390985742, 'auc_top100': 0.1375771390985742, 'avg_sa': 2.858507521146182, 'diversity_top100': 0.8081042695824119, 'n_oracle': 10}
+generation 3: population=7, oracle_calls=7, generating 4 offspring...
+  generation 3 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 29.7s
+  agent step 1: tool call -> replace_atom({"element": "C", "idx": 2})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 21.8s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 9})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 9 N, 4, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 41.9s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 4})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 15.0s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 20})
+  agent step 4: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 17 18 19 26 27
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 3 pair 1/4: edit_pair done
+  generation 3 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 25.1s
+  agent step 1: tool call -> replace_atom({"element": "N", "idx": 12})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 14 16
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 18.8s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "C", "idx": 10})
+  agent step 2: tool result success=True: added C atom (bond=single) to atom 10
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 12.5s
+  agent step 3: tool call -> remove_substructure({"idx": 1, "substructure": "[C]"})
+  agent step 3: tool result success=False: no substructure match for '[C]' contains atom index 1
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 13.9s
+  agent step 4: tool call -> remove_substructure({"idx": 1, "substructure": "C"})
+  agent step 4: tool result success=False: no substructure match for 'C' contains atom index 1
+  generation 3 pair 2/4: edit_pair done
+  generation 3 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 15.6s
+  agent step 1: tool call -> crossover_molecules({"idx1": 0, "idx2": 0})
+  agent step 1: tool result success=True: crossover between atom 0 (mol1) and atom 0 (mol2)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 19.0s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "fluoromethyl", "idx": 18})
+  agent step 2: tool result success=False: unknown functional group 'fluoromethyl'
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 11.9s
+  agent step 3: tool call -> replace_atom({"idx": 0, "element": "F"})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 14.9s
+  agent step 4: tool call -> add_atom({"bond": "single", "element": "F", "idx": 13})
+  agent step 4: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  generation 3 pair 3/4: edit_pair done
+  generation 3 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 24.0s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 10})
+  agent step 1: tool result success=True: attached '[1*]C' to atom 10 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 26.5s
+  agent step 2: tool call -> replace_atom({"element": "H", "idx": 13})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 13 H, 2, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 19.4s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "methoxy", "idx": 9})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 9 N, 4, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 11.0s
+  agent step 4: tool call -> replace_atom({"element": "H", "idx": 13})
+  agent step 4: tool result success=False: invalid modification: Explicit valence for atom # 13 H, 2, is greater than permitted
+  generation 3 pair 4/4: edit_pair done
+10/40 | avg_top1: 1.731 | avg_top10: 1.608 | avg_top100: 1.608 | avg_sa: 2.785 | div: 0.720
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.607777071804061, 'avg_top100': 1.607777071804061, 'auc_top1': 0.17308779871491642, 'auc_top10': 0.1607777071804061, 'auc_top100': 0.1607777071804061, 'avg_sa': 2.7852441629280964, 'diversity_top100': 0.7204780601686886, 'n_oracle': 10}
+generation 4: population=8, oracle_calls=8, generating 4 offspring...
+  generation 4 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 28.2s
+  agent step 1: tool call -> remove_substructure({"idx": 3, "substructure": "c1ccccc1F"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccccc1F' contains atom index 3
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 10.2s
+  agent step 2: tool call -> remove_substructure({"idx": 3, "substructure": "c1ccccc1"})
+  agent step 2: tool result success=False: no substructure match for 'c1ccccc1' contains atom index 3
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 12.2s
+  agent step 3: tool call -> replace_atom({"element": "Cl", "idx": 10})
+  agent step 3: tool result success=True: replaced atom 10 with Cl
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 19.6s
+  agent step 4: tool call -> add_atom({"bond": "single", "element": "C", "idx": 15})
+  agent step 4: tool result success=True: added C atom (bond=single) to atom 15
+  generation 4 pair 1/4: edit_pair done
+  generation 4 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 27.1s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "pyridyl", "idx": 2})
+  agent step 1: tool result success=True: attached '[1*]c1ccncc1' to atom 2 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 22.0s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "C", "idx": 13})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 13 O, 3, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 19.1s
+  agent step 3: tool call -> replace_substructure({"idx": 13, "old_substructure": "S(=O)(=O)C", "new_substructure": "[*]C(=O)C"})
+  agent step 3: tool result success=False: no substructure match for 'S(=O)(=O)C' contains atom index 13
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 13.9s
+  agent step 4: tool call -> replace_substructure({"idx": 13, "old_substructure": "S(=O)(=O)C", "new_substructure": "[*]C(=O)C"})
+  agent step 4: tool result success=False: no substructure match for 'S(=O)(=O)C' contains atom index 13
+  generation 4 pair 2/4: edit_pair done
+  generation 4 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 37.3s
+  agent step 1: tool call -> replace_atom({"element": "F", "idx": 13})
+  agent step 1: tool result success=True: replaced atom 13 with F
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 15.3s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 14})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 12 16
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 8.3s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 10})
+  agent step 3: tool result success=True: attached '[1*]C' to atom 10 (bond=single)
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 8.0s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 11})
+  agent step 4: tool result success=True: attached '[1*]O' to atom 11 (bond=single)
+  generation 4 pair 3/4: edit_pair done
+  generation 4 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 27.3s
+  agent step 1: tool call -> add_atom({"bond": "single", "element": "F", "idx": 2})
+  agent step 1: tool result success=True: added F atom (bond=single) to atom 2
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 11.1s
+  agent step 2: tool call -> replace_atom({"element": "O", "idx": 22})
+  agent step 2: tool result success=True: replaced atom 22 with O
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 9.4s
+  agent step 3: tool call -> replace_atom({"element": "O", "idx": 20})
+  agent step 3: tool result success=True: replaced atom 20 with O
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 4.9s
+  agent step 4: no tool call, no FINAL ANSWER - nudging
+  generation 4 pair 4/4: edit_pair done
+12/40 | avg_top1: 1.731 | avg_top10: 1.607 | avg_top100: 1.607 | avg_sa: 2.842 | div: 0.720
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.607499175647567, 'avg_top100': 1.607499175647567, 'auc_top1': 0.21635974839364552, 'auc_top10': 0.20093739695594587, 'auc_top100': 0.20093739695594587, 'avg_sa': 2.8421594289832823, 'diversity_top100': 0.7195551011332355, 'n_oracle': 12}
+generation 5: population=10, oracle_calls=10, generating 4 offspring...
+  generation 5 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 23.8s
+  agent step 1: tool call -> replace_atom({"element": "F", "idx": 15})
+  agent step 1: tool result success=True: replaced atom 15 with F
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 16.8s
+  agent step 2: tool call -> replace_atom({"element": "F", "idx": 4})
+  agent step 2: tool result success=True: replaced atom 4 with F
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 26.3s
+  agent step 3: tool call -> replace_atom({"element": "O", "idx": 6})
+  agent step 3: tool result success=True: replaced atom 6 with O
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 5.5s
+  agent step 4: no tool call, no FINAL ANSWER - nudging
+  generation 5 pair 1/4: edit_pair done
+  generation 5 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 31.6s
+  agent step 1: tool call -> add_substructure({"bond": "single", "idx": 1, "substructure": "[*]c2ccncc2"})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 2 3 4 16 17
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 16.1s
+  agent step 2: tool call -> add_atom({"bond": "single", "idx": 2, "element": "Cl"})
+  agent step 2: tool result success=True: added Cl atom (bond=single) to atom 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 11.6s
+  agent step 3: tool call -> remove_substructure({"idx": 2, "substructure": "[Cl]"})
+  agent step 3: tool result success=False: no substructure match for '[Cl]' contains atom index 2
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 26.3s
+  agent step 4: tool call -> remove_substructure({"idx": 4, "substructure": "Cl"})
+  agent step 4: tool result success=False: no substructure match for 'Cl' contains atom index 4
+  generation 5 pair 2/4: edit_pair done
+  generation 5 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 41.1s
+  agent step 1: tool call -> replace_atom({"element": "C", "idx": 4})
+  agent step 1: tool result success=True: replaced atom 4 with C
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 18.3s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "Cl", "idx": 2})
+  agent step 2: tool result success=True: added Cl atom (bond=single) to atom 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 7.0s
+  agent step 3: no tool call, no FINAL ANSWER - nudging
+  agent step 4/4
+    -> LLM call starting (10 messages)...
+    <- LLM call returned in 12.1s
+  agent step 4: FINAL ANSWER, no tool call
+  generation 5 pair 3/4: edit_pair done
+  generation 5 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 28.9s
+  agent step 1: tool call -> replace_substructure({"idx": 7, "old_substructure": "S(=O)(=O)C", "new_substructure": "C(=O)C"})
+  agent step 1: tool result success=False: no substructure match for 'S(=O)(=O)C' contains atom index 7
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 22.0s
+  agent step 2: tool call -> replace_substructure({"idx": 17, "old_substructure": "c1ccn[nH]1", "new_substructure": "[*]c1c(F)ccc(Cl)c1"})
+  agent step 2: tool result success=False: no substructure match for 'c1ccn[nH]1' contains atom index 17
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 29.3s
+  agent step 3: tool call -> add_substructure({"bond": "single", "idx": 18, "substructure": "[*]F"})
+  agent step 3: tool result success=True: attached '[*]F' to atom 18 (bond=single)
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 22.2s
+  agent step 4: tool call -> add_substructure({"bond": "single", "idx": 20, "substructure": "[*]Cl"})
+  agent step 4: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 17 18 19 26 27
+  generation 5 pair 4/4: edit_pair done
+14/40 | avg_top1: 1.731 | avg_top10: 1.648 | avg_top100: 1.616 | avg_sa: 2.858 | div: 0.700
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6477911647037007, 'avg_top100': 1.6161471768514988, 'auc_top1': 0.23799572323301005, 'auc_top10': 0.22657128514675887, 'auc_top100': 0.22222023681708108, 'avg_sa': 2.8576091390134524, 'diversity_top100': 0.7000530174905225, 'n_oracle': 14}
+generation 6: population=11, oracle_calls=11, generating 4 offspring...
+  generation 6 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 38.9s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "pyridyl", "idx": 2})
+  agent step 1: tool result success=True: attached '[1*]c1ccncc1' to atom 2 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 21.6s
+  agent step 2: tool call -> replace_substructure({"idx": 2, "old_substructure": "c1ccncc1", "new_substructure": "c1ccccc1"})
+  agent step 2: tool result success=False: no substructure match for 'c1ccncc1' contains atom index 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 20.3s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 23})
+  agent step 3: tool result success=True: replaced atom 23 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 20.6s
+  agent step 4: tool call -> add_substructure({"bond": "single", "idx": 21, "substructure": "[*]OC"})
+  agent step 4: tool result success=True: attached '[*]OC' to atom 21 (bond=single)
+  generation 6 pair 1/4: edit_pair done
+  generation 6 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 26.4s
+  agent step 1: tool call -> remove_substructure({"idx": 8, "substructure": "c1ccc(Cl)c(F)c1"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccc(Cl)c(F)c1' contains atom index 8
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 28.9s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "C", "idx": 4})
+  agent step 2: tool result success=True: added C atom (bond=single) to atom 4
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 16.2s
+  agent step 3: tool call -> replace_atom({"element": "F", "idx": 19})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 19 F, 2, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 14.7s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 14})
+  agent step 4: tool result success=False: invalid modification: Explicit valence for atom # 14 C, 5, is greater than permitted
+  generation 6 pair 2/4: edit_pair done
+  generation 6 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 29.2s
+  agent step 1: tool call -> replace_atom({"element": "C", "idx": 22})
+  agent step 1: tool result success=True: replaced atom 22 with C
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 13.2s
+  agent step 2: tool call -> replace_atom({"element": "F", "idx": 20})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 20 F, 5, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 8.3s
+  agent step 3: tool call -> add_atom({"bond": "single", "element": "F", "idx": 20})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 20 C, 6, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 9.5s
+  agent step 4: tool call -> add_atom({"bond": "single", "element": "F", "idx": 2})
+  agent step 4: tool result success=True: added F atom (bond=single) to atom 2
+  generation 6 pair 3/4: edit_pair done
+  generation 6 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 33.6s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 20})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 17 18 19 26 27
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 33.7s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "F", "idx": 13})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 16.0s
+  agent step 3: tool call -> add_atom({"bond": "single", "element": "F", "idx": 12})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 21 22 23 24 25
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 27.7s
+  agent step 4: tool call -> replace_substructure({"idx": 1, "old_substructure": "c1nonc1", "new_substructure": "c1ccccc1"})
+  agent step 4: tool result success=False: substructure removal must leave exactly one attachment point (found 2); only terminal substructures are supported
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 6 pair 4/4: edit_pair done
+15/40 | avg_top1: 1.731 | avg_top10: 1.648 | avg_top100: 1.616 | avg_sa: 2.858 | div: 0.700
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6477911647037007, 'avg_top100': 1.6161471768514988, 'auc_top1': 0.23799572323301005, 'auc_top10': 0.22657128514675887, 'auc_top100': 0.22222023681708108, 'avg_sa': 2.8576091390134524, 'diversity_top100': 0.7000530174905225, 'n_oracle': 15}
+generation 7: population=11, oracle_calls=11, generating 4 offspring...
+  generation 7 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 22.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 2})
+  agent step 1: tool result success=True: attached '[1*]O' to atom 2 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 9.5s
+  agent step 2: tool call -> remove_substructure({"idx": 2, "substructure": "O"})
+  agent step 2: tool result success=False: no substructure match for 'O' contains atom index 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 24.3s
+  agent step 3: tool call -> remove_substructure({"idx": 2, "substructure": "[OH]"})
+  agent step 3: tool result success=False: no substructure match for '[OH]' contains atom index 2
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 9.8s
+  agent step 4: tool call -> remove_substructure({"idx": 7, "substructure": "cO"})
+  agent step 4: tool result success=False: no substructure match for 'cO' contains atom index 7
+  generation 7 pair 1/4: edit_pair done
+  generation 7 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 18.6s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 14})
+  agent step 1: tool result success=False: invalid modification: Explicit valence for atom # 14 S, 7, is greater than permitted
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 10.8s
+  agent step 2: tool call -> replace_atom({"element": "F", "idx": 15})
+  agent step 2: tool result success=True: replaced atom 15 with F
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 11.2s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 15})
+  agent step 3: tool result success=True: replaced atom 15 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 14.2s
+  agent step 4: tool call -> replace_atom({"element": "C", "idx": 17})
+  agent step 4: tool result success=True: replaced atom 17 with C
+  generation 7 pair 2/4: edit_pair done
+  generation 7 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 19.4s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 13})
+  agent step 1: tool result success=True: attached '[1*]c1ccccc1' to atom 13 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 24.8s
+  agent step 2: tool call -> replace_atom({"element": "N", "idx": 21})
+  agent step 2: tool result success=True: replaced atom 21 with N
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 17.0s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 21})
+  agent step 3: tool result success=True: replaced atom 21 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 4.7s
+  agent step 4: FINAL ANSWER, no tool call
+  generation 7 pair 3/4: edit_pair done
+  generation 7 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 32.2s
+  agent step 1: tool call -> replace_atom({"element": "F", "idx": 4})
+  agent step 1: tool result success=False: invalid modification: Explicit valence for atom # 4 F, 2, is greater than permitted
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 12.7s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 7})
+  agent step 2: tool result success=True: attached '[1*]c1ccccc1' to atom 7 (bond=single)
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 19.8s
+  agent step 3: tool call -> replace_atom({"element": "F", "idx": 18})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 18 F, 4, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 10.5s
+  agent step 4: tool call -> replace_substructure({"idx": 7, "old_substructure": "c1ccccc1", "new_substructure": "[*]C"})
+  agent step 4: tool result success=False: no substructure match for 'c1ccccc1' contains atom index 7
+  generation 7 pair 4/4: edit_pair done
+15/40 | avg_top1: 1.731 | avg_top10: 1.657 | avg_top100: 1.616 | avg_sa: 2.873 | div: 0.699
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6572462000714285, 'avg_top100': 1.61639251749001, 'auc_top1': 0.25963169807237463, 'auc_top10': 0.24858693001071427, 'auc_top100': 0.2424588776235015, 'avg_sa': 2.872836903361964, 'diversity_top100': 0.699419097103904, 'n_oracle': 15}
+generation 8: population=12, oracle_calls=12, generating 4 offspring...
+  generation 8 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 9.5s
+  agent step 1: tool call -> crossover_molecules({"idx1": 10, "idx2": 15})
+  agent step 1: tool result success=False: atom 10 in molecule 1 does not yield exactly 2 fragments (likely in a ring or has no acyclic bond)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 27.7s
+  agent step 2: tool call -> remove_substructure({"idx": 14, "substructure": "S(=O)(=O)C"})
+  agent step 2: tool result success=True: removed substructure matching 'S(=O)(=O)C'
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 10.9s
+  agent step 3: tool call -> add_atom({"bond": "single", "element": "O", "idx": 11})
+  agent step 3: tool result success=True: added O atom (bond=single) to atom 11
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 26.5s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 2})
+  agent step 4: tool result success=True: attached '[1*]C' to atom 2 (bond=single)
+  generation 8 pair 1/4: edit_pair done
+  generation 8 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 43.2s
+  agent step 1: tool call -> replace_atom({"element": "H", "idx": 4})
+  agent step 1: tool result success=False: invalid modification: Explicit valence for atom # 4 H, 2, is greater than permitted
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 17.0s
+  agent step 2: tool call -> replace_substructure({"idx": 7, "old_substructure": "[*]S(=O)(=O)C", "new_substructure": "[*]C(=O)C"})
+  agent step 2: tool result success=True: replaced substructure matching '[*]S(=O)(=O)C' with '[*]C(=O)C'
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 24.4s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 10})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 10 F, 2, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 24.0s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 16})
+  agent step 4: tool result success=True: attached '[1*]O' to atom 16 (bond=single)
+  generation 8 pair 2/4: edit_pair done
+  generation 8 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 33.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 14})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 12 16
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 17.7s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 14})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 12 16
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 17.2s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 12})
+  agent step 3: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 9 10 11 14 16
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 6.6s
+  agent step 4: tool call -> replace_atom({"element": "Br", "idx": 13})
+  agent step 4: tool result success=True: replaced atom 13 with Br
+  generation 8 pair 3/4: edit_pair done
+  generation 8 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 31.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "pyridyl", "idx": 3})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 2 5 7 8
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 8.8s
+  agent step 2: tool call -> add_substructure({"bond": "single", "idx": 3, "substructure": "[*]c1ncccc1"})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 2 5 7 8
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 18.7s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 2})
+  agent step 3: tool result success=True: attached '[1*]C' to atom 2 (bond=single)
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 11.7s
+  agent step 4: tool call -> remove_substructure({"idx": 15, "substructure": "C"})
+  agent step 4: tool result success=False: no substructure match for 'C' contains atom index 15
+  generation 8 pair 4/4: edit_pair done
+16/40 | avg_top1: 1.731 | avg_top10: 1.657 | avg_top100: 1.616 | avg_sa: 2.873 | div: 0.699
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6572462000714285, 'avg_top100': 1.61639251749001, 'auc_top1': 0.25963169807237463, 'auc_top10': 0.24858693001071427, 'auc_top100': 0.2424588776235015, 'avg_sa': 2.872836903361964, 'diversity_top100': 0.699419097103904, 'n_oracle': 16}
+generation 9: population=12, oracle_calls=12, generating 4 offspring...
+  generation 9 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 40.1s
+  agent step 1: no tool call, no FINAL ANSWER - nudging
+  agent step 2/4
+    -> LLM call starting (4 messages)...
+    <- LLM call returned in 7.2s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 5})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 6 7 8 9 23 24 25
+  agent step 3/4
+    -> LLM call starting (7 messages)...
+    <- LLM call returned in 20.3s
+  agent step 3: tool call -> replace_atom({"element": "F", "idx": 19})
+  agent step 3: tool result success=True: replaced atom 19 with F
+  agent step 4/4
+    -> LLM call starting (10 messages)...
+    <- LLM call returned in 16.5s
+  agent step 4: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 24})
+  agent step 4: tool result success=True: attached '[1*]O' to atom 24 (bond=single)
+  generation 9 pair 1/4: edit_pair done
+  generation 9 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 50.8s
+  agent step 1: no tool call, no FINAL ANSWER - nudging
+  agent step 2/4
+    -> LLM call starting (4 messages)...
+    <- LLM call returned in 14.5s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 10})
+  agent step 2: tool result success=True: attached '[1*]C' to atom 10 (bond=single)
+  agent step 3/4
+    -> LLM call starting (7 messages)...
+    <- LLM call returned in 12.7s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "fluorine", "idx": 11})
+  agent step 3: tool result success=False: unknown functional group 'fluorine'
+  agent step 4/4
+    -> LLM call starting (10 messages)...
+    <- LLM call returned in 12.6s
+  agent step 4: tool call -> add_atom({"bond": "single", "element": "F", "idx": 5})
+  agent step 4: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 2 3 7 8
+  generation 9 pair 2/4: edit_pair done
+  generation 9 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 18.5s
+  agent step 1: tool call -> replace_substructure({"idx": 13, "old_substructure": "c1ccccc1", "new_substructure": "[*]c1ncccc1"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccccc1' contains atom index 13
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 17.1s
+  agent step 2: tool call -> replace_atom({"idx": 15, "element": "N"})
+  agent step 2: tool result success=True: replaced atom 15 with N
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 19.2s
+  agent step 3: tool call -> replace_atom({"idx": 21, "element": "F"})
+  agent step 3: tool result success=True: replaced atom 21 with F
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 9.7s
+  agent step 4: tool call -> replace_atom({"idx": 0, "element": "O"})
+  agent step 4: tool result success=True: replaced atom 0 with O
+  generation 9 pair 3/4: edit_pair done
+  generation 9 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 16.8s
+  agent step 1: tool call -> replace_atom({"element": "Br", "idx": 4})
+  agent step 1: tool result success=True: replaced atom 4 with Br
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 9.2s
+  agent step 2: tool call -> replace_atom({"element": "F", "idx": 15})
+  agent step 2: tool result success=True: replaced atom 15 with F
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 8.7s
+  agent step 3: tool call -> replace_atom({"element": "C", "idx": 15})
+  agent step 3: tool result success=True: replaced atom 15 with C
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 4.6s
+  agent step 4: no tool call, no FINAL ANSWER - nudging
+  generation 9 pair 4/4: edit_pair done
+16/40 | avg_top1: 1.731 | avg_top10: 1.657 | avg_top100: 1.593 | avg_sa: 2.858 | div: 0.723
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6572462000714285, 'avg_top100': 1.5926307514970097, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.2693025075116071, 'auc_top100': 0.2588024971182641, 'avg_sa': 2.8584216924687955, 'diversity_top100': 0.7227939310155346, 'n_oracle': 16}
+generation 10: population=13, oracle_calls=13, generating 4 offspring...
+  generation 10 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 21.8s
+  agent step 1: tool call -> remove_substructure({"idx": 14, "substructure": "[C]"})
+  agent step 1: tool result success=False: no substructure match for '[C]' contains atom index 14
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 12.0s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 2})
+  agent step 2: tool result success=True: attached '[1*]C' to atom 2 (bond=single)
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 13.7s
+  agent step 3: tool call -> replace_atom({"idx": 4, "element": "F"})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 4 F, 2, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 21.4s
+  agent step 4: tool call -> remove_substructure({"idx": 1, "substructure": "[CH3]"})
+  agent step 4: tool result success=False: no substructure match for '[CH3]' contains atom index 1
+  generation 10 pair 1/4: edit_pair done
+  generation 10 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 29.4s
+  agent step 1: tool call -> replace_substructure({"idx": 13, "old_substructure": "c1ccccc1", "new_substructure": "[*]c1ccncc1"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccccc1' contains atom index 13
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 11.3s
+  agent step 2: tool call -> replace_substructure({"idx": 14, "old_substructure": "c1ccccc1", "new_substructure": "[*]c1ccncc1"})
+  agent step 2: tool result success=True: replaced substructure matching 'c1ccccc1' with '[*]c1ccncc1'
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 20.8s
+  agent step 3: tool call -> replace_atom({"idx": 15, "element": "F"})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 15 F, 3, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 5.3s
+  agent step 4: no tool call, no FINAL ANSWER - nudging
+  generation 10 pair 2/4: edit_pair done
+  generation 10 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 15.1s
+  agent step 1: tool call -> crossover_molecules({"idx1": 0, "idx2": 0})
+  agent step 1: tool result success=False: crossover failed to produce a valid molecule from any of the 4 fragment combinations
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 25.6s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "phenyl", "idx": 11})
+  agent step 2: tool result success=True: attached '[1*]c1ccccc1' to atom 11 (bond=single)
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 14.5s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 21})
+  agent step 3: tool result success=False: invalid modification: Explicit valence for atom # 21 O, 3, is greater than permitted
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 13.7s
+  agent step 4: tool call -> replace_atom({"element": "Cl", "idx": 0})
+  agent step 4: tool result success=True: replaced atom 0 with Cl
+  generation 10 pair 3/4: edit_pair done
+  generation 10 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 25.7s
+  agent step 1: tool call -> crossover_molecules({"idx1": 0, "idx2": 0})
+  agent step 1: tool result success=True: crossover between atom 0 (mol1) and atom 0 (mol2)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 22.6s
+  agent step 2: tool call -> add_atom({"bond": "single", "element": "Cl", "idx": 2})
+  agent step 2: tool result success=True: added Cl atom (bond=single) to atom 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 13.9s
+  agent step 3: tool call -> add_functional_group({"bond": "single", "group": "methyl", "idx": 4})
+  agent step 3: tool result success=True: attached '[1*]C' to atom 4 (bond=single)
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 8.5s
+  agent step 4: FINAL ANSWER, no tool call
+  generation 10 pair 4/4: edit_pair done
+17/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.604 | avg_sa: 2.866 | div: 0.680
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.6044773752572592, 'auc_top1': 0.25963169807237463, 'auc_top10': 0.24969797467764937, 'auc_top100': 0.24067160628858889, 'avg_sa': 2.8657412034990917, 'diversity_top100': 0.6799542445783492, 'n_oracle': 17}
+generation 11: population=12, oracle_calls=12, generating 4 offspring...
+  generation 11 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 36.8s
+  agent step 1: tool call -> replace_substructure({"idx": 8, "old_substructure": "c1ccc(Cl)c(F)c1", "new_substructure": "[*]c1c(Cl)cnc(F)c1"})
+  agent step 1: tool result success=False: no substructure match for 'c1ccc(Cl)c(F)c1' contains atom index 8
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 10.1s
+  agent step 2: tool call -> replace_atom({"idx": 8, "element": "O"})
+  agent step 2: tool result success=False: invalid modification: Explicit valence for atom # 8 O, 6, is greater than permitted
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 42.8s
+  agent step 3: tool call -> replace_atom({"idx": 9, "element": "F"})
+  agent step 3: tool result success=True: replaced atom 9 with F
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 28.9s
+  agent step 4: tool call -> replace_atom({"idx": 9, "element": "C"})
+  agent step 4: tool result success=True: replaced atom 9 with C
+  generation 11 pair 1/4: edit_pair done
+  generation 11 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 25.1s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 2})
+  agent step 1: tool result success=True: attached '[1*]O' to atom 2 (bond=single)
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 6.4s
+  agent step 2: tool call -> remove_substructure({"idx": 2, "substructure": "O"})
+  agent step 2: tool result success=False: no substructure match for 'O' contains atom index 2
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call returned in 23.7s
+  agent step 3: tool call -> remove_substructure({"idx": 20, "substructure": "[OH]"})
+  agent step 3: tool result success=True: removed substructure matching '[OH]'
+  agent step 4/4
+    -> LLM call starting (11 messages)...
+    <- LLM call returned in 10.2s
+  agent step 4: tool call -> remove_substructure({"idx": 18, "substructure": "[Cl]"})
+  agent step 4: tool result success=False: no substructure match for '[Cl]' contains atom index 18
+  generation 11 pair 2/4: edit_pair done
+  generation 11 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 47.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "pyridyl", "idx": 2})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 14 15 17 19
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call returned in 33.7s
+  agent step 2: tool call -> add_functional_group({"bond": "single", "group": "pyridyl", "idx": 2})
+  agent step 2: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 14 15 17 19
+  agent step 3/4
+    -> LLM call starting (8 messages)...
+    <- LLM call failed after 5.1s: PermissionDeniedError: Error code: 403
+PermissionDeniedError Error code: 403
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 11 pair 3/4: edit_pair done
+  generation 11 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 5.0s: PermissionDeniedError: Error code: 403
+PermissionDeniedError Error code: 403
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 11 pair 4/4: edit_pair done
+18/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.27050613923412015, 'auc_top100': 0.25827731599396886, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 18}
+generation 12: population=13, oracle_calls=13, generating 4 offspring...
+  generation 12 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 5.1s: PermissionDeniedError: Error code: 403
+PermissionDeniedError Error code: 403
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 12 pair 1/4: edit_pair done
+  generation 12 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 5.0s: PermissionDeniedError: Error code: 403
+PermissionDeniedError Error code: 403
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 12 pair 2/4: edit_pair done
+  generation 12 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 12 pair 3/4: edit_pair done
+  generation 12 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 12 pair 4/4: edit_pair done
+19/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.27050613923412015, 'auc_top100': 0.25827731599396886, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 19}
+generation 13: population=13, oracle_calls=13, generating 4 offspring...
+  generation 13 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 23.3s
+  agent step 1: tool call -> replace_atom({"element": "F", "idx": 14})
+  agent step 1: tool result success=True: replaced atom 14 with F
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 13 pair 1/4: edit_pair done
+  generation 13 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 13 pair 2/4: edit_pair done
+  generation 13 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 22.2s
+  agent step 1: tool call -> remove_substructure({"idx": 13, "substructure": "[Cl]"})
+  agent step 1: tool result success=True: removed substructure matching '[Cl]'
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 13 pair 3/4: edit_pair done
+  generation 13 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 5.1s: PermissionDeniedError: Error code: 403
+PermissionDeniedError Error code: 403
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 13 pair 4/4: edit_pair done
+19/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.27050613923412015, 'auc_top100': 0.25827731599396886, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 19}
+generation 14: population=13, oracle_calls=13, generating 4 offspring...
+  generation 14 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 14 pair 1/4: edit_pair done
+  generation 14 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 14 pair 2/4: edit_pair done
+  generation 14 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 14 pair 3/4: edit_pair done
+  generation 14 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 14 pair 4/4: edit_pair done
+19/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.27050613923412015, 'auc_top100': 0.25827731599396886, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 19}
+generation 15: population=13, oracle_calls=13, generating 4 offspring...
+  generation 15 pair 1/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 15 pair 1/4: edit_pair done
+  generation 15 pair 2/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 15 pair 2/4: edit_pair done
+  generation 15 pair 3/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 15 pair 3/4: edit_pair done
+  generation 15 pair 4/4: starting edit_pair
+  agent step 1/4
+    -> LLM call starting (2 messages)...
+    <- LLM call returned in 24.2s
+  agent step 1: tool call -> add_functional_group({"bond": "single", "group": "hydroxyl", "idx": 5})
+  agent step 1: tool result success=False: invalid modification: Can't kekulize mol.  Unkekulized atoms: 1 2 4 17 18
+  agent step 2/4
+    -> LLM call starting (5 messages)...
+    <- LLM call failed after 3.1s: InternalServerError: <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+InternalServerError <!DOCTYPE html>
+<html>
+<head>
+    <title>DigitalOcean - Maintenance</title>
+    <link href="https://assets.digitalocean.com/public/favicon.png" rel="shortcut icon" type="image/png">
+    <style type="text/css">
+        body {
+            background-color: #27a1e3;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.header{
+            background-color: #E2F4FE;
+            background-image: url('https://assets.digitalocean.com/public/waves.png');
+            background-repeat: repeat-x;
+            background-position: center bottom;
+            padding-top: 150px;
+        }
+        div.main{
+            overflow: auto;
+            width: 960px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        div.text{
+            width: 450px;
+            float: left;
+        }
+        div.text p{
+            color: #fff;
+            font-size: 18pt;
+            font-family: helvetica;
+        }
+        div.mascot{
+            width: 450px;
+            float: right;
+        }
+        div.copyright{
+            clear: both;
+        }
+        div.copyright p{
+            color: #fff;
+            text-align: center;
+            font-size: 10pt;
+            font-family: helvetica;
+            padding-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+</div>
+<div class="main">
+    <div class="text">
+        <a href="https://www.digitalocean.com"><img src="https://assets.digitalocean.com/public/logo.svg"></a>
+        <p>DigitalOcean is currently under maintenance and will be back shortly!</p>
+    </div>
+    <div class="mascot">
+        <img src="https://assets.digitalocean.com/public/mascot.png" />
+    </div>
+</div>
+<div class="copyright">
+    <p>DigitalOcean<sup>TM</sup>, Inc. All Rights Reserved.</p>
+</div>
+</body>
+</html>
+ToolMolAgent: no successful tool call in budget, falling back to Graph-GA
+  generation 15 pair 4/4: edit_pair done
+19/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 0.2812676729117392, 'auc_top10': 0.27050613923412015, 'auc_top100': 0.25827731599396886, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 19}
+40/40 | avg_top1: 1.731 | avg_top10: 1.665 | avg_top100: 1.589 | avg_sa: 2.941 | div: 0.674
+{'avg_top1': 1.7308779871491642, 'avg_top10': 1.6646531645176623, 'avg_top100': 1.589398867655193, 'auc_top1': 1.449610314237425, 'auc_top10': 1.3941470252835422, 'auc_top100': 1.331121551661224, 'avg_sa': 2.9410562340413895, 'diversity_top100': 0.6743093508052, 'n_oracle': 40}
+convergence criteria met, abort ...... 
+Logging final results...
+Saving molecules...
+---- The whole process takes 0.96 hours ----

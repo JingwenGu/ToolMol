@@ -1,4 +1,3 @@
-from transformers import T5Tokenizer, T5ForConditionalGeneration
 import selfies as sf
 from rdkit import Chem
 
@@ -6,6 +5,7 @@ from rdkit import Chem
 device = 'cuda:0'
 class BioT5:
     def __init__(self):
+        from transformers import T5Tokenizer, T5ForConditionalGeneration
 
         self.tokenizer = T5Tokenizer.from_pretrained("QizhiPei/biot5-base-text2mol")
         self.model = T5ForConditionalGeneration.from_pretrained('QizhiPei/biot5-base-text2mol').to(device)
