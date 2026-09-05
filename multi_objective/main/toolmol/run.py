@@ -3,6 +3,7 @@ from __future__ import print_function
 import json
 
 import numpy as np
+import yaml
 from rdkit import Chem, rdBase
 rdBase.DisableLog('rdApp.error')
 
@@ -50,14 +51,34 @@ class GB_GA_Optimizer(BaseOptimizer):
         self.oracle.assign_evaluator(self.args)
         self.mol_lm.max_steps = config["max_steps"]
 
-        if self.smi_file is not None:
-            starting_population = self.all_smiles[:config["population_size"]]
+        if getattr(self.args, "resume_from", None):
+            # Reconstruct the true starting population by re-running select_pareto_front()
+            # over every molecule the prior run ever scored, rather than a naive top-N by
+            # summed score - population_mol at any generation is always exactly the
+            # non-dominated front over the full history (dominance is monotonic under the
+            # union), so this recovers the exact live population, not an approximation.
+            # Loading the saved buffer into mol_buffer first means the re-scoring call
+            # below hits the cache instead of spending fresh oracle budget on molecules we
+            # already have scores for.
+            with open(self.args.resume_from) as f:
+                saved = yaml.safe_load(f)
+            print(f"resuming from {self.args.resume_from}: {len(saved)} saved molecules", flush=True)
+            self.oracle.mol_buffer = dict(saved)
+            saved_mol = [Chem.MolFromSmiles(smi) for smi in saved]
+            saved_mol = [m for m in saved_mol if m is not None]
+            population_mol = self.oracle.select_pareto_front([Chem.MolToSmiles(mol) for mol in saved_mol])
+            population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
+            print(f"resumed population: {len(population_mol)} molecules on the reconstructed "
+                  f"Pareto front, {len(self.oracle)} oracle calls carried over", flush=True)
         else:
-            starting_population = np.random.choice(self.all_smiles, config["population_size"])
+            if self.smi_file is not None:
+                starting_population = self.all_smiles[:config["population_size"]]
+            else:
+                starting_population = np.random.choice(self.all_smiles, config["population_size"])
 
-        population_smiles = starting_population
-        population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
-        population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
+            population_smiles = starting_population
+            population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
+            population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
         patience = 0
         generation = 0

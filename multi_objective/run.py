@@ -24,6 +24,7 @@ def main():
     parser.add_argument('--llm_base_url', type=str, default=None, help='Override API base URL, e.g. to point at a GPT-OSS-120B-compatible endpoint')
     parser.add_argument('--llm_api_key_env', type=str, default='OPENAI_API_KEY', help='Env var name holding the API key for --llm_base_url, e.g. DEEPINFRA_API_KEY when pointed at a non-OpenAI provider')
     parser.add_argument('--llm_extra_body', type=str, default=None, help='JSON string passed as extra_body to the chat completions call, e.g. \'{"provider": {"only": ["groq"]}}\' to pin OpenRouter to a specific underlying provider')
+    parser.add_argument('--resume_from', type=str, default=None, help='Path to a saved results_*.yaml (SMILES -> [score, index]) from a prior ToolMol run to resume from. The true starting population is reconstructed by re-running select_pareto_front() over the full saved set, not a top-N-by-score truncation.')
     parser.add_argument('--bin_size', type=int, default=100)
     parser.add_argument('--patience', type=int, default=5)
     parser.add_argument('--max_oracle_calls', type=int, default=10000)

@@ -10,6 +10,7 @@ step budget - the paper's stated "extremely uncommon" failure path.
 import os
 import json
 import re
+import threading
 import time
 
 from openai import OpenAI, RateLimitError
@@ -77,9 +78,17 @@ def _strip_context(entry):
 
 
 # Some providers occasionally stall a request indefinitely instead of erroring (observed
-# hanging 8+ hours against DigitalOcean with no response). Bound every call so a stall
-# raises openai.APITimeoutError - caught by edit_pair's broad except, which falls back
-# to Graph-GA for that pair - instead of hanging the whole run.
+# hanging 8+ hours against DigitalOcean, and up to 3.6 hours on isolated calls against
+# Cerebras, with no response). httpx's own read-timeout - the client's `timeout=` below -
+# only fires after a gap with *zero* bytes received; a connection that trickles occasional
+# keep-alive bytes without ever completing the response defeats it. So this bound is
+# enforced twice: once via the client's own timeout (catches most stalls, e.g. a dead
+# connect phase), and again as a hard wall-clock deadline around the call in a daemon
+# thread (catches the trickling-connection case the client-level timeout misses). A stall
+# that blows the deadline raises TimeoutError - caught by edit_pair's broad except, which
+# falls back to Graph-GA for that pair - instead of hanging the whole run. The abandoned
+# daemon thread is left to finish or die on its own; it doesn't block later calls since a
+# fresh thread is started per call rather than routed through a shared worker pool.
 REQUEST_TIMEOUT_SECONDS = 180.0
 
 
@@ -119,12 +128,17 @@ class ToolMolAgent:
             new_child = mu.mutate(new_child, mutation_rate)
         return new_child
 
-    def _create_with_retry(self, messages):
-        for attempt in range(MAX_RATE_LIMIT_RETRIES + 1):
-            t0 = time.time()
-            print(f"    -> LLM call starting ({len(messages)} messages)...", flush=True)
+    def _call_with_deadline(self, messages):
+        """Run the completions call in a daemon thread and enforce a hard wall-clock
+        deadline via Thread.join(timeout=...), independent of whatever the client's own
+        (bytes-since-last-read) timeout does or doesn't catch. Returns the response, or
+        raises TimeoutError if the deadline is hit, or re-raises whatever exception the
+        call itself raised."""
+        box = {}
+
+        def _call():
             try:
-                response = self.client.chat.completions.create(
+                box['response'] = self.client.chat.completions.create(
                     model=self.model,
                     messages=messages,
                     tools=TOOL_SCHEMAS,
@@ -132,6 +146,25 @@ class ToolMolAgent:
                     temperature=0,
                     extra_body=self.extra_body,
                 )
+            except Exception as e:
+                box['error'] = e
+
+        thread = threading.Thread(target=_call, daemon=True)
+        thread.start()
+        thread.join(timeout=REQUEST_TIMEOUT_SECONDS)
+
+        if thread.is_alive():
+            raise TimeoutError(f"LLM call exceeded hard {REQUEST_TIMEOUT_SECONDS:.0f}s deadline")
+        if 'error' in box:
+            raise box['error']
+        return box['response']
+
+    def _create_with_retry(self, messages):
+        for attempt in range(MAX_RATE_LIMIT_RETRIES + 1):
+            t0 = time.time()
+            print(f"    -> LLM call starting ({len(messages)} messages)...", flush=True)
+            try:
+                response = self._call_with_deadline(messages)
                 print(f"    <- LLM call returned in {time.time() - t0:.1f}s", flush=True)
                 return response
             except RateLimitError as e:
@@ -181,6 +214,14 @@ class ToolMolAgent:
             print(f"  agent step {step + 1}/{self.max_steps}", flush=True)
             response = self._create_with_retry(messages)
             msg = response.choices[0].message
+
+            # gpt-oss models return chain-of-thought in a separate field, not included in
+            # content - log it so failure analysis can see *why* a step was chosen, not just
+            # what tool call resulted. The field name is provider-specific: DigitalOcean uses
+            # reasoning_content, Cerebras uses plain reasoning. Not all providers populate this.
+            reasoning = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None)
+            if reasoning:
+                print(f"  agent step {step + 1}: reasoning: {reasoning}", flush=True)
 
             assistant_msg = {"role": "assistant", "content": msg.content}
             if msg.tool_calls:

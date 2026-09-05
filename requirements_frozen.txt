@@ -1,0 +1,130 @@
+# Frozen dependency list for the "molleo" conda environment used to run
+# MOLLEO / ToolMol in this repo. Generated via `pip freeze` on 2026-08-30.
+# Python 3.9.25, Windows (conda env "molleo").
+#
+# Note: a few entries are conda-installed local build artifacts (file:///C:/...
+# paths) rather than PyPI releases - these are tied to this machine's conda
+# build channel and won't resolve via `pip install -r` elsewhere. Install
+# those via conda (numpy, pillow, pyyaml, mkl_fft, mkl_random, sympy,
+# typing_extensions, jinja2, markupsafe, gmpy2, cffi, idna, pysocks,
+# win_inet_pton, brotlicffi, pycparser, filelock, networkx) and the rest via pip.
+
+about-time==4.2.1
+alive-progress==3.3.0
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.12.1
+asttokens==2.2.1
+autograd==1.8.0
+backcall==0.2.0
+brotlicffi @ file:///C:/miniconda3/conda-bld/brotlicffi_1761745218276/work
+certifi==2022.12.7
+cffi @ file:///C:/miniconda3/conda-bld/cffi_1760098049787/work
+charset-normalizer==2.1.1
+click==8.1.8
+cma==4.4.4
+colorama==0.4.6
+comm==0.1.2
+contourpy==1.3.0
+cycler==0.12.1
+dataclasses==0.6
+debugpy==1.6.6
+decorator==5.1.1
+Deprecated==1.3.1
+dill==0.4.1
+distro==1.9.0
+docopt==0.6.2
+exceptiongroup==1.3.1
+executing==1.2.0
+filelock @ file:///C:/b/abs_758187j281/croot/filelock_1744281404850/work
+fonttools==4.60.2
+fsspec==2025.10.0
+fuzzywuzzy==0.18.0
+gmpy2 @ file:///C:/b/abs_d8ki0o0h97/croot/gmpy2_1738085498525/work
+graphemeu==0.7.2
+h11==0.16.0
+hf-xet==1.5.2
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==0.36.2
+idna @ file:///C:/miniconda3/conda-bld/idna_1761912043328/work
+importlib-metadata==6.0.0
+importlib_resources==6.5.2
+ipykernel==6.21.0
+ipython==8.9.0
+jedi==0.18.2
+Jinja2 @ file:///C:/b/abs_920kup4e6u/croot/jinja2_1741711580669/work
+jiter==0.16.0
+joblib==1.5.3
+jupyter_client==8.0.2
+jupyter_core==5.2.0
+kiwisolver==1.4.7
+markdown-it-py==3.0.0
+MarkupSafe @ file:///C:/b/abs_a0ma7ge0jc/croot/markupsafe_1738584052792/work
+matplotlib==3.9.4
+matplotlib-inline==0.1.6
+mdurl==0.1.2
+mkl-service==2.5.2
+mkl_fft @ file:///C:/b/abs_64riv3lfyn/croot/mkl_fft_1751310924052/work
+mkl_random @ file:///C:/miniconda3/conda-bld/mkl_random_1761593078217/work
+mpmath @ file:///C:/b/abs_7833jrbiox/croot/mpmath_1690848321154/work
+networkx @ file:///C:/b/abs_3bxnu56g9d/croot/networkx_1717597507456/work
+numpy @ file:///C:/b/abs_81ri0q57xq/croot/numpy_and_numpy_base_1755590863635/work/dist/numpy-1.26.4-cp39-cp39-win_amd64.whl#sha256=fb32ac616c403cd3962459034d608ce9daef8ff811cc8639c324d08dfdd5beb5
+openai==2.46.0
+packaging==23.0
+pandas==2.3.3
+parso==0.8.3
+pickleshare==0.7.5
+pillow @ file:///C:/b/abs_b50vowcrzo/croot/pillow_1738010273782/work
+platformdirs==2.6.2
+prompt-toolkit==3.0.36
+psutil==5.9.4
+pure-eval==0.2.2
+pycparser @ file:///C:/miniconda3/conda-bld/pycparser_1757496061107/work
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.14.0
+pymoo==0.6.1.5
+pyparsing==3.3.2
+PySocks @ file:///C:/miniconda3/conda-bld/pysocks_1761753077861/work
+PyTDC==0.4.1
+python-dateutil==2.8.2
+pytz==2026.2
+pywin32==305
+PyYAML @ file:///C:/b/abs_14xkfs39bx/croot/pyyaml_1728657968772/work
+pyzmq==25.0.0
+rd_filters @ git+https://github.com/PatWalters/rd_filters.git@11a3b31f5b3669834bb916d8ed4422e69e455211
+rdkit==2025.9.2
+rdkit-pypi==2022.9.5
+regex==2026.1.15
+requests==2.28.1
+rich==15.0.0
+safetensors==0.7.0
+scikit-learn==1.2.2
+scipy==1.13.1
+seaborn==0.13.2
+selfies==2.2.0
+sentencepiece==0.2.2
+shellingham==1.5.4
+six==1.16.0
+sniffio==1.3.1
+stack-data==0.6.2
+sympy @ file:///C:/b/abs_f1v7nwa6vp/croot/sympy_1756713483242/work
+threadpoolctl==3.6.0
+tiktoken==0.14.0
+tokenizers==0.19.1
+torch==2.2.2
+torchaudio==2.2.2
+torchvision @ file:///C:/b/abs_61prww4bv9/croot/torchvision_1689079992237/work
+tornado==6.2
+tqdm==4.69.0
+traitlets==5.9.0
+transformers==4.40.0
+typer==0.23.2
+typing-inspection==0.4.2
+typing_extensions @ file:///C:/b/abs_ecq8gc0vbm/croot/typing_extensions_1756281142218/work
+tzdata==2026.3
+urllib3==1.26.13
+win_inet_pton @ file:///C:/miniconda3/conda-bld/win_inet_pton_1761746274727/work
+wrapt==2.2.2
+zipp==3.23.1
