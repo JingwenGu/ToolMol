@@ -1,8 +1,10 @@
 from __future__ import print_function
 
 import json
+import os
 
 import numpy as np
+import yaml
 from rdkit import Chem, rdBase
 rdBase.DisableLog('rdApp.error')
 
@@ -38,7 +40,9 @@ class GB_GA_Optimizer(BaseOptimizer):
         if args.mol_lm == "ToolMol":
             extra_body = json.loads(args.llm_extra_body) if args.llm_extra_body else None
             self.mol_lm = ToolMolAgent(model=args.llm_model, base_url=args.llm_base_url,
-                                       api_key_env=args.llm_api_key_env, extra_body=extra_body)
+                                       api_key_env=args.llm_api_key_env, extra_body=extra_body,
+                                       backend=args.llm_backend, device_map=args.llm_device_map,
+                                       max_new_tokens=args.llm_max_new_tokens)
             self.mol_lm.goal_description = _goal_description(args)
 
     def reset(self):
@@ -50,13 +54,45 @@ class GB_GA_Optimizer(BaseOptimizer):
         self.oracle.assign_evaluator(self.args)
         self.mol_lm.max_steps = config["max_steps"]
 
-        if self.smi_file is not None:
-            starting_population = self.all_smiles[:config["population_size"]]
-        else:
-            starting_population = np.random.choice(self.all_smiles, config["population_size"])
+        if self.args.resume_from:
+            # Carry the earlier run's oracle-call history forward (so max_oracle_calls
+            # counts from where it left off, not from 0 - see Oracle.finish/storing_buffer
+            # in pareto_optimizer.py) and reseed the starting population from the Pareto
+            # front over everything it had already found, rather than a fresh random
+            # ZINC sample.
+            with open(self.args.resume_from) as f:
+                resumed = yaml.safe_load(f)
+            self.oracle.storing_buffer = dict(resumed)
+            population_mol = self.oracle.select_pareto_front(list(resumed.keys()))
+            population_mol = [m for m in population_mol if m is not None]
+            print(f"Resumed from {self.args.resume_from}: {len(resumed)} previously oracle-scored "
+                  f"molecules ({len(self.oracle.storing_buffer)} counted toward the budget), "
+                  f"{len(population_mol)}-molecule Pareto front as the starting population", flush=True)
 
-        population_smiles = starting_population
-        population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
+            # The generation-10 snapshot history (main/pareto_optimizer.py's
+            # record_snapshot/save_snapshots) lives only in-memory (self.oracle.snapshots)
+            # and gets overwritten by save_snapshots' 'w'-mode open - so without this, each
+            # new chain link starts that dict empty and clobbers the previous link's
+            # snapshot file the first time it saves. save_result and save_snapshots always
+            # write to the same task-label-derived filenames (results_<label>.yaml /
+            # pareto_snapshots_<label>.yaml in the same directory), so the snapshot file
+            # sitting alongside resume_from's results file - if any - is the prior link's
+            # history to carry forward.
+            resume_dir = os.path.dirname(self.args.resume_from)
+            resume_basename = os.path.basename(self.args.resume_from)
+            if resume_basename.startswith('results_'):
+                snapshot_path = os.path.join(resume_dir, 'pareto_snapshots_' + resume_basename[len('results_'):])
+                if os.path.exists(snapshot_path):
+                    with open(snapshot_path) as f:
+                        self.oracle.snapshots = yaml.safe_load(f) or {}
+                    print(f"Also resumed {len(self.oracle.snapshots)} snapshot(s) from {snapshot_path}", flush=True)
+        else:
+            if self.smi_file is not None:
+                starting_population = self.all_smiles[:config["population_size"]]
+            else:
+                starting_population = np.random.choice(self.all_smiles, config["population_size"])
+            population_mol = [Chem.MolFromSmiles(s) for s in starting_population]
+
         population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
         patience = 0
