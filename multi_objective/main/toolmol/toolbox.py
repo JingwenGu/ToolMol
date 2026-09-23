@@ -77,17 +77,30 @@ def replace_atom(mol_smiles, idx, element):
     if err:
         return ToolResult(False, None, err)
 
-    rw = mol_ops.copy_edit_mol(mol)
-    try:
-        rw.ReplaceAtom(idx, Chem.Atom(element))
-    except RuntimeError as e:
-        return ToolResult(False, None, f"invalid element '{element}': {e}")
-    try:
-        new_mol = rw.GetMol()
-        Chem.SanitizeMol(new_mol)
-        return ToolResult(True, new_mol, f"replaced atom {idx} with {element}")
-    except (Chem.rdchem.AtomValenceException, Chem.rdchem.KekulizeException, ValueError) as e:
-        return ToolResult(False, None, f"invalid modification: {e}")
+    # Try the plain substitution first, then - only if that fails to kekulize - retry with an
+    # explicit hydrogen on the new atom. copy_edit_mol rebuilds every atom as a bare
+    # Chem.Atom(symbol), which drops aromaticity and hydrogen state, so swapping an aromatic
+    # ring heteroatom for nitrogen produced a bare two-connected aromatic N with no hydrogen.
+    # That is not a valid aromatic system, and benzoxazole -> benzimidazole, furan -> pyrrole
+    # and every other aromatic O/S -> NH swap failed with "Can't kekulize mol". A pyrrole-type
+    # nitrogen needs NumExplicitHs=1; carbons and pyridine-type nitrogens do not, hence the
+    # retry rather than setting it unconditionally.
+    for explicit_hs in (0, 1):
+        rw = mol_ops.copy_edit_mol(mol)
+        try:
+            new_atom = Chem.Atom(element)
+            if explicit_hs:
+                new_atom.SetNumExplicitHs(explicit_hs)
+            rw.ReplaceAtom(idx, new_atom)
+        except RuntimeError as e:
+            return ToolResult(False, None, f"invalid element '{element}': {e}")
+        try:
+            new_mol = rw.GetMol()
+            Chem.SanitizeMol(new_mol)
+            return ToolResult(True, new_mol, f"replaced atom {idx} with {element}")
+        except (Chem.rdchem.AtomValenceException, Chem.rdchem.KekulizeException, ValueError) as e:
+            err = e
+    return ToolResult(False, None, f"invalid modification: {err}")
 
 
 def add_functional_group(mol_smiles, idx, group, bond):
@@ -140,24 +153,24 @@ def remove_substructure(mol_smiles, anchor_idx, branch_idx):
     return ToolResult(True, new_mol, f"removed branch at atom {branch_idx} (kept atom {anchor_idx}): {removed_desc}")
 
 
-def _cut_at_index(mol, idx):
-    if not (0 <= idx < mol.GetNumAtoms()):
-        return None
-    atom = mol.GetAtomWithIdx(idx)
-    acyclic_bonds = [b for b in atom.GetBonds() if not b.IsInRing()]
-    random.shuffle(acyclic_bonds)
-    for bond in acyclic_bonds:
-        fragments_mol = Chem.FragmentOnBonds(mol, [bond.GetIdx()], addDummies=True, dummyLabels=[(1, 1)])
-        try:
-            frags = Chem.GetMolFrags(fragments_mol, asMols=True, sanitizeFrags=True)
-        except ValueError:
-            continue
-        if len(frags) == 2:
-            return frags
-    return None
+def crossover_molecules(mol1_smiles, anchor1, branch1, mol2_smiles, anchor2, branch2):
+    """Cut one named bond in each parent, keep the anchor side of each, and join the two kept
+    pieces with a single bond between the two anchor atoms.
 
+    This replaces an earlier signature that took one atom index per parent. That version was
+    doubly random: it shuffled the chosen atom's acyclic bonds and cut whichever happened to
+    work, then shuffled all four fragment pairings and returned the first valid product. The
+    same call on the same inputs produced five different molecules across eight invocations,
+    so the model's stated intent barely constrained the result - asking to keep parent 1's
+    heteroaryl and add parent 2's aryl could just as easily return the two fragments it had
+    asked to discard, joined at an unintended position.
 
-def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2):
+    That mattered beyond the wasted edit: in the regret taxonomy those episodes score as
+    "executed something unrelated to the stated plan" and the blame lands on the model's
+    reasoning rather than on the tool. Naming a bond on each side - the same anchor/branch
+    convention remove_substructure and replace_substructure already use - makes the product a
+    deterministic function of the arguments.
+    """
     mol1, err = _load(mol1_smiles)
     if err:
         return ToolResult(False, None, err)
@@ -165,32 +178,27 @@ def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2):
     if err:
         return ToolResult(False, None, err)
 
-    frags1 = _cut_at_index(mol1, idx1)
-    if frags1 is None:
-        return ToolResult(False, None, (f"atom {idx1} in molecule 1 does not yield exactly 2 fragments "
-                                         f"(likely in a ring or has no acyclic bond)"))
-    frags2 = _cut_at_index(mol2, idx2)
-    if frags2 is None:
-        return ToolResult(False, None, (f"atom {idx2} in molecule 2 does not yield exactly 2 fragments "
-                                         f"(likely in a ring or has no acyclic bond)"))
+    keep1, stub1, _bt1, removed1, err = mol_ops.cut_at_bond(mol1, anchor1, branch1)
+    if err:
+        return ToolResult(False, None, f"molecule 1: {err}")
+    keep2, stub2, _bt2, removed2, err = mol_ops.cut_at_bond(mol2, anchor2, branch2)
+    if err:
+        return ToolResult(False, None, f"molecule 2: {err}")
 
-    pairings = [(a, b) for a in frags1 for b in frags2]
-    random.shuffle(pairings)
-    rxn = AllChem.ReactionFromSmarts('[*:1]-[1*].[1*]-[*:2]>>[*:1]-[*:2]')
-    for fa, fb in pairings:
-        try:
-            products = rxn.RunReactants((fa, fb))
-        except Exception:
-            continue
-        for prod in products:
-            candidate = prod[0]
-            if co.mol_ok(candidate) and co.ring_OK(candidate):
-                try:
-                    Chem.SanitizeMol(candidate)
-                    return ToolResult(True, candidate, f"crossover between atom {idx1} (mol1) and atom {idx2} (mol2)")
-                except ValueError:
-                    continue
-    return ToolResult(False, None, "crossover failed to produce a valid molecule from any of the 4 fragment combinations")
+    offset = keep1.GetNumAtoms()
+    combo = Chem.RWMol(Chem.CombineMols(keep1, keep2))
+    combo.AddBond(stub1, offset + stub2, Chem.BondType.SINGLE)
+    mol_ops._consume_explicit_hs(combo.GetAtomWithIdx(stub1), Chem.BondType.SINGLE)
+    mol_ops._consume_explicit_hs(combo.GetAtomWithIdx(offset + stub2), Chem.BondType.SINGLE)
+
+    try:
+        new_mol = combo.GetMol()
+        Chem.SanitizeMol(new_mol)
+    except (Chem.rdchem.AtomValenceException, Chem.rdchem.KekulizeException, ValueError) as e:
+        return ToolResult(False, None, f"invalid modification: {e}")
+
+    return ToolResult(True, new_mol, (f"joined molecule 1 at atom {anchor1} (discarded {removed1}) "
+                                       f"to molecule 2 at atom {anchor2} (discarded {removed2})"))
 
 
 TOOL_DISPATCH = {
@@ -330,18 +338,23 @@ TOOL_SCHEMAS = [
         "type": "function",
         "function": {
             "name": "crossover_molecules",
-            "description": ("Split both of the two original parent molecules at the given atom indices "
-                             "and recombine one fragment from each into a new molecule. Typically the "
-                             "first modification you make, combining the two parents before further edits. "
-                             "This is the ONLY tool that can access ligand 2 at all - every other tool acts "
-                             "solely on your current working molecule (ligand 1) and cannot see ligand 2."),
+            "description": ("Combine the two original parent molecules: cut one bond in each, keep the "
+                             "anchor side of each, and join those two kept pieces together with a single "
+                             "bond between the two anchor atoms. You choose exactly which part of each "
+                             "parent survives, so the product is fully determined by your arguments. "
+                             "Typically the first modification you make, combining the two parents before "
+                             "further edits. This is the ONLY tool that can access ligand 2 at all - every "
+                             "other tool acts solely on your current working molecule (ligand 1) and cannot "
+                             "see ligand 2."),
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "idx1": {"type": "integer", "description": "Atom index in parent molecule 1 to cut at (must not be in a ring)."},
-                    "idx2": {"type": "integer", "description": "Atom index in parent molecule 2 to cut at (must not be in a ring)."},
+                    "anchor1": {"type": "integer", "description": "Atom index in parent molecule 1 to KEEP - the new bond to molecule 2 is formed here."},
+                    "branch1": {"type": "integer", "description": "Atom index in parent molecule 1 on the side to DISCARD. Must be one of anchor1's neighbours (see the 'nbrs' column of molecule 1's atom table), and the bond between them must not be part of a ring."},
+                    "anchor2": {"type": "integer", "description": "Atom index in parent molecule 2 to KEEP - the new bond to molecule 1 is formed here."},
+                    "branch2": {"type": "integer", "description": "Atom index in parent molecule 2 on the side to DISCARD. Must be one of anchor2's neighbours (see the 'nbrs' column of molecule 2's atom table), and the bond between them must not be part of a ring."},
                 },
-                "required": ["idx1", "idx2"],
+                "required": ["anchor1", "branch1", "anchor2", "branch2"],
             },
         },
     },

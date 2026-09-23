@@ -47,6 +47,22 @@ class GB_GA_Optimizer(BaseOptimizer):
                                        few_shot_file=getattr(args, "few_shot_file", None),
                                        io_dir=getattr(args, "llm_io_dir", None))
             self.mol_lm.goal_description = _goal_description(args)
+            self.mol_lm.score_detail = self._score_detail
+
+    def _score_detail(self, smi):
+        """Break Phi down per objective, showing each raw value and its rescaled contribution.
+
+        Phi is a sum over objectives rescaled to [0,1], so a single number cannot say which
+        objective is lagging. In practice QED and SA saturate near their ceilings early while
+        the binding term stays near zero, and a model shown only the sum will keep optimising
+        the two it can infer from the properties block and ignore the one carrying all the
+        remaining headroom. Spelling the split out costs a few tokens per episode.
+        """
+        parts = []
+        for obj in self.oracle.objectives:
+            raw = obj.raw(smi)
+            parts.append(f"{obj.name} {raw:.3g} -> {obj.rescaled(raw):.3f}")
+        return "; ".join(parts)
 
     def reset(self):
         del self.oracle

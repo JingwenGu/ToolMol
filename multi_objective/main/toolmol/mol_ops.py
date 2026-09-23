@@ -37,6 +37,30 @@ def copy_edit_mol(mol):
     return new_mol
 
 
+BOND_TYPE_TO_ORDER = {
+    Chem.BondType.SINGLE: 1,
+    Chem.BondType.DOUBLE: 2,
+    Chem.BondType.TRIPLE: 3,
+}
+
+
+def _consume_explicit_hs(atom, bond_type):
+    """Free up valence on an atom that is about to gain a bond, by removing the explicit
+    hydrogens the new substituent replaces.
+
+    Carbons carry their hydrogens implicitly and RDKit recomputes those automatically, so
+    attaching to carbon never needed this. Aromatic nitrogens do not: a pyrrole-type N is
+    written with NumExplicitHs=1, and sanitizing a fragment produced by cut_at_bond assigns
+    exactly that to the nitrogen left holding the cut bond. Adding a substituent on top of
+    that H - rather than in place of it - pushed the nitrogen to valence 5 and every
+    N-aryl -> N-alkyl swap on a pyrazole, imidazole or indole failed with a valence error,
+    which is ordinary medicinal chemistry that the toolbox simply could not express.
+    """
+    n_explicit = atom.GetNumExplicitHs()
+    if n_explicit > 0:
+        atom.SetNumExplicitHs(max(0, n_explicit - BOND_TYPE_TO_ORDER.get(bond_type, 1)))
+
+
 def attach_fragment(mol, idx, frag_smiles, bond_symbol):
     """Attach frag_smiles to atom idx of mol via a bond of the given symbol ('single'/'double'/
     'triple'). The fragment may mark its attachment point with exactly one [*]/[1*]-style dummy
@@ -83,6 +107,8 @@ def attach_fragment(mol, idx, frag_smiles, bond_symbol):
         # carbon). No dummy atom to remove in this case.
         used_fallback = True
         combo.AddBond(idx, offset + 0, bond_type)
+
+    _consume_explicit_hs(combo.GetAtomWithIdx(idx), bond_type)
 
     try:
         new_mol = combo.GetMol()

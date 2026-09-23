@@ -287,6 +287,14 @@ class ToolMolAgent:
         # (adapted wording for the Phase 1-3 cheap-oracle stand-ins - see plan ambiguity #9 -
         # the paper's literal "[PROTEIN TARGET]" phrasing applies once Boltz-2 is wired in).
         self.goal_description = "improve the configured objectives"
+        # Optional callable smi -> str returning a per-objective breakdown of a parent's score,
+        # set by run.py. Without it the prompt shows only the summed Phi, and a model that wants
+        # to know which objective is actually lagging has to back it out arithmetically from the
+        # properties block - QED and SA are shown there, so the binding term is recoverable only
+        # as Phi minus the other two, rescaling each by hand. That is error-prone busywork and
+        # silently hides the one objective with real headroom behind two that are usually near
+        # their ceiling. None preserves the original prompt exactly.
+        self.score_detail = None
 
         if backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
@@ -357,6 +365,16 @@ class ToolMolAgent:
             output_ids[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
         print(f"    <- local LLM call returned in {time.time() - t0:.1f}s", flush=True)
         return _parse_local_response(generated)
+
+    def _score_detail(self, smi):
+        """Per-objective breakdown for a parent, or '' when run.py did not supply one."""
+        if self.score_detail is None:
+            return ""
+        try:
+            return " (" + self.score_detail(smi) + ")"
+        except Exception:
+            # Never let a reporting nicety break an episode.
+            return ""
 
     def _render_delta(self, new_messages, seq):
         """Human-readable rendering of just the messages added since the last request, for the
@@ -519,8 +537,8 @@ class ToolMolAgent:
                 f"encouraged to make a crossover between the candidate molecules on the first "
                 f"step, then mutate the resulting molecule. Only make a few modifications (at "
                 f"most 3), then respond with FINAL ANSWER. Do not let molecular weight exceed 700.\n\n"
-                f"1. {smi1}\nScore: {score1}\n{_format_context(mol1)}\n\n"
-                f"2. {smi2}\nScore: {score2}\n{_format_context(mol2)}"
+                f"1. {smi1}\nScore: {score1}{self._score_detail(smi1)}\n{_format_context(mol1)}\n\n"
+                f"2. {smi2}\nScore: {score2}{self._score_detail(smi2)}\n{_format_context(mol2)}"
             )}
         )
 
@@ -640,7 +658,8 @@ class ToolMolAgent:
 
                 try:
                     if name == "crossover_molecules":
-                        result = fn(parent1_smi, args.get("idx1"), parent2_smi, args.get("idx2"))
+                        result = fn(parent1_smi, args.get("anchor1"), args.get("branch1"),
+                                    parent2_smi, args.get("anchor2"), args.get("branch2"))
                     else:
                         result = fn(Chem.MolToSmiles(working_mol), **args)
                 except TypeError as e:
@@ -667,6 +686,15 @@ class ToolMolAgent:
                 messages.append(tool_msg)
                 if result.success:
                     track_context(tool_msg)
+
+            # A model that has finished editing usually says so in the same breath as its last
+            # tool call. The check below used to run only when tool_calls was empty, so every
+            # episode paid one extra full round trip - prompt, atom table and all - to produce
+            # nothing but the words FINAL ANSWER. On a three-edit episode that is a quarter of
+            # the LLM calls spent on a no-op.
+            if msg.content and "FINAL ANSWER" in msg.content.upper():
+                print(f"  agent step {step + 1}: FINAL ANSWER alongside tool call(s), ending episode", flush=True)
+                break
 
             if n_modifications >= 3:
                 reminder = "You have made 3 modifications already - please output FINAL ANSWER now."
