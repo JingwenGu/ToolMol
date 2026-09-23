@@ -1,0 +1,9 @@
+# Short-loop config for the RSI experiment (operator-in-the-loop via --llm_backend claude).
+# Budget reasoning: each episode yields ~1 new molecule, so with max_oracle_calls 50 and a
+# 20-molecule starting pool the run costs ~30 episodes no matter how they are batched;
+# offspring_size only sets how many generations those episodes spread across (8 -> ~4).
+population_size: 20
+offspring_size: 8
+mutation_rate: 0.0
+k: 10.0
+max_steps: 10

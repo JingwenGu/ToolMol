@@ -253,7 +253,7 @@ def load_few_shot_messages(path):
 class ToolMolAgent:
     def __init__(self, model="gpt-4", base_url=None, max_steps=10, api_key_env="OPENAI_API_KEY",
                  extra_body=None, backend="api", device_map="auto", max_new_tokens=1024,
-                 system_prompt_suffix=None, few_shot_file=None):
+                 system_prompt_suffix=None, few_shot_file=None, io_dir=None):
         # "api" talks to any OpenAI-compatible chat-completions endpoint - the official
         # OpenAI API, or a self-hosted server (e.g. vLLM/Ollama) pointed to via base_url.
         # "responses" talks to the same kind of server's /v1/responses endpoint instead -
@@ -262,6 +262,9 @@ class ToolMolAgent:
         # shows up in an unstructured `reasoning` string, never as msg.tool_calls) - see
         # _create_responses. "transformers" loads the model in-process with Hugging Face
         # transformers instead, for local inference with no server to run - see _create_local.
+        # "claude" talks to no model at all: it writes each request to a file and blocks until
+        # a reply file appears, so an interactive operator (a human, or an agent driving this
+        # repo) can answer each step by hand - see _create_claude.
         self.backend = backend
         self.model = model
         self.max_steps = max_steps
@@ -298,8 +301,20 @@ class ToolMolAgent:
             self.tokenizer = AutoTokenizer.from_pretrained(model)
             self.hf_model = AutoModelForCausalLM.from_pretrained(
                 model, torch_dtype="auto", device_map=device_map)
+        elif backend == "claude":
+            self.io_dir = io_dir or os.environ.get("TOOLMOL_IO_DIR", "claude_io")
+            os.makedirs(self.io_dir, exist_ok=True)
+            self._req_seq = 0
+            self._episode_idx = 0
+            # Index into `messages` of the first entry not yet written to a .txt delta. Every
+            # request restates the whole conversation in its .json, but the operator only needs
+            # to read what changed since the last one - over a run's worth of steps, re-reading
+            # the system prompt, few-shot block and both parents' atom tables every time costs
+            # far more than the decision itself. Reset per episode by _agentic_edit.
+            self._sent_upto = 0
         else:
-            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', or 'transformers')")
+            raise ValueError(f"Unknown backend: {backend!r} "
+                              f"(expected 'api', 'responses', 'transformers', or 'claude')")
 
     def edit_pair(self, mol1, score1, mol2, score2, mutation_rate=0.0):
         try:
@@ -343,6 +358,64 @@ class ToolMolAgent:
         print(f"    <- local LLM call returned in {time.time() - t0:.1f}s", flush=True)
         return _parse_local_response(generated)
 
+    def _render_delta(self, new_messages, seq):
+        """Human-readable rendering of just the messages added since the last request, for the
+        operator answering the 'claude' backend. The full conversation is always available in
+        the sibling .json; this is the part that actually changed."""
+        lines = [f"=== request {seq:05d} | episode {self._episode_idx} ==="]
+        for m in new_messages:
+            role = m["role"]
+            if role == "assistant":
+                # Echoing the operator's own previous turn back at them is pure noise.
+                continue
+            lines.append(f"--- {role} ---")
+            lines.append(m.get("content") or "")
+        lines.append("--- reply with: {\"content\": \"<reasoning>\", "
+                      "\"tool_calls\": [{\"name\": ..., \"arguments\": {...}}]} ---")
+        return "\n".join(lines)
+
+    def _create_claude(self, messages):
+        """Write the request to a file, block until a reply file appears, parse it into the same
+        shape _agentic_edit expects back from an OpenAI ChatCompletion message. No network call,
+        so none of the timeout/rate-limit/deadline machinery below applies - and deliberately no
+        deadline at all, since the whole point is to wait as long as the operator needs.
+
+        The reply is {"content": str|null, "tool_calls": [{"name": str, "arguments": obj|str}]}.
+        An empty/absent tool_calls with "FINAL ANSWER" in content ends the episode, exactly as a
+        real model's reply would."""
+        self._req_seq += 1
+        seq = self._req_seq
+        base = os.path.join(self.io_dir, f"request_{seq:05d}")
+        with open(base + ".json", "w", encoding="utf-8") as f:
+            json.dump({"episode": self._episode_idx, "messages": messages}, f, indent=1)
+        with open(base + ".txt", "w", encoding="utf-8") as f:
+            f.write(self._render_delta(messages[self._sent_upto:], seq))
+        self._sent_upto = len(messages)
+
+        resp_path = os.path.join(self.io_dir, f"response_{seq:05d}.json")
+        print(f"    -> WAITING for {resp_path}", flush=True)
+        t0 = time.time()
+        while True:
+            if os.path.exists(resp_path):
+                try:
+                    with open(resp_path, encoding="utf-8") as f:
+                        payload = json.load(f)
+                    break
+                except (json.JSONDecodeError, ValueError, OSError):
+                    # The file is mid-write; try again on the next tick rather than crashing
+                    # the episode on a partially-flushed reply.
+                    pass
+            time.sleep(1.0)
+        print(f"    <- got reply after {time.time() - t0:.0f}s", flush=True)
+
+        tool_calls = []
+        for i, tc in enumerate(payload.get("tool_calls") or []):
+            args = tc.get("arguments", {})
+            tool_calls.append(_ToolCall(
+                id=f"call_{seq}_{i}", name=tc.get("name", ""),
+                arguments=args if isinstance(args, str) else json.dumps(args)))
+        return _Response(_Message(content=payload.get("content"), tool_calls=tool_calls))
+
     def _call_with_deadline(self, request_fn):
         """Run request_fn() (a client.*.create(...) call) in a daemon thread and enforce a
         hard wall-clock deadline via Thread.join(timeout=...), independent of whatever the
@@ -370,6 +443,8 @@ class ToolMolAgent:
     def _create_with_retry(self, messages):
         if self.backend == "transformers":
             return self._create_local(messages)
+        if self.backend == "claude":
+            return self._create_claude(messages)
         if self.backend == "responses":
             return self._call_with_rate_limit_retry(
                 messages, lambda: self.client.responses.create(
@@ -419,6 +494,13 @@ class ToolMolAgent:
         # what any tool call actually acts on, starting from the very first tool call.
         mol1, mol2 = _canonicalize(mol1), _canonicalize(mol2)
         smi1, smi2 = Chem.MolToSmiles(mol1), Chem.MolToSmiles(mol2)
+
+        if self.backend == "claude":
+            # A fresh conversation starts here, so the next request's .txt delta must restate
+            # everything (system prompt, goal, both parents' context) rather than diffing
+            # against the previous - unrelated - episode's message list.
+            self._episode_idx += 1
+            self._sent_upto = 0
 
         system_content = SYSTEM_PROMPT
         if self.system_prompt_suffix:

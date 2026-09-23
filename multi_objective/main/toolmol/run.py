@@ -44,7 +44,8 @@ class GB_GA_Optimizer(BaseOptimizer):
                                        backend=args.llm_backend, device_map=args.llm_device_map,
                                        max_new_tokens=args.llm_max_new_tokens,
                                        system_prompt_suffix=getattr(args, "llm_system_prompt_suffix", None),
-                                       few_shot_file=getattr(args, "few_shot_file", None))
+                                       few_shot_file=getattr(args, "few_shot_file", None),
+                                       io_dir=getattr(args, "llm_io_dir", None))
             self.mol_lm.goal_description = _goal_description(args)
 
     def reset(self):

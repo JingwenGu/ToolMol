@@ -1,0 +1,5 @@
+# Protocol-0 pickles are ASCII-looking; core.autocrlf=true silently corrupts them on
+# checkout (fpscores.pkl became CRLF, making TDC.s SA oracle return 0.0 for every molecule).
+*.pkl binary
+*.gz binary
+*.smi text eol=lf
