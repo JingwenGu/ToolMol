@@ -1,0 +1,28 @@
+gen_0001_oracle_25:
+  CCS(=O)(=O)c1ccc(C(=O)Nc2ccccc2)cc1:
+  - 1.8822434090974065
+  - 9
+  Cc1ccccc1C(=O)Nc1ccc2c(N3CCCC3)ncnc2c1:
+  - 1.8758209979676095
+  - 1
+  COc1ccc(CNC(=O)c2ccc(F)c(OC)c2)cn1:
+  - 1.8712823935088734
+  - 7
+  CC(C)NC(=O)c1ccc(-c2ccncc2)cc1:
+  - 1.8564543111855
+  - 5
+  CN1CCOc2ccc(S(=O)(=O)Nc3ccc(F)cc3)cc21:
+  - 1.8349031456676084
+  - 4
+  O=C(CN1C(=O)S/C(=C/c2ccccc2)C1=O)Nc1ccccc1:
+  - 1.8164968434128208
+  - 3
+  CC(=O)Nc1ccc(NCc2ccccc2F)c(C(F)(F)F)c1:
+  - 1.7902818539076009
+  - 2
+  Cn1cc(C(=O)Nc2cncc(F)c2)c(C2CC2)n1:
+  - 1.771905396674382
+  - 6
+  O=C(Nc1ccc(F)cc1)c1ccc2nccnc2c1:
+  - 1.7464522990799827
+  - 8

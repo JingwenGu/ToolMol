@@ -42,7 +42,9 @@ class GB_GA_Optimizer(BaseOptimizer):
             self.mol_lm = ToolMolAgent(model=args.llm_model, base_url=args.llm_base_url,
                                        api_key_env=args.llm_api_key_env, extra_body=extra_body,
                                        backend=args.llm_backend, device_map=args.llm_device_map,
-                                       max_new_tokens=args.llm_max_new_tokens)
+                                       max_new_tokens=args.llm_max_new_tokens,
+                                       system_prompt_suffix=getattr(args, "llm_system_prompt_suffix", None),
+                                       few_shot_file=getattr(args, "few_shot_file", None))
             self.mol_lm.goal_description = _goal_description(args)
 
     def reset(self):
@@ -54,20 +56,25 @@ class GB_GA_Optimizer(BaseOptimizer):
         self.oracle.assign_evaluator(self.args)
         self.mol_lm.max_steps = config["max_steps"]
 
-        if self.args.resume_from:
-            # Carry the earlier run's oracle-call history forward (so max_oracle_calls
-            # counts from where it left off, not from 0 - see Oracle.finish/storing_buffer
-            # in pareto_optimizer.py) and reseed the starting population from the Pareto
-            # front over everything it had already found, rather than a fresh random
-            # ZINC sample.
+        if getattr(self.args, "resume_from", None):
+            # Reconstruct the true starting population by re-running select_pareto_front()
+            # over every molecule the prior run ever scored, rather than a naive top-N by
+            # summed score - population_mol at any generation is always exactly the
+            # non-dominated front over the full history (dominance is monotonic under the
+            # union), so this recovers the exact live population, not an approximation.
+            # Loading the saved buffer into mol_buffer first means the re-scoring call
+            # below hits the cache instead of spending fresh oracle budget on molecules we
+            # already have scores for.
             with open(self.args.resume_from) as f:
-                resumed = yaml.safe_load(f)
-            self.oracle.storing_buffer = dict(resumed)
-            population_mol = self.oracle.select_pareto_front(list(resumed.keys()))
-            population_mol = [m for m in population_mol if m is not None]
-            print(f"Resumed from {self.args.resume_from}: {len(resumed)} previously oracle-scored "
-                  f"molecules ({len(self.oracle.storing_buffer)} counted toward the budget), "
-                  f"{len(population_mol)}-molecule Pareto front as the starting population", flush=True)
+                saved = yaml.safe_load(f)
+            print(f"resuming from {self.args.resume_from}: {len(saved)} saved molecules", flush=True)
+            self.oracle.mol_buffer = dict(saved)
+            saved_mol = [Chem.MolFromSmiles(smi) for smi in saved]
+            saved_mol = [m for m in saved_mol if m is not None]
+            population_mol = self.oracle.select_pareto_front([Chem.MolToSmiles(mol) for mol in saved_mol])
+            population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
+            print(f"resumed population: {len(population_mol)} molecules on the reconstructed "
+                  f"Pareto front, {len(self.oracle)} oracle calls carried over", flush=True)
 
             # The generation-10 snapshot history (main/pareto_optimizer.py's
             # record_snapshot/save_snapshots) lives only in-memory (self.oracle.snapshots)
@@ -91,9 +98,10 @@ class GB_GA_Optimizer(BaseOptimizer):
                 starting_population = self.all_smiles[:config["population_size"]]
             else:
                 starting_population = np.random.choice(self.all_smiles, config["population_size"])
-            population_mol = [Chem.MolFromSmiles(s) for s in starting_population]
 
-        population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
+            population_smiles = starting_population
+            population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
+            population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
         patience = 0
         generation = 0
