@@ -1,0 +1,239 @@
+gen_0010_oracle_124:
+  Fc1cnc(-c2ccnc(NC3CC3)c2)c(Br)c1:
+  - 2.3364591238028476
+  - 1
+  COc1cc(F)cnc1-c1ccnc(NC2CC2)c1:
+  - 2.314451493102021
+  - 2
+  Fc1ccc(-c2ccnc(NC3CC3)c2)nc1:
+  - 2.2498139936211587
+  - 3
+  c1cc(-c2ccc(NC3CC3)cc2)cc(NC2CC2)n1:
+  - 2.228184604791095
+  - 4
+  Fc1cnc(-c2ccnc(NC3CC3)c2)cc1Cl:
+  - 2.180754974350878
+  - 5
+  Fc1ccc(Br)c(Nc2ccnc(NC3CC3)n2)c1:
+  - 2.1774040764053484
+  - 37
+  Fc1ccc(Nc2ccnc(NC3CC3)n2)cc1:
+  - 2.1765153334217233
+  - 6
+  Brc1ccc(-c2ccnc(NC3CC3)c2)nc1:
+  - 2.169424714313379
+  - 7
+  c1cc(-c2ccc(Nc3ccnc(NC4CC4)c3)cc2)ccn1:
+  - 2.159682077684419
+  - 8
+  COc1cnc(-c2ccnc(NC3CC3)c2)c(OC)c1:
+  - 2.1404367256271244
+  - 9
+  COc1ccc(-c2ccnc(NC3CC3)c2)nc1:
+  - 2.118567194311618
+  - 10
+  O=C(Nc1ccnc(NC2CC2)n1)c1ccc(F)cc1:
+  - 2.112498485542929
+  - 11
+  c1ccc(Nc2ccnc(NC3CC3)n2)cc1:
+  - 2.1078587289111157
+  - 12
+  COc1ccnc(-c2ccnc(NC3CC3)c2)c1:
+  - 2.0992816913530383
+  - 34
+  COc1cnc(NC2CC2)cc1-c1ccc(F)cc1:
+  - 2.0181492248327446
+  - 13
+  O=C(Nc1ccc2c(N3CCCC3)ncnc2c1)C1CC1:
+  - 2.007872355714508
+  - 14
+  COc1cc(-c2ccc(NC3CC3)cc2)ccn1:
+  - 1.9891932054403976
+  - 36
+  c1cc2cc(-c3ccc(NC4CC4)cc3)ccc2cn1:
+  - 1.9731835412754264
+  - 15
+  O=C(Nc1ccc2c(N3CCCC3)ncnc2c1)C(F)F:
+  - 1.9721234880662202
+  - 16
+  O=C(Nc1ccc(-c2ccncc2)cc1)C1CC1:
+  - 1.9651273341695674
+  - 17
+  COc1cc(NC(=O)C2CC2)ccc1-c1ccncc1:
+  - 1.9283183615155028
+  - 18
+  CNC(=O)c1ccc(-c2ccc(F)cc2)c(OC)c1:
+  - 1.9114947827097288
+  - 38
+  O=C(Nc1ccc(-c2ccncc2)cc1Br)C1CC1:
+  - 1.9054449024516247
+  - 19
+  COc1cc(-c2ccc(F)cc2)ccc1NC(=O)C1CC1:
+  - 1.895754421196504
+  - 20
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccccc1:
+  - 1.8900994516968512
+  - 33
+  COc1cc(-c2ccncc2)ccc1NC(=O)C1CC1:
+  - 1.8803129634048417
+  - 21
+  COc1cc(-c2ccccc2)ccc1NC(=O)C1CC1:
+  - 1.8764433531272973
+  - 22
+  O=C(Nc1ccc(-c2ccccc2)cc1F)C1CC1:
+  - 1.8759242341278708
+  - 23
+  COc1ccc(NC(=O)c2ccc(OC)c(OC)c2)cc1:
+  - 1.872493839425211
+  - 35
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccncc1:
+  - 1.868074430522221
+  - 24
+  COc1ccc(C(=O)Nc2ccncc2F)cc1OC:
+  - 1.8669643375255311
+  - 25
+  O=C(Nc1ccc(-c2ccncc2)cc1)c1ccc(F)cc1:
+  - 1.8355274426899568
+  - 26
+  CN1CCOc2ccc(S(=O)(=O)Nc3ccc(F)cc3)cc21:
+  - 1.8349031456676084
+  - 27
+  CN1CCOc2ccc(S(=O)(=O)Nc3ccccc3)cc21:
+  - 1.8345783887843026
+  - 28
+  O=C(Nc1cc(F)c2c(N3CCCC3)ncnc2c1)C1CC1:
+  - 1.8171630617273204
+  - 29
+  CN1CCOc2c(-c3ccncc3)cc(C(=O)NC3CC3)cc21:
+  - 1.8107168445620672
+  - 30
+  CC(=O)c1ccc(NC(=O)C2CC2)cc1:
+  - 1.7265225821433257
+  - 31
+  c1ccc(NC2CC2)cc1:
+  - 1.6099747189428175
+  - 32
+gen_0018_oracle_148:
+  O=C(Nc1ccc(-c2ccnc(NC3CC3)n2)cc1)C1CC1:
+  - 2.4726734277038545
+  - 1
+  COc1cc(F)ccc1-c1ccnc(NC2CC2)n1:
+  - 2.3382118919624197
+  - 2
+  Fc1cnc(-c2ccnc(NC3CC3)c2)c(Br)c1:
+  - 2.3364591238028476
+  - 3
+  COc1cc(F)cnc1-c1ccnc(NC2CC2)c1:
+  - 2.314451493102021
+  - 4
+  COc1ccc(F)cc1-c1ccnc(NC2CC2)c1:
+  - 2.229905065288585
+  - 5
+  Fc1cnc(-c2ccnc(NC3CC3)c2)cc1Cl:
+  - 2.180754974350878
+  - 6
+  Brc1ccc(-c2ccnc(NC3CC3)c2)nc1:
+  - 2.169424714313379
+  - 7
+  O=C(Nc1ccnc(NC2CC2)n1)c1ccc(Cl)cc1:
+  - 2.123994830453138
+  - 8
+  O=C(Nc1ccnc(NC2CC2)n1)c1ccccc1:
+  - 2.1118603383231016
+  - 9
+  c1ccc(Nc2ccnc(NC3CC3)n2)cc1:
+  - 2.1078587289111157
+  - 10
+  O=C(Nc1ccc(F)cc1)c1ccnc(NC2CC2)c1:
+  - 2.07775316218248
+  - 11
+  c1ccc(-c2ccc(Nc3ccnc(NC4CC4)n3)cc2)cc1:
+  - 2.067790448725143
+  - 12
+  O=C(Nc1ccc2c(N3CCCC3)ncnc2c1)C1CC1:
+  - 2.007872355714508
+  - 13
+  O=C(Nc1ccc2c(N3CCCC3)ncnc2c1)C(F)F:
+  - 1.9721234880662202
+  - 14
+  O=C(Nc1ccc(-c2ccncc2)cc1)C1CC1:
+  - 1.9651273341695674
+  - 15
+  CS(=O)(=O)Nc1ccc(-c2ccncc2)cc1:
+  - 1.9635039909492376
+  - 16
+  COc1cc(NC(=O)C2CC2)ccc1-c1ccncc1:
+  - 1.9283183615155028
+  - 17
+  CNC(=O)c1ccc(-c2ccc(F)cc2)c(OC)c1:
+  - 1.9114947827097288
+  - 18
+  O=C(Nc1ccc(-c2ccncc2)cc1Br)C1CC1:
+  - 1.9054449024516247
+  - 19
+  COc1cc(F)ccc1-c1ccc(NC(=O)C2CC2)cc1:
+  - 1.9024193494885506
+  - 20
+  COc1cc(-c2ccc(F)cc2)ccc1NC(=O)C1CC1:
+  - 1.895754421196504
+  - 21
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccccc1:
+  - 1.8900994516968512
+  - 22
+  COc1ccc(C(=O)Nc2ccccc2)cc1OC:
+  - 1.8899864353152618
+  - 23
+  COc1ccc(NC(=O)c2ccc(F)c(OC)c2)cc1:
+  - 1.8879931114490769
+  - 24
+  COc1ccc(NC(=O)c2ccc(Cl)c(OC)c2)cc1:
+  - 1.8845066959628012
+  - 25
+  COc1cc(NC(=O)C2CC2)ccc1-c1ccccc1:
+  - 1.884448751237958
+  - 26
+  COc1cc(-c2ccncc2)ccc1NC(=O)C1CC1:
+  - 1.8803129634048417
+  - 27
+  COc1cc(-c2ccccc2)ccc1NC(=O)C1CC1:
+  - 1.8764433531272973
+  - 28
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccc(F)cn1:
+  - 1.8761536315217422
+  - 29
+  O=C(Nc1ccc(-c2ccccc2)cc1F)C1CC1:
+  - 1.8759242341278708
+  - 30
+  COc1ccc(NC(=O)c2ccc(F)c(F)c2)cc1:
+  - 1.8725963984041263
+  - 31
+  COc1ccc(NC(=O)c2ccc(OC)c(OC)c2)cc1:
+  - 1.872493839425211
+  - 32
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccncc1:
+  - 1.868074430522221
+  - 33
+  COc1ccc(C(=O)Nc2ccncc2F)cc1OC:
+  - 1.8669643375255311
+  - 34
+  O=C(Nc1cc2ncnc(N3CCCC3)c2cc1F)C1CC1:
+  - 1.8668749054391642
+  - 35
+  COc1ccc(C(=O)NC2CC2)cc1-c1ccc(Cl)cn1:
+  - 1.8528647435295293
+  - 36
+  O=C(Nc1ccc(-c2ccncc2)cc1)c1ccc(F)cc1:
+  - 1.8355274426899568
+  - 37
+  CN1CCOc2ccc(S(=O)(=O)Nc3ccc(F)cc3)cc21:
+  - 1.8349031456676084
+  - 38
+  CN1CCOc2ccc(S(=O)(=O)Nc3ccccc3)cc21:
+  - 1.8345783887843026
+  - 39
+  c1ccc(Nc2cccc(-c3ccncc3)c2)cc1:
+  - 1.8192806735676483
+  - 40
+  COc1ccc(Nc2ccccc2)cc1:
+  - 1.7904628316437976
+  - 41

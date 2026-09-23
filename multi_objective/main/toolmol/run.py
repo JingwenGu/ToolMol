@@ -39,7 +39,9 @@ class GB_GA_Optimizer(BaseOptimizer):
         if args.mol_lm == "ToolMol":
             extra_body = json.loads(args.llm_extra_body) if args.llm_extra_body else None
             self.mol_lm = ToolMolAgent(model=args.llm_model, base_url=args.llm_base_url,
-                                       api_key_env=args.llm_api_key_env, extra_body=extra_body)
+                                       api_key_env=args.llm_api_key_env, extra_body=extra_body,
+                                       system_prompt_suffix=getattr(args, "llm_system_prompt_suffix", None),
+                                       few_shot_file=getattr(args, "few_shot_file", None))
             self.mol_lm.goal_description = _goal_description(args)
 
     def reset(self):
