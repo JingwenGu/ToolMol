@@ -52,8 +52,8 @@ def invoke_step(tool_name, args, working_smi, mol1_smi, mol2_smi, target_smi):
     return result, result_smi
 
 
-def build():
-    examples = json.load(open(os.path.join(HERE, 'fewshot_examples_3step.json'), encoding='utf-8'))
+def build(examples_path):
+    examples = json.load(open(examples_path, encoding='utf-8'))
     messages = []
     for ex_i, ex in enumerate(examples):
         mol1_smi, mol2_smi = ex['mol1_smi'], ex['mol2_smi']
@@ -101,10 +101,17 @@ def build():
 
         print(f"[{ex['snap_id']}] ok: {n_steps} steps, final smi = {working_smi}", flush=True)
 
-    json.dump(messages, open(os.path.join(HERE, 'fewshot_messages_3step.json'), 'w', encoding='utf-8'),
-               indent=1, ensure_ascii=False)
-    print(f"\nwrote {len(messages)} messages ({len(examples)} examples) to fewshot_messages_3step.json")
+    return messages, examples
 
 
 if __name__ == '__main__':
-    build()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--examples', default=os.path.join(HERE, 'fewshot_examples_3step.json'),
+                     help='post_rationalize_3step.py --out file to assemble')
+    ap.add_argument('--out', default=os.path.join(HERE, 'fewshot_messages_3step.json'))
+    args = ap.parse_args()
+
+    messages, examples = build(args.examples)
+    json.dump(messages, open(args.out, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
+    print(f"\nwrote {len(messages)} messages ({len(examples)} examples) to {args.out}")

@@ -242,23 +242,43 @@ FG_SMILES_MAIN = None
 
 
 def main():
-    global FG_SMILES_MAIN
+    global FG_SMILES_MAIN, PARENT2_BY_KEY
     ap = argparse.ArgumentParser()
     ap.add_argument('--beam', type=int, default=30)
     ap.add_argument('--workers', type=int, default=15)
     ap.add_argument('--picks', type=str, default=None, help='comma-separated snap_ids subset (for a quick test run)')
+    ap.add_argument('--top-n-regret', type=int, default=None,
+                     help='instead of --picks or the hardcoded PICKS list, auto-select the top N '
+                          'snap_ids by regret from --master. Simple and reproducible, unlike the '
+                          'original gpt-5.4 PICKS list, which was a hand curated subset (mixing '
+                          'moderate and high regret across a spread of tools), not literally top-N.')
+    ap.add_argument('--master', type=str, default=os.path.join(REGRET_DIR, 'regret_master_gpt54.json'),
+                     help='regret-summary JSON to select snapshots from (schema: main/toolmol/oracle.py-'
+                          'style list of dicts with snap_id/gen/pair/step/chosen_tool/working_smi_before/'
+                          'chosen_delta/best_delta/regret - matches both this dir\'s regret_master_gpt54.json '
+                          'and regret/*_regret_summary.json from the sibling brute_force.py tool)')
+    ap.add_argument('--snapshots', type=str, default=os.path.join(REGRET_DIR, 'snapshots_gpt54.jsonl'),
+                     help='snapshots.jsonl to pull parent2 SMILES from (same schema as regret/snapshots.jsonl)')
     ap.add_argument('--out', type=str, default=os.path.join(HERE, 'beam3_results.jsonl'))
     args = ap.parse_args()
 
     from main.toolmol.fg_lookup import FUNCTIONAL_GROUPS
     FG_SMILES_MAIN = list(FUNCTIONAL_GROUPS.values())
 
-    master = json.load(open(os.path.join(REGRET_DIR, 'regret_master_gpt54.json'), encoding='utf-8'))
+    master = json.load(open(args.master, encoding='utf-8'))
     by_id = {m['snap_id']: m for m in master}
 
-    picks = PICKS
+    PARENT2_BY_KEY = {}
+    for _line in open(args.snapshots, encoding='utf-8'):
+        _d = json.loads(_line)
+        PARENT2_BY_KEY[(_d['gen'], _d['pair'], _d['step'])] = _d['parent2']
+
     if args.picks:
         picks = [int(x) for x in args.picks.split(',')]
+    elif args.top_n_regret:
+        picks = [m['snap_id'] for m in sorted(master, key=lambda m: -m['regret'])[:args.top_n_regret]]
+    else:
+        picks = PICKS
 
     done_ids = set()
     if os.path.exists(args.out):
@@ -303,11 +323,9 @@ def main():
     log("ALL DONE")
 
 
-# build parent2 lookup from snapshots_gpt54.jsonl at import time
+# parent2 lookup, built from --snapshots inside main() (was module-level / import-time and
+# hardcoded to snapshots_gpt54.jsonl; needed to depend on the CLI arg instead)
 PARENT2_BY_KEY = {}
-for _line in open(os.path.join(REGRET_DIR, 'snapshots_gpt54.jsonl'), encoding='utf-8'):
-    _d = json.loads(_line)
-    PARENT2_BY_KEY[(_d['gen'], _d['pair'], _d['step'])] = _d['parent2']
 
 
 if __name__ == '__main__':
