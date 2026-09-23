@@ -15,7 +15,7 @@ reachable with a rich but finite fragment library," not a true global optimum.
 """
 import sys, os, json, random, time, csv
 
-sys.path.append(r"D:\校外学习\Reading\Computer Science\ML papers\AI4S\MOLLEO\multi_objective")
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "multi_objective"))
 from rdkit import Chem
 from main.toolmol import toolbox
 from main.toolmol.fg_lookup import FUNCTIONAL_GROUPS

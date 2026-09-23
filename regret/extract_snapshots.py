@@ -3,7 +3,8 @@ snapshots by replaying the new (2-idx bond-cut) run's log as a state machine - n
 pure text parsing plus the same state-transition logic agent.py itself follows."""
 import re, json, os
 
-LOG = r"D:\校外学习\Reading\Computer Science\ML papers\AI4S\MOLLEO\multi_objective\main\toolmol\results\task_cerebras_seed1_max200_idxredesign_2026-09-07\run_log.txt"
+LOG = os.path.join(os.path.dirname(__file__), "..", "multi_objective", "main", "toolmol",
+                    "results", "task_cerebras_seed1_max200_idxredesign_2026-09-07", "run_log.txt")
 OUT = os.path.join(os.path.dirname(__file__), "snapshots.jsonl")
 
 start_re = re.compile(r"generation (\d+) pair (\d+)/(\d+): starting edit_pair")
