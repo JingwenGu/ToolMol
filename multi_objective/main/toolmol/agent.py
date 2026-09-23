@@ -295,6 +295,13 @@ class ToolMolAgent:
         # silently hides the one objective with real headroom behind two that are usually near
         # their ceiling. None preserves the original prompt exactly.
         self.score_detail = None
+        # Optional callable smi -> bool, set by run.py, reporting whether a molecule has already
+        # been scored this run. The model is shown two parents and nothing about the rest of the
+        # population, so it cannot tell that an edit it is about to finish on reproduces a
+        # molecule that already exists - and the mating pool reuses a handful of high-scoring
+        # parents heavily, so independent episodes converge on the same products. A duplicate
+        # costs no oracle call but contributes nothing, wasting the whole episode.
+        self.is_duplicate = None
 
         if backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
@@ -572,6 +579,35 @@ class ToolMolAgent:
                 _strip_context(m)
             context_msgs.append(entry)
 
+        # Number of times this episode has been told its product already exists. Capped, because
+        # each push-back spends a step from the same budget the edits come out of - better to
+        # return a duplicate than to burn the episode arguing about one.
+        duplicates_flagged = [0]
+        MAX_DUPLICATE_PUSHBACKS = 2
+
+        def duplicate_pushback():
+            """True if the episode should keep going because its current molecule is one the run
+            has already scored. Appends the message telling the model so."""
+            if self.is_duplicate is None or duplicates_flagged[0] >= MAX_DUPLICATE_PUSHBACKS:
+                return False
+            try:
+                if not self.is_duplicate(Chem.MolToSmiles(working_mol)):
+                    return False
+            except Exception:
+                return False
+            duplicates_flagged[0] += 1
+            print(f"  duplicate product - asking for a further modification "
+                  f"({duplicates_flagged[0]}/{MAX_DUPLICATE_PUSHBACKS})", flush=True)
+            nudge = {"role": "user", "content": (
+                "This molecule has already been evaluated in this run, so finishing here would "
+                "add nothing new to the population. Please make at least one further "
+                "modification to produce a molecule that differs from it, then respond with "
+                "FINAL ANSWER.\n"
+                f"Current SMILES: {Chem.MolToSmiles(working_mol)}\n{_format_context(working_mol)}")}
+            messages.append(nudge)
+            track_context(nudge)
+            return True
+
         for step in range(self.max_steps):
             print(f"  agent step {step + 1}/{self.max_steps}", flush=True)
             response = self._create_with_retry(messages)
@@ -607,6 +643,8 @@ class ToolMolAgent:
 
             if not msg.tool_calls:
                 if msg.content and "FINAL ANSWER" in msg.content.upper():
+                    if duplicate_pushback():
+                        continue
                     print(f"  agent step {step + 1}: FINAL ANSWER, no tool call", flush=True)
                     break
                 print(f"  agent step {step + 1}: no tool call, no FINAL ANSWER - nudging", flush=True)
@@ -693,8 +731,10 @@ class ToolMolAgent:
             # nothing but the words FINAL ANSWER. On a three-edit episode that is a quarter of
             # the LLM calls spent on a no-op.
             if msg.content and "FINAL ANSWER" in msg.content.upper():
-                print(f"  agent step {step + 1}: FINAL ANSWER alongside tool call(s), ending episode", flush=True)
-                break
+                if not duplicate_pushback():
+                    print(f"  agent step {step + 1}: FINAL ANSWER alongside tool call(s), ending episode", flush=True)
+                    break
+                continue
 
             if n_modifications >= 3:
                 reminder = "You have made 3 modifications already - please output FINAL ANSWER now."

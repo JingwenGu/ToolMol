@@ -48,6 +48,16 @@ class GB_GA_Optimizer(BaseOptimizer):
                                        io_dir=getattr(args, "llm_io_dir", None))
             self.mol_lm.goal_description = _goal_description(args)
             self.mol_lm.score_detail = self._score_detail
+            self.mol_lm.is_duplicate = self._is_duplicate
+
+    def _is_duplicate(self, smi):
+        """Has this molecule already been scored this run?
+
+        all_molecules() merges storing_buffer (flushed by clean_buffer each generation) with the
+        current mol_buffer, so neither alone is the full history. Keys are canonical SMILES from
+        Oracle.score_smi, and the agent canonicalizes too, so a plain lookup is sound.
+        """
+        return smi in self.oracle.all_molecules()
 
     def _score_detail(self, smi):
         """Break Phi down per objective, showing each raw value and its rescaled contribution.
