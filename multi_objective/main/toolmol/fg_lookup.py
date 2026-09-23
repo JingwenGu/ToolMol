@@ -49,6 +49,27 @@ FUNCTIONAL_GROUPS = {
     'piperidinyl': '[1*]N1CCCCC1',
     'piperazinyl': '[1*]N1CCNCC1',
     'pyrrolidinyl': '[1*]N1CCCC1',
+    'methylpiperazinyl': '[1*]N1CCN(C)CC1',
+    'tetrahydropyranyl': '[1*]C1CCOCC1',
+    # Hinge-binding heterocycles. Reaching these previously meant hand-writing SMILES into
+    # add_substructure, which is where malformed-fragment failures concentrated - a model asked
+    # for "a carbonyl amide group" supplied a bare double-bonded oxygen, and an intended phenyl
+    # arrived as a methyl. They are the motifs that actually move the activity objective, so
+    # they are worth a name each. The amino variants attach through the exocyclic nitrogen, so
+    # the donor NH and the ring-nitrogen acceptor land adjacent to each other, which is the
+    # geometry that works; the plain ring variants attach through carbon.
+    'pyrimidinyl': '[1*]c1ncccn1',
+    'aminopyrimidinyl': '[1*]Nc1ncccn1',
+    '2-aminopyrimidinyl': '[1*]Nc1ncccn1',
+    'aminopyridinyl': '[1*]Nc1ccccn1',
+    'pyrazinyl': '[1*]c1cnccn1',
+    'pyrazolyl': '[1*]c1cc[nH]n1',
+    'indazolyl': '[1*]c1ccc2[nH]ncc2c1',
+    'aminoquinazolinyl': '[1*]Nc1ncnc2ccccc12',
+    'benzimidazolyl': '[1*]c1nc2ccccc2[nH]1',
+    'benzoxazolyl': '[1*]c1nc2ccccc2o1',
+    'fluorophenyl': '[1*]c1ccc(F)cc1',
+    'chlorophenyl': '[1*]c1ccc(Cl)cc1',
 }
 
 

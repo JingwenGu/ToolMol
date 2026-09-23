@@ -45,7 +45,8 @@ class GB_GA_Optimizer(BaseOptimizer):
                                        max_new_tokens=args.llm_max_new_tokens,
                                        system_prompt_suffix=getattr(args, "llm_system_prompt_suffix", None),
                                        few_shot_file=getattr(args, "few_shot_file", None),
-                                       io_dir=getattr(args, "llm_io_dir", None))
+                                       io_dir=getattr(args, "llm_io_dir", None),
+                                       domain_brief_file=getattr(args, "domain_brief", None))
             self.mol_lm.goal_description = _goal_description(args)
             self.mol_lm.score_detail = self._score_detail
             self.mol_lm.is_duplicate = self._is_duplicate

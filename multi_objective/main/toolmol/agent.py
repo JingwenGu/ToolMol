@@ -253,7 +253,8 @@ def load_few_shot_messages(path):
 class ToolMolAgent:
     def __init__(self, model="gpt-4", base_url=None, max_steps=10, api_key_env="OPENAI_API_KEY",
                  extra_body=None, backend="api", device_map="auto", max_new_tokens=1024,
-                 system_prompt_suffix=None, few_shot_file=None, io_dir=None):
+                 system_prompt_suffix=None, few_shot_file=None, io_dir=None,
+                 domain_brief_file=None):
         # "api" talks to any OpenAI-compatible chat-completions endpoint - the official
         # OpenAI API, or a self-hosted server (e.g. vLLM/Ollama) pointed to via base_url.
         # "responses" talks to the same kind of server's /v1/responses endpoint instead -
@@ -278,6 +279,15 @@ class ToolMolAgent:
         # rationale at all unless explicitly asked to write one into content. Leaving this
         # None preserves the exact original prompt for every other provider/model.
         self.system_prompt_suffix = system_prompt_suffix
+        # Task knowledge accumulated by earlier runs, appended to the system prompt. This is the
+        # mechanism by which a lesson learned in one iteration reaches the next one: an operator
+        # remembers across episodes, but a real model starts every episode from nothing, so
+        # anything worth carrying forward has to live in the prompt rather than in the operator's
+        # head. See main/toolmol/domain_brief.md. None reproduces the original prompt exactly.
+        self.domain_brief = None
+        if domain_brief_file:
+            with open(domain_brief_file, encoding='utf-8') as f:
+                self.domain_brief = f.read().strip()
         # Few-shot conversation history prepended before the live query on every call - a
         # toggle, not a permanent prompt change: None (the default) reproduces the exact
         # original behavior for every existing run; pass a path to turn it on for a specific
