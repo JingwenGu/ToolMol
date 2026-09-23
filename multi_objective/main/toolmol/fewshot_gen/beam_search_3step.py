@@ -1,16 +1,20 @@
 """Non-myopic beam search over 3 sequential tool calls, for the same 10 molecules used to
 build the few-shot demonstration library (regret_gpt54_v1.json / PICKS below).
 
-At every beam level, crossover_molecules candidates are generated against *this node's*
-current working molecule combined with the snapshot's parent2. Note this differs from the
-live agent's actual semantics (confirmed by reading agent.py's _agentic_edit): the live agent
-always calls crossover_molecules against the frozen original parent1, never the evolved
-working molecule, matching brute_force_gpt54.py's original convention. That mismatch doesn't
-end up affecting the 10 results this script actually produced, since crossover only ever wins
-the beam at level 1 in every one of the 10 runs - at level 1 the working molecule and parent1
-are identical by construction - but a future run of this script on different input molecules
-could have crossover win at level 2/3, where the mismatch would matter. Worth fixing before
-reusing this beyond the original 10-molecule investigation.
+ASSUMPTION (load-bearing, not yet enforced by removing the mismatch it papers over):
+crossover_molecules only ever wins the beam at level 1, never level 2/3. This matters because
+at every beam level this script generates crossover_molecules candidates against *this node's*
+current working molecule combined with the snapshot's parent2 - which differs from the live
+agent's actual semantics (confirmed by reading agent.py's _agentic_edit): the live agent always
+calls crossover_molecules against the frozen original parent1, never the evolved working
+molecule, matching brute_force_gpt54.py's original convention. At level 1 the working molecule
+and parent1 are identical by construction, so the mismatch is inert there - but a crossover
+step winning at level 2/3 would be scored against the wrong base molecule and silently produce
+a wrong path. run_one_molecule() below asserts this can't happen rather than trusting it
+silently: a future run on different input molecules that DOES have crossover win beyond level 1
+will raise instead of writing a quietly-wrong beam3_results.jsonl entry. If that ever fires,
+this needs the real fix (generate crossover candidates against the frozen parent1 at every
+level, not the evolving working molecule) before rerunning.
 
 Beam search, not exhaustive: at each level, keep the global top BEAM candidates by delta
 (not per-branch), expand all of them at the next level. Not a proof of 3-step optimality -
@@ -162,6 +166,21 @@ def _ring_free_atom_indices_main(mol):
     return [a.GetIdx() for a in mol.GetAtoms() if any(not b.IsInRing() for b in a.GetBonds())]
 
 
+def _assert_crossover_only_at_step1(path, snap_id):
+    """Enforces the module docstring's ASSUMPTION. A crossover_molecules step anywhere but
+    path[0] was scored against the evolving working molecule (this script's convention) rather
+    than the frozen parent1 (the live agent's actual convention) - see the docstring for why
+    that's wrong. Fail loudly here rather than silently writing a wrong result."""
+    for depth, step in enumerate(path):
+        if step['tool'] == 'crossover_molecules' and depth != 0:
+            raise AssertionError(
+                f"[{snap_id}] crossover_molecules won the beam at depth {depth + 1} (path={path}) - "
+                f"violates the ASSUMPTION documented at the top of this file. This candidate was "
+                f"scored against the evolving working molecule, not the frozen parent1 the live "
+                f"agent actually uses, so its delta/smi are wrong. Fix crossover candidate "
+                f"generation to use the frozen parent1 at every beam level before proceeding.")
+
+
 def run_one_molecule(pool, snap_id, snap, beam_width, log):
     working_smi = snap['working_smi_before']
     parent2 = snap['parent2']
@@ -201,6 +220,10 @@ def run_one_molecule(pool, snap_id, snap, beam_width, log):
     best1 = max(level1, key=lambda r: r['delta']) if level1 else None
     best2 = max(level2, key=lambda r: r['delta']) if level2 else None
     best3 = max(level3, key=lambda r: r['delta']) if level3 else None
+
+    for candidate in (best2, best3, best):
+        if candidate is not None:
+            _assert_crossover_only_at_step1(candidate['path'], snap_id)
 
     return {
         'snap_id': snap_id, 'gen': snap['gen'], 'pair': snap['pair'], 'step': snap['step'],
