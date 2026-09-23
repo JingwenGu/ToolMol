@@ -147,9 +147,12 @@ class _ToolCall:
 
 
 class _Message:
-    def __init__(self, content, tool_calls):
+    def __init__(self, content, tool_calls, reasoning=None):
         self.content = content
         self.tool_calls = tool_calls or None
+        # Read via getattr(msg, "reasoning", None) in _agentic_edit's logging, same as a
+        # provider-populated chat-completions message would carry it.
+        self.reasoning = reasoning
 
 
 class _Response:
@@ -204,18 +207,27 @@ def _messages_to_responses_input(messages):
 
 def _parse_responses_output(response):
     # Mirrors the shape _agentic_edit expects (.content / .tool_calls[].id /
-    # .function.{name,arguments}) - same contract _parse_local_response fills for the
-    # transformers backend. tool_call.id is set to the Responses API's call_id (not the
-    # separate, unrelated `id` field on the item) since that's what _messages_to_responses_input
-    # needs back to build the next turn's function_call/function_call_output pair.
+    # .function.{name,arguments} / .reasoning) - same contract _parse_local_response fills
+    # for the transformers backend. tool_call.id is set to the Responses API's call_id (not
+    # the separate, unrelated `id` field on the item) since that's what
+    # _messages_to_responses_input needs back to build the next turn's function_call/
+    # function_call_output pair. Reasoning items (gpt-oss's Harmony analysis-channel chain
+    # of thought - see ResponseReasoningItem) are never replayed back to the model (see
+    # _messages_to_responses_input), but are still surfaced here so _agentic_edit's existing
+    # `getattr(msg, "reasoning", None)` logging captures them, same as it does for a
+    # chat-completions provider that populates msg.reasoning/reasoning_content.
     tool_calls = []
     content = None
+    reasoning_parts = []
     for item in response.output:
         if item.type == "function_call":
             tool_calls.append(_ToolCall(id=item.call_id, name=item.name, arguments=item.arguments))
         elif item.type == "message":
             content = "".join(part.text for part in item.content if getattr(part, "text", None))
-    return _Response(_Message(content=content, tool_calls=tool_calls))
+        elif item.type == "reasoning":
+            reasoning_parts.extend(part.text for part in (item.content or []) if getattr(part, "text", None))
+    reasoning = "\n".join(reasoning_parts) if reasoning_parts else None
+    return _Response(_Message(content=content, tool_calls=tool_calls, reasoning=reasoning))
 
 
 def _parse_local_response(text):
