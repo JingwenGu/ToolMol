@@ -538,6 +538,8 @@ class ToolMolAgent:
             self._sent_upto = 0
 
         system_content = SYSTEM_PROMPT
+        if self.domain_brief:
+            system_content = system_content + "\n\n" + self.domain_brief
         if self.system_prompt_suffix:
             system_content = system_content + "\n" + self.system_prompt_suffix
 
