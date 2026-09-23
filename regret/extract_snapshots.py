@@ -1,17 +1,25 @@
 """Reconstruct (working_mol_before, parent1, parent2, chosen_tool, args, success, result_smi)
 snapshots by replaying the new (2-idx bond-cut) run's log as a state machine - no LLM calls,
 pure text parsing plus the same state-transition logic agent.py itself follows."""
-import re, json, os
+import re, json, os, argparse
 
-LOG = os.path.join(os.path.dirname(__file__), "..", "multi_objective", "main", "toolmol",
-                    "results", "task_cerebras_seed1_max200_idxredesign_2026-09-07", "run_log.txt")
-OUT = os.path.join(os.path.dirname(__file__), "snapshots.jsonl")
+_p = argparse.ArgumentParser()
+_p.add_argument("--log", default=os.path.join(
+    os.path.dirname(__file__), "..", "multi_objective", "main", "toolmol",
+    "results", "task_cerebras_seed1_max200_idxredesign_2026-09-07", "run_log.txt"),
+    help="run_log.txt to replay (default: the original cerebras reference run)")
+_p.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "snapshots.jsonl"),
+    help="where to write the reconstructed snapshots (default: regret/snapshots.jsonl)")
+_args = _p.parse_args()
+
+LOG = _args.log
+OUT = _args.out
 
 start_re = re.compile(r"generation (\d+) pair (\d+)/(\d+): starting edit_pair")
 done_re = re.compile(r"generation (\d+) pair (\d+)/(\d+): edit_pair done")
 parent1_re = re.compile(r"\[state\] parent1: (\S+)")
 parent2_re = re.compile(r"\[state\] parent2: (\S+)")
-call_re = re.compile(r"agent step (\d+): tool call -> (\w+)\((.*)\)$")
+call_start_re = re.compile(r"agent step (\d+): tool call -> (\w+)\(")
 before_re = re.compile(r"\[state\] before call: (\S+)")
 result_re = re.compile(r"agent step \d+: tool result success=(True|False): (.*)")
 undo_result_re = re.compile(r"agent step \d+: tool result: (success|failed): (.*)")
@@ -33,14 +41,51 @@ def new_episode(gen, pair):
 
 pending_call = None       # {'step','name','args_str'}
 pending_finalized = None  # {'step','name','args_str','success'} - awaiting "Current SMILES" if success
+collecting = None         # {'step','name','lines'} - mid-way through a tool call's argument
+                           # block, which gpt-oss (unlike Qwen/Cerebras) always pretty-prints
+                           # across multiple lines rather than one compact JSON line - so the
+                           # call's closing ")" is never on the "tool call ->" line itself.
+
+# Any of these lines marks the end of an in-progress multi-line argument block (the next
+# thing agent.py prints after a tool call is always one of: the "before call" state dump,
+# a tool result, or - for undo, which skips "before call" - the result line directly).
+TERMINATORS = (before_re, result_re, undo_result_re)
+
+
+_call_prefix_re = re.compile(r"^\s*agent step \d+: tool call -> \w+\(")
+
+
+def finalize_collecting():
+    """Turn the buffered argument lines into pending_call.args_str: just the "(...)" contents,
+    matching what the old single-line call_re used to capture."""
+    global pending_call, collecting
+    joined = "".join(collecting["lines"])
+    joined = _call_prefix_re.sub("", joined, count=1).strip()
+    if joined.endswith(")"):
+        joined = joined[:-1]
+    pending_call = {"step": collecting["step"], "name": collecting["name"], "args_str": joined,
+                     "working_smi_before": episode["working_smi"],
+                     "parent1": episode["parent1"], "parent2": episode["parent2"]}
+    collecting = None
+
 
 with open(LOG, encoding="utf-8", errors="replace") as f:
     for line in f:
+        if collecting is not None:
+            if any(r.search(line) for r in TERMINATORS) or call_start_re.search(line) or \
+               start_re.search(line) or done_re.search(line):
+                finalize_collecting()
+                # fall through - this line still needs to be matched against the patterns below
+            else:
+                collecting["lines"].append(line)
+                continue
+
         m = start_re.search(line)
         if m:
             episode = new_episode(int(m.group(1)), int(m.group(2)))
             pending_call = None
             pending_finalized = None
+            collecting = None
             continue
         if episode is None:
             continue
@@ -55,11 +100,9 @@ with open(LOG, encoding="utf-8", errors="replace") as f:
             episode["parent2"] = m.group(1)
             continue
 
-        m = call_re.search(line)
+        m = call_start_re.search(line)
         if m:
-            pending_call = {"step": int(m.group(1)), "name": m.group(2), "args_str": m.group(3),
-                             "working_smi_before": episode["working_smi"],
-                             "parent1": episode["parent1"], "parent2": episode["parent2"]}
+            collecting = {"step": int(m.group(1)), "name": m.group(2), "lines": [line]}
             continue
 
         m = before_re.search(line)

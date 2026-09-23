@@ -98,7 +98,12 @@ def call_tool(tool_name, working_smi, parent1_smi, parent2_smi, args):
     return fn(working_smi, **args)
 
 
-def brute_force_snapshot(snap_id, snap, candidates_writer):
+def brute_force_snapshot(snap_id, snap):
+    # Returns (result_dict, candidate_rows) rather than writing straight to a CSV writer, so
+    # this can run in a worker process (each snapshot is fully independent - no shared state
+    # with any other snapshot - so this whole function parallelizes across a process pool one
+    # snapshot per task; a shared file handle/writer can't cross that process boundary, so the
+    # main process does all file writing after collecting each worker's return value instead).
     working_smi = snap["working_smi_before"]
     parent1_smi, parent2_smi = snap["parent1"], snap["parent2"]
 
@@ -107,6 +112,7 @@ def brute_force_snapshot(snap_id, snap, candidates_writer):
     n_tried = 0
     n_success = 0
     best = None  # (delta, phi, tool_name, args, smi, raw)
+    rows = []
     for tool_name, args in gen_candidates(working_smi, parent1_smi, parent2_smi):
         n_tried += 1
         result = call_tool(tool_name, working_smi, parent1_smi, parent2_smi, args)
@@ -118,9 +124,9 @@ def brute_force_snapshot(snap_id, snap, candidates_writer):
             continue
         n_success += 1
         delta = phi - baseline_phi
-        candidates_writer.writerow([snap_id, tool_name, json.dumps(args), smi,
-                                     f"{raw['qed']:.4f}", f"{raw['jnk3']:.4f}", f"{raw['sa']:.4f}",
-                                     f"{phi:.4f}", f"{delta:.4f}"])
+        rows.append([snap_id, tool_name, json.dumps(args), smi,
+                      f"{raw['qed']:.4f}", f"{raw['jnk3']:.4f}", f"{raw['sa']:.4f}",
+                      f"{phi:.4f}", f"{delta:.4f}"])
         if best is None or delta > best[0]:
             best = (delta, phi, tool_name, args, smi, raw)
 
@@ -135,7 +141,7 @@ def brute_force_snapshot(snap_id, snap, candidates_writer):
 
     regret = (best[0] - chosen_delta) if best is not None else None
 
-    return {
+    res = {
         "snap_id": snap_id, "gen": snap["gen"], "pair": snap["pair"], "step": snap["step"],
         "working_smi_before": working_smi, "baseline_phi": baseline_phi, "baseline_raw": baseline_raw,
         "chosen_tool": snap["name"], "chosen_args_str": snap["args_str"], "chosen_success": chosen_success,
@@ -146,14 +152,36 @@ def brute_force_snapshot(snap_id, snap, candidates_writer):
         "best_smi": best[4] if best else None, "best_raw": best[5] if best else None,
         "regret": regret,
     }
+    return res, rows
+
+
+def _worker(args):
+    snap_id, snap = args
+    t0 = time.time()
+    res, rows = brute_force_snapshot(snap_id, snap)
+    return res, rows, time.time() - t0
 
 
 if __name__ == "__main__":
     import argparse
+    import multiprocessing as mp
+
     p = argparse.ArgumentParser()
     p.add_argument("--n", type=int, default=50)
     p.add_argument("--test", action="store_true", help="run on just 2 snapshots for timing")
+    p.add_argument("--snapshots", default=SNAPSHOTS, help="snapshots.jsonl to sample from")
+    p.add_argument("--out-prefix", default=None,
+                    help="prefix for output files (default: unprefixed candidates_log.csv/regret_summary.json)")
+    p.add_argument("--workers", type=int, default=1,
+                    help="worker processes for parallel brute force across snapshots (each snapshot is "
+                         "fully independent, so this scales ~linearly up to min(--n, cpu count); "
+                         "default 1 = serial, matching the original behavior")
     args_cli = p.parse_args()
+
+    SNAPSHOTS = args_cli.snapshots
+    if args_cli.out_prefix:
+        CANDIDATES_CSV = os.path.join(HERE, f"{args_cli.out_prefix}_candidates_log.csv")
+        SUMMARY_JSON = os.path.join(HERE, f"{args_cli.out_prefix}_regret_summary.json")
 
     snapshots = []
     with open(SNAPSHOTS, encoding="utf-8") as f:
@@ -182,21 +210,38 @@ if __name__ == "__main__":
         random.shuffle(sample)
         print(f"stratified sample: {[(name, sum(1 for s in sample if s['name']==name)) for name in tool_names]}")
 
-    print(f"running brute force over {len(sample)} snapshots...")
+    print(f"running brute force over {len(sample)} snapshots ({args_cli.workers} worker(s))...")
     os.makedirs(HERE, exist_ok=True)
     results = []
     t0 = time.time()
+    tasks = list(enumerate(sample))
     with open(CANDIDATES_CSV, "w", newline="", encoding="utf-8") as cf:
         w = csv.writer(cf)
         w.writerow(["snap_id", "tool", "args", "smiles", "qed", "jnk3", "sa", "combined_score", "delta_vs_baseline"])
-        for i, snap in enumerate(sample):
-            t1 = time.time()
-            res = brute_force_snapshot(i, snap, w)
-            dt = time.time() - t1
-            print(f"[{i+1}/{len(sample)}] gen={snap['gen']} pair={snap['pair']} tool={snap['name']} "
+
+        def handle(i, snap, res, rows, dt):
+            for row in rows:
+                w.writerow(row)
+            print(f"[{len(results)+1}/{len(sample)}] gen={snap['gen']} pair={snap['pair']} tool={snap['name']} "
                   f"tried={res['n_candidates_tried']} success={res['n_candidates_succeeded']} "
                   f"regret={res['regret']} ({dt:.1f}s)", flush=True)
             results.append(res)
+
+        if args_cli.workers <= 1:
+            for i, snap in tasks:
+                t1 = time.time()
+                res, rows = brute_force_snapshot(i, snap)
+                handle(i, snap, res, rows, time.time() - t1)
+        else:
+            # imap_unordered so results are handled (and progress printed) as each worker
+            # finishes, not held back by whichever snapshot happens to be slowest/first in
+            # input order. It doesn't preserve the tasks list's order, so recover which
+            # snapshot a result belongs to via its own snap_id (== the enumerate index)
+            # rather than zipping against tasks positionally.
+            with mp.Pool(processes=args_cli.workers) as pool:
+                for res, rows, dt in pool.imap_unordered(_worker, tasks, chunksize=1):
+                    snap = sample[res["snap_id"]]
+                    handle(res["snap_id"], snap, res, rows, dt)
     print(f"total time: {time.time()-t0:.1f}s")
 
     with open(SUMMARY_JSON, "w", encoding="utf-8") as f:
