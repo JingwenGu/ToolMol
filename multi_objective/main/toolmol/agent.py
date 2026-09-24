@@ -312,6 +312,13 @@ class ToolMolAgent:
         # parents heavily, so independent episodes converge on the same products. A duplicate
         # costs no oracle call but contributes nothing, wasting the whole episode.
         self.is_duplicate = None
+        # Optional callable () -> str summarising what the run has already scored, set by run.py.
+        # The agent is otherwise shown two parent molecules and nothing else, so it cannot tell
+        # that the population has converged, cannot see which structural ideas already exist, and
+        # cannot deliberately explore away from a crowded region - it only finds out it repeated
+        # something when the duplicate check rejects its product at the end of an episode. That is
+        # reactive and wastes the episode. None preserves the original prompt.
+        self.population_summary = None
 
         if backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
@@ -382,6 +389,17 @@ class ToolMolAgent:
             output_ids[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
         print(f"    <- local LLM call returned in {time.time() - t0:.1f}s", flush=True)
         return _parse_local_response(generated)
+
+    def _population_block(self):
+        """Text appended to the opening prompt describing what the run has already scored."""
+        if self.population_summary is None:
+            return ""
+        try:
+            summary = self.population_summary()
+        except Exception:
+            # Never let a reporting nicety break an episode.
+            return ""
+        return ("\n\n" + summary) if summary else ""
 
     def _score_detail(self, smi):
         """Per-objective breakdown for a parent, or '' when run.py did not supply one."""
@@ -558,6 +576,7 @@ class ToolMolAgent:
                 f"most 3), then respond with FINAL ANSWER. Do not let molecular weight exceed 700.\n\n"
                 f"1. {smi1}\nScore: {score1}{self._score_detail(smi1)}\n{_format_context(mol1)}\n\n"
                 f"2. {smi2}\nScore: {score2}{self._score_detail(smi2)}\n{_format_context(mol2)}"
+                f"{self._population_block()}"
             )}
         )
 

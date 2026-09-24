@@ -55,6 +55,38 @@ class GB_GA_Optimizer(BaseOptimizer):
             self.mol_lm.goal_description = _goal_description(args)
             self.mol_lm.score_detail = self._score_detail
             self.mol_lm.is_duplicate = self._is_duplicate
+            self.mol_lm.population_summary = self._population_summary
+
+    # How many of the run's best molecules to show the agent each episode. Enough to convey what
+    # the population looks like and which ideas are already taken; small enough that the block
+    # costs well under 200 tokens on a prompt that already carries two full atom tables.
+    POPULATION_SHOWN = 8
+
+    def _population_summary(self):
+        """Compact view of what the run has scored so far, for the opening prompt.
+
+        Shows the best molecules by Phi with their binding term, because that is the objective
+        the agent cannot otherwise reason about and the one carrying the headroom. The point is
+        not only to avoid duplicates - the duplicate check already catches those after the fact -
+        but to let the agent see which structural ideas are already represented, so it can choose
+        to differ from them deliberately rather than rediscovering them.
+        """
+        scored = self.oracle.all_molecules()
+        if not scored:
+            return ""
+        rows = sorted(scored.items(), key=lambda kv: -kv[1][0])[:self.POPULATION_SHOWN]
+        lines = [f"Molecules already evaluated in this run ({len(scored)} total, best "
+                 f"{len(rows)} shown). Your product must differ from every one of them; where "
+                 f"you can, differ from a molecule in exactly one respect so the comparison is "
+                 f"informative:"]
+        for smi, (phi, _idx) in rows:
+            jnk3 = ""
+            for obj in self.oracle.objectives:
+                if obj.name not in ('qed', 'sa'):
+                    jnk3 = f"  {obj.name} {obj.raw(smi):.2f}"
+                    break
+            lines.append(f"  {phi:.3f}{jnk3}  {smi}")
+        return "\n".join(lines)
 
     def _is_duplicate(self, smi):
         """Has this molecule already been produced or scored this run?
@@ -155,7 +187,9 @@ class GB_GA_Optimizer(BaseOptimizer):
             smi_to_score = dict(zip(population_smi_list, population_scores))
 
             pairs = make_mating_pool_phi(population_mol, population_smi_list, self.oracle,
-                                          k=config["k"], offspring_size=config["offspring_size"])
+                                          k=config["k"], offspring_size=config["offspring_size"],
+                                          share_radius=config.get("share_radius", 0.0),
+                                          max_parent_share=config.get("max_parent_share", 1.0))
             # len(self.oracle) is len(mol_buffer) - the current Pareto front - not the budget
             # consumed, which is the deduplicated union tracked by all_molecules(). Printing the
             # former as "oracle_calls" made the log look like the run had barely started.

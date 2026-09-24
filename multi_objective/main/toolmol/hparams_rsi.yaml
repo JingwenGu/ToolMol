@@ -7,3 +7,16 @@ offspring_size: 8
 mutation_rate: 0.0
 k: 10.0
 max_steps: 10
+
+# Diversity controls (see main/toolmol/sampling.py, which records the measurements).
+# Iteration 2's worst generation gave one molecule 6 of 16 parent slots.
+#   max_parent_share - hard cap on the fraction of the 2*offspring_size slots any one molecule
+#                      may take. This is the control that works: replaying that generation's
+#                      shape, worst-case usage falls from a mean of 6.3 slots (p95 10) to 4.0.
+#   share_radius     - fitness sharing over Tanimoto distance. Measured weak: no effect at all
+#                      against a single dominant molecule, and only 92% -> 86% against a cluster
+#                      of near-identical leaders. Kept mild rather than dropped, but the cap is
+#                      doing the work and the prompt-side population view addresses the real
+#                      cause of late-run stagnation.
+share_radius: 0.4
+max_parent_share: 0.25
