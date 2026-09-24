@@ -160,6 +160,16 @@ def crossover_non_ring(parent_A, parent_B):
 
 def crossover(parent_A, parent_B):
     parent_smiles = [Chem.MolToSmiles(parent_A), Chem.MolToSmiles(parent_B)]
+    # Kekulize mutates in place, so without these copies a crossover call permanently clears the
+    # aromatic flags on the caller's molecules. The population is held as mol objects and keyed
+    # by Chem.MolToSmiles elsewhere in the generation loop, so a corrupted parent stops matching
+    # its own oracle entry: main/toolmol/run.py looks up smi_to_score[Chem.MolToSmiles(m0)] once
+    # per pair, and a parent kekulized by an earlier pair raises KeyError there and kills the run.
+    # Only the agent's Graph-GA fallback path reaches this, which is why it went unnoticed - it
+    # fires when the model fails to produce a valid molecule, i.e. exactly when a run is already
+    # having a bad time.
+    parent_A = Chem.Mol(parent_A)
+    parent_B = Chem.Mol(parent_B)
     try:
         Chem.Kekulize(parent_A, clearAromaticFlags=True)
         Chem.Kekulize(parent_B, clearAromaticFlags=True)

@@ -220,10 +220,25 @@ class GB_GA_Optimizer(BaseOptimizer):
             # add new_population
             population_mol += offspring_mol
             population_mol = self.sanitize(population_mol)
+            candidate_smi = [Chem.MolToSmiles(mol) for mol in population_mol]
+
+            # Score every candidate BEFORE the front is computed. select_pareto_front() reads
+            # obj.raw(smi) directly rather than going through score_smi, so without this an
+            # offspring that the front rejects is still evaluated by the oracle and then
+            # disappears: absent from mol_buffer, absent from the results file, and not counted
+            # against max_oracle_calls. That is not a cosmetic accounting problem. It silently
+            # discards exactly the molecules a run learns most from - the deliberate negatives
+            # of a controlled comparison are dominated by construction - and it lets the budget
+            # counter stall, so a run whose offspring all lose can never reach its own stopping
+            # condition. Observed in iteration 3: oracle_calls held at 42/50 across two
+            # generations while sixteen new molecules were produced and scored.
+            self.oracle(candidate_smi)
             # Pareto optimal set
             self.oracle.clean_buffer()
-            population_mol = self.oracle.select_pareto_front([Chem.MolToSmiles(mol) for mol in population_mol])
-            # stats
+            population_mol = self.oracle.select_pareto_front(candidate_smi)
+            # stats. Re-scoring the survivors is cached - score_smi carries them forward out of
+            # storing_buffer without re-evaluating - and repopulates mol_buffer with the front,
+            # which is what len(self.oracle) is defined to mean.
             population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
             population_tuples = list(zip(population_scores, population_mol))
             population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)

@@ -2,6 +2,12 @@
 # Budget reasoning: each episode yields ~1 new molecule, so with max_oracle_calls 50 and a
 # 20-molecule starting pool the run costs ~30 episodes no matter how they are batched;
 # offspring_size only sets how many generations those episodes spread across (8 -> ~4).
+#
+# That arithmetic only became true once the scoring-order defect was fixed. Before it, offspring
+# rejected by the Pareto front were evaluated and then discarded unrecorded, so the counter
+# tracked survivors rather than evaluations: iteration 3 consumed 56 episodes to reach a reported
+# 42/50 and had to be stopped by hand. If a run's episode count starts drifting far above the
+# figure above, suspect the budget accounting before suspecting the agent.
 population_size: 20
 offspring_size: 8
 mutation_rate: 0.0

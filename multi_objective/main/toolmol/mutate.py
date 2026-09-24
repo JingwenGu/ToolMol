@@ -101,6 +101,10 @@ def change_atom(mol):
 
 def mutate(mol, mutation_rate, mol_lm=None, net=None):
 
+    # Copy before kekulizing: Chem.Kekulize edits in place, so mutating a caller's molecule here
+    # permanently clears its aromatic flags and its canonical SMILES stops matching the oracle
+    # buffer that keys the population. Same defect as in crossover.py; see the note there.
+    mol = Chem.Mol(mol)
     try:
         Chem.Kekulize(mol, clearAromaticFlags=True)
     except ValueError:
