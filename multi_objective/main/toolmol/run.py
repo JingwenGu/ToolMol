@@ -36,6 +36,11 @@ class GB_GA_Optimizer(BaseOptimizer):
         # needs the generically-rescaled ToolMolOracle instead.
         self.oracle = ToolMolOracle(args=self.args)
 
+        # Products of the current generation, for duplicate detection before scoring (see
+        # _is_duplicate). Initialised here so the lookup is safe if called before the first
+        # generation's loop assigns it.
+        self._generation_products = set()
+
         self.mol_lm = None
         if args.mol_lm == "ToolMol":
             extra_body = json.loads(args.llm_extra_body) if args.llm_extra_body else None
@@ -52,13 +57,16 @@ class GB_GA_Optimizer(BaseOptimizer):
             self.mol_lm.is_duplicate = self._is_duplicate
 
     def _is_duplicate(self, smi):
-        """Has this molecule already been scored this run?
+        """Has this molecule already been produced or scored this run?
 
-        all_molecules() merges storing_buffer (flushed by clean_buffer each generation) with the
-        current mol_buffer, so neither alone is the full history. Keys are canonical SMILES from
-        Oracle.score_smi, and the agent canonicalizes too, so a plain lookup is sound.
+        Two sources, and both are needed. all_molecules() merges storing_buffer (flushed by
+        clean_buffer each generation) with the current mol_buffer, covering everything the oracle
+        has scored. But offspring are not scored until their generation ends, so that alone misses
+        the case where two episodes of the *same* generation converge - which happened in
+        iteration 2, episodes 17 and 23, with the gate staying silent. _generation_products closes
+        that window by recording each offspring as it is produced.
         """
-        return smi in self.oracle.all_molecules()
+        return smi in self.oracle.all_molecules() or smi in self._generation_products
 
     def _score_detail(self, smi):
         """Break Phi down per objective, showing each raw value and its rescaled contribution.
@@ -148,15 +156,31 @@ class GB_GA_Optimizer(BaseOptimizer):
 
             pairs = make_mating_pool_phi(population_mol, population_smi_list, self.oracle,
                                           k=config["k"], offspring_size=config["offspring_size"])
+            # len(self.oracle) is len(mol_buffer) - the current Pareto front - not the budget
+            # consumed, which is the deduplicated union tracked by all_molecules(). Printing the
+            # former as "oracle_calls" made the log look like the run had barely started.
             print(f"generation {generation}: population={len(population_mol)}, "
-                  f"oracle_calls={len(self.oracle)}, generating {len(pairs)} offspring...", flush=True)
+                  f"oracle_calls={len(self.oracle.all_molecules())}/{self.args.max_oracle_calls}, "
+                  f"generating {len(pairs)} offspring...", flush=True)
             offspring_mol = []
+            # Offspring are not scored until the generation ends, so the oracle's buffers cannot
+            # tell an episode that an earlier episode of this same generation already produced the
+            # molecule it is about to return. Recording each product here closes that window; see
+            # _is_duplicate. Reset per generation because everything from prior generations has by
+            # then been scored and is visible through the oracle.
+            self._generation_products = set()
             for pair_idx, (m0, m1) in enumerate(pairs):
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: starting edit_pair", flush=True)
-                offspring_mol.append(self.mol_lm.edit_pair(
+                child = self.mol_lm.edit_pair(
                     m0, smi_to_score[Chem.MolToSmiles(m0)],
                     m1, smi_to_score[Chem.MolToSmiles(m1)],
-                    config["mutation_rate"]))
+                    config["mutation_rate"])
+                offspring_mol.append(child)
+                if child is not None:
+                    try:
+                        self._generation_products.add(Chem.MolToSmiles(child))
+                    except (ValueError, RuntimeError):
+                        pass
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: edit_pair done", flush=True)
 
             # add new_population
