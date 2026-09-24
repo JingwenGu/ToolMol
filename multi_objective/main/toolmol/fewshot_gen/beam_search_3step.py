@@ -22,6 +22,19 @@ a branch outside the top BEAM at any level is pruned even if its descendants wou
 but it explores BEAM independent lines simultaneously rather than one greedy path.
 """
 import sys, os, json, time, argparse
+
+# Must happen before numpy (imported transitively via rdkit/main.toolmol.*) ever loads its BLAS
+# backend, which reads these once at init and otherwise defaults to one thread pool per process
+# sized to the full core count. This script runs --workers separate processes (each importing
+# numpy independently via _pool_init) on top of that per-process pool, so without this a
+# --workers 16 run alone can try to spawn on the order of 16 x 64 = 1024 OS threads - fine on a
+# dedicated SLURM allocation, but enough to exhaust process/thread limits machine-wide on a
+# shared login node (observed directly: pthread_create failures for every other user on the
+# node, not just this job, until the runaway processes were killed).
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+           "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
+    os.environ.setdefault(_v, "1")
+
 from multiprocessing import Pool
 
 HERE = os.path.dirname(os.path.abspath(__file__))

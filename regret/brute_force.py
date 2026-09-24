@@ -15,6 +15,18 @@ reachable with a rich but finite fragment library," not a true global optimum.
 """
 import sys, os, json, random, time, csv
 
+# Must happen before numpy (imported transitively via rdkit/main.toolmol.*) ever loads its BLAS
+# backend, which reads these once at init and otherwise defaults to one thread pool per process
+# sized to the full core count. --workers spawns that many separate processes, each importing
+# numpy independently via _worker, so without this a large --workers run can try to spawn far
+# more OS threads than there are cores - harmless-looking on a SLURM allocation sized to match
+# (threads just contend within your own cores), but capable of exhausting process/thread limits
+# machine-wide if ever run somewhere shared, like a login node (observed directly with the same
+# pattern in fewshot_gen/beam_search_3step.py - see that file's history).
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+           "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS"):
+    os.environ.setdefault(_v, "1")
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "multi_objective"))
 from rdkit import Chem
 from main.toolmol import toolbox
