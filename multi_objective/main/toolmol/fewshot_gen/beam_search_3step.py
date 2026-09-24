@@ -1,20 +1,19 @@
 """Non-myopic beam search over 3 sequential tool calls, for the same 10 molecules used to
 build the few-shot demonstration library (regret_gpt54_v1.json / PICKS below).
 
-ASSUMPTION (load-bearing, not yet enforced by removing the mismatch it papers over):
-crossover_molecules only ever wins the beam at level 1, never level 2/3. This matters because
-at every beam level this script generates crossover_molecules candidates against *this node's*
-current working molecule combined with the snapshot's parent2 - which differs from the live
-agent's actual semantics (confirmed by reading agent.py's _agentic_edit): the live agent always
-calls crossover_molecules against the frozen original parent1, never the evolved working
-molecule, matching brute_force_gpt54.py's original convention. At level 1 the working molecule
-and parent1 are identical by construction, so the mismatch is inert there - but a crossover
-step winning at level 2/3 would be scored against the wrong base molecule and silently produce
-a wrong path. run_one_molecule() below asserts this can't happen rather than trusting it
-silently: a future run on different input molecules that DOES have crossover win beyond level 1
-will raise instead of writing a quietly-wrong beam3_results.jsonl entry. If that ever fires,
-this needs the real fix (generate crossover candidates against the frozen parent1 at every
-level, not the evolving working molecule) before rerunning.
+crossover_molecules always acts on the frozen original parent1 (never the evolving working
+molecule), matching the live agent's actual semantics (agent.py's _agentic_edit) - see the
+parent1 param threaded through _gen_candidates/_call_tool/expand/run_one_molecule below.
+
+This used to be a latent bug: an earlier version scored crossover_molecules candidates against
+*this node's* current working molecule instead. It stayed inert against the original 10 gpt-5.4
+molecules (crossover only ever won the beam at level 1 there, where the working molecule and
+parent1 happen to be identical by construction), but a subsequent run against gpt-oss-120b data
+hit a real case - snap_id 12 had crossover win at depth 3, scored against the wrong base
+molecule. _assert_crossover_only_at_step1() below (now a regression guard, not a documented
+limitation) is what caught it: it still runs on every result and will raise immediately if a
+future change to candidate generation ever reintroduces the mismatch, rather than silently
+writing a wrong beam3_results.jsonl entry.
 
 Beam search, not exhaustive: at each level, keep the global top BEAM candidates by delta
 (not per-branch), expand all of them at the next level. Not a proof of 3-step optimality -
@@ -84,7 +83,7 @@ def _ring_free_atom_indices(mol):
     return [a.GetIdx() for a in mol.GetAtoms() if any(not b.IsInRing() for b in a.GetBonds())]
 
 
-def _gen_candidates(mol, mol2_smi):
+def _gen_candidates(mol, mol1_smi, mol2_smi):
     n = mol.GetNumAtoms()
     for idx in range(n):
         for el in ELEMENTS:
@@ -104,24 +103,28 @@ def _gen_candidates(mol, mol2_smi):
             for frag in _group_smiles:
                 yield 'replace_substructure', {'anchor_idx': anchor, 'branch_idx': branch, 'new_substructure': frag}
 
+    # Matches the live agent (agent.py's _agentic_edit): crossover_molecules always acts on the
+    # frozen original parent1, never the evolving working molecule - so its candidate indices
+    # come from mol1_smi (constant across every beam level), not mol (this node's current smi).
     if mol2_smi:
+        mol1 = _Chem.MolFromSmiles(mol1_smi)
         mol2 = _Chem.MolFromSmiles(mol2_smi)
-        for i1 in _ring_free_atom_indices(mol):
+        for i1 in _ring_free_atom_indices(mol1):
             for i2 in _ring_free_atom_indices(mol2):
                 yield 'crossover_molecules', {'idx1': i1, 'idx2': i2}
 
 
-def _call_tool(tool_name, working_smi, mol2_smi, args):
+def _call_tool(tool_name, working_smi, mol1_smi, mol2_smi, args):
     if tool_name == 'crossover_molecules':
-        return _toolbox.crossover_molecules(working_smi, args['idx1'], mol2_smi, args['idx2'])
+        return _toolbox.crossover_molecules(mol1_smi, args['idx1'], mol2_smi, args['idx2'])
     return getattr(_toolbox, tool_name)(working_smi, **args)
 
 
 def _eval_one(task):
-    """task = (working_smi, mol2_smi, baseline_phi, tool_name, args) -> result dict or None"""
-    working_smi, mol2_smi, baseline_phi, tool_name, args = task
+    """task = (working_smi, mol1_smi, mol2_smi, baseline_phi, tool_name, args) -> result dict or None"""
+    working_smi, mol1_smi, mol2_smi, baseline_phi, tool_name, args = task
     try:
-        result = _call_tool(tool_name, working_smi, mol2_smi, args)
+        result = _call_tool(tool_name, working_smi, mol1_smi, mol2_smi, args)
     except Exception:
         return None
     if not result.success:
@@ -137,10 +140,11 @@ def _eval_one(task):
             'delta': phi - baseline_phi, 'raw': raw}
 
 
-def expand(pool, smi, mol2_smi, baseline_phi, chunksize=200):
+def expand(pool, smi, mol1_smi, mol2_smi, baseline_phi, chunksize=200):
     from rdkit import Chem
     mol = Chem.MolFromSmiles(smi)
-    tasks = [(smi, mol2_smi, baseline_phi, t, a) for t, a in _gen_candidates_main(mol, mol2_smi)]
+    tasks = [(smi, mol1_smi, mol2_smi, baseline_phi, t, a)
+             for t, a in _gen_candidates_main(mol, mol1_smi, mol2_smi)]
     n_tried = len(tasks)
     results = pool.map(_eval_one, tasks, chunksize=chunksize)
     results = [r for r in results if r is not None]
@@ -148,7 +152,7 @@ def expand(pool, smi, mol2_smi, baseline_phi, chunksize=200):
 
 
 # main-process copies (for building task lists without needing worker globals)
-def _gen_candidates_main(mol, mol2_smi):
+def _gen_candidates_main(mol, mol1_smi, mol2_smi):
     from rdkit import Chem
     n = mol.GetNumAtoms()
     for idx in range(n):
@@ -168,9 +172,11 @@ def _gen_candidates_main(mol, mol2_smi):
             yield 'remove_substructure', {'anchor_idx': anchor, 'branch_idx': branch}
             for frag in FG_SMILES_MAIN:
                 yield 'replace_substructure', {'anchor_idx': anchor, 'branch_idx': branch, 'new_substructure': frag}
+    # See _gen_candidates above: crossover always uses the frozen mol1_smi, not this node's mol.
     if mol2_smi:
+        mol1 = Chem.MolFromSmiles(mol1_smi)
         mol2 = Chem.MolFromSmiles(mol2_smi)
-        for i1 in _ring_free_atom_indices_main(mol):
+        for i1 in _ring_free_atom_indices_main(mol1):
             for i2 in _ring_free_atom_indices_main(mol2):
                 yield 'crossover_molecules', {'idx1': i1, 'idx2': i2}
 
@@ -180,28 +186,31 @@ def _ring_free_atom_indices_main(mol):
 
 
 def _assert_crossover_only_at_step1(path, snap_id):
-    """Enforces the module docstring's ASSUMPTION. A crossover_molecules step anywhere but
-    path[0] was scored against the evolving working molecule (this script's convention) rather
-    than the frozen parent1 (the live agent's actual convention) - see the docstring for why
-    that's wrong. Fail loudly here rather than silently writing a wrong result."""
+    """Regression guard, not a live limitation - crossover candidates are generated against the
+    frozen parent1 at every level now (see module docstring), so this should never fire. Kept as
+    a loud, immediate failure in case a future change to candidate generation reintroduces the
+    working-molecule-vs-parent1 mismatch this used to paper over, rather than silently writing a
+    wrong beam3_results.jsonl entry. A crossover step winning beyond depth 1 is not itself wrong
+    now - only the assertion's original premise (it can't happen) would be."""
     for depth, step in enumerate(path):
         if step['tool'] == 'crossover_molecules' and depth != 0:
             raise AssertionError(
-                f"[{snap_id}] crossover_molecules won the beam at depth {depth + 1} (path={path}) - "
-                f"violates the ASSUMPTION documented at the top of this file. This candidate was "
-                f"scored against the evolving working molecule, not the frozen parent1 the live "
-                f"agent actually uses, so its delta/smi are wrong. Fix crossover candidate "
-                f"generation to use the frozen parent1 at every beam level before proceeding.")
+                f"[{snap_id}] crossover_molecules won the beam at depth {depth + 1} (path={path}) "
+                f"- this should be scored correctly now (against the frozen parent1), so this "
+                f"assertion firing means a regression was introduced in candidate generation, "
+                f"not that this particular path is wrong. Check _gen_candidates/_gen_candidates_main "
+                f"still thread mol1_smi through unchanged from the evolving working molecule.")
 
 
 def run_one_molecule(pool, snap_id, snap, beam_width, log):
     working_smi = snap['working_smi_before']
+    parent1 = working_smi  # frozen for the whole search - see _gen_candidates' crossover note
     parent2 = snap['parent2']
     # compute baseline via a worker call to stay consistent with pool workers' objective defs
     base_phi, base_raw = pool.apply(_phi_and_raw, (working_smi,))
 
     t0 = time.time()
-    level1, n1 = expand(pool, working_smi, parent2, base_phi)
+    level1, n1 = expand(pool, working_smi, parent1, parent2, base_phi)
     for r in level1:
         r['path'] = [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'delta': r['delta']}]
     log(f"[{snap_id}] level 1: tried={n1} succeeded={len(level1)} ({time.time()-t0:.1f}s)")
@@ -211,7 +220,7 @@ def run_one_molecule(pool, snap_id, snap, beam_width, log):
     t1 = time.time()
     level2 = []
     for node in beam1:
-        res, n = expand(pool, node['smi'], parent2, base_phi)
+        res, n = expand(pool, node['smi'], parent1, parent2, base_phi)
         for r in res:
             r['path'] = node['path'] + [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'delta': r['delta']}]
         level2.extend(res)
@@ -222,7 +231,7 @@ def run_one_molecule(pool, snap_id, snap, beam_width, log):
     t2 = time.time()
     level3 = []
     for node in beam2:
-        res, n = expand(pool, node['smi'], parent2, base_phi)
+        res, n = expand(pool, node['smi'], parent1, parent2, base_phi)
         for r in res:
             r['path'] = node['path'] + [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'delta': r['delta']}]
         level3.extend(res)
