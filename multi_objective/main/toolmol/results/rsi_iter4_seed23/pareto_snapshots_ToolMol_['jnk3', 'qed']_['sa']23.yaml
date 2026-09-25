@@ -1,0 +1,34 @@
+gen_0004_oracle_52:
+  NC(=O)c1ccc(Nc2nccc(-c3ccccc3)n2)cc1:
+  - 2.5379894909719702
+  - 35
+  N#Cc1ccc(Nc2nccc(-c3ccccc3)n2)cc1:
+  - 2.4646595973388346
+  - 22
+  O=C(O)c1ccc(Nc2nccc(-c3ccccc3)n2)cc1:
+  - 2.4568830598784204
+  - 46
+  Cc1ccc(-c2ccnc(Nc3ccc(C(N)=O)cc3)n2)cc1:
+  - 2.4222115844682355
+  - 50
+  CNC(=O)c1ccc(Nc2nccc(-c3ccccc3)n2)cc1:
+  - 2.3982459977149193
+  - 36
+  c1ccc(Nc2nccc(-c3ccccc3)n2)cc1:
+  - 2.3970235067512253
+  - 21
+  O=C(Nc1nnc(-c2ccc(Br)cc2)s1)C1CC1:
+  - 1.845325114229893
+  - 8
+  C=CCc1ccccc1OCC(=O)Nc1ccc(OC)cc1:
+  - 1.7128898648898094
+  - 9
+  Cc1ccc([C@H](C)N(C)C(=O)Nc2cnn(C[C@H]3CCCO3)c2)cc1:
+  - 1.6936248281746908
+  - 2
+  CN(C)c1ncc2c(n1)CN(C(=O)[C@H]1CCCN1C(=O)c1cccnc1)CC2:
+  - 1.5865483977264487
+  - 10
+  NC(=O)c1cccc(CC[NH2+]C2C3CC4CC(C3)CC2C4)c1:
+  - 1.5134718935731928
+  - 3
