@@ -1,0 +1,46 @@
+gen_0005_oracle_56:
+  COc1ccc(C(=O)NCc2nnc(C(C)(C)C)s2)cc1:
+  - 1.8301668014430001
+  - 33
+  COc1ccc(C(=O)NN(C)C(=O)c2ccc(OC)cc2)cc1:
+  - 1.7799917786123014
+  - 47
+  CCc1nn(C)cc1C(=O)N[C@H](CC)c1ccncc1:
+  - 1.7160547987208976
+  - 18
+  CCc1nn(C)cc1C(=O)NC(CO)c1ccncc1:
+  - 1.686174843874416
+  - 50
+  COc1ccc(C(=O)CCN(C)C(=O)c2ccc(OC)cc2)cc1:
+  - 1.6600612803884616
+  - 56
+  CCNC(=O)c1cccnc1OCC(=O)c1cn(C)nc1CC:
+  - 1.6596937711584987
+  - 43
+  COc1ccc(C(=O)NCc2n[nH]c(=O)[nH]2)c(C)c1:
+  - 1.6348131692849486
+  - 46
+  O=[N+]([O-])c1ccc2nc(NCCc3ccncc3Cl)ccc2c1:
+  - 1.5343333591080726
+  - 35
+  O=C(Nc1ccc2cc([N+](=O)[O-])ccc2n1)c1ccncc1Cl:
+  - 1.5153840190755707
+  - 12
+  CCc1nn(C)cc1C(=O)COc1ncccc1C(=O)NCC1=CC(=O)C=N1:
+  - 1.5071624683527953
+  - 38
+  Cn1cc(CCNC(=O)c2ccc(-n3cnnn3)cc2)c2cc(F)ccc21:
+  - 1.4641710582131005
+  - 15
+  CCc1nn(C)cc1C(C(=O)Nc1ccc2cc(N([O-])[O-])ccc2n1)C1=NC(=O)N=N1:
+  - 1.3305251469544523
+  - 53
+  C=C(Nc1ccc2cc([N+](=O)[O-])ccc2n1)C(=O)NCCc1csc(-c2ccc(C)cc2)n1:
+  - 1.1743115709199328
+  - 45
+  CCc1nn(C)cc1C(NC(CC)c1ccncc1)C(=O)Nc1ccc2cc([NH+]([O-])[O-])ccc2n1:
+  - 1.0737422057868007
+  - 31
+  CCNC(=O)c1cccnc1OCC(CNc1ccc2cc([NH+]([O-])[O-])ccc2n1)c1cn(C)nc1CC:
+  - 1.071343253333572
+  - 51
