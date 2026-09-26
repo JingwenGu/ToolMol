@@ -56,9 +56,54 @@ there matters more than anything else in this brief:
 | **pyridin-4-yl** | **0.04** |
 
 A basic ring nitrogen pointing into this pocket is catastrophic — worse than removing the ring
-entirely. Sulfur is fine. Saturated rings lose about half the benefit, so the site wants an
-aromatic carbocycle specifically. **Do not reach for a pyridyl here to control lipophilicity;
-that instinct is correct for QED and destroys the binding.**
+entirely. Sulfur is fine. **Do not reach for a pyridyl here to control lipophilicity; that
+instinct is correct for QED and destroys the binding.**
+
+*Correction, and an important one.* Earlier versions concluded from the saturated-ring row that
+the site "wants an aromatic carbocycle specifically". That is wrong, and the error was reading a
+two-point comparison — benzene against cyclohexyl — as being about aromaticity when it was about
+conjugation. A five- or six-membered carbocycle carrying a C=C conjugated to the hinge scores
+like a benzene (~0.87 against ~0.86 in the context where both were measured), while the fully
+saturated version of that same ring collapses to ~0.59. What the pocket requires is a flat,
+conjugated ring attached directly — not an aromatic one.
+
+**It must be a ring, though — conjugation alone is not enough.** This is worth stating sharply
+because the obvious next inference from the paragraph above is wrong, and a whole generation was
+spent finding that out. If conjugation is the requirement, an open chain bearing the same double
+bond ought to do, and it does not:
+
+| pocket, everything else held constant | activity |
+|---|---|
+| five-membered ring with a C=N | 0.88 |
+| five-membered ring with a C=C | 0.87 |
+| nitrile | 0.66 |
+| vinyl | 0.64 |
+| isopropenyl | 0.62 |
+| but-1-en-2-yl | 0.57 |
+
+Every ring lands at 0.85–0.88; every chain loses about 0.22. Conjugation is necessary and
+ring-shaped bulk is the other half. Note that the chains have the *best* drug-likeness in the
+whole series — the isopropenyl gives the highest QED-plus-SA of any molecule ever built here —
+so the readable terms actively point the wrong way at this position. Do not follow them.
+
+**Inside the ring, nothing else matters.** Five compositions (all-carbon, imine, ether away from
+the double bond, enamine on the double bond, imine-plus-ether) and two ring sizes all score
+0.85–0.88. Heteroatoms move LogP and therefore QED, which is worth a few hundredths, but they do
+not move binding. Pick one for its polarity and stop; this position will not repay further
+sampling.
+
+**The 1,3 relationship between pocket and donor is required.** Moving the pocket to the 1,4
+position on the hinge — same atoms, QED identical to four decimal places — costs **0.88 → 0.29**.
+On a two-nitrogen hinge this cannot even be tested, because the alternative positions sit next
+to a ring nitrogen; it only becomes visible with a one-nitrogen hinge, and it is easy to carry
+the 1,3 arrangement forward for many runs without ever noticing it was never chosen.
+
+That distinction is worth real score rather than being a technicality. A non-aromatic pocket
+drops the molecule from three aromatic rings to two, and QED's aromatic-ring term is steep
+enough that this is worth more than 0.1 of QED — larger than the entire spread across every
+donor-ring substituent ever measured here. It is the single biggest QED gain available on this
+scaffold, and it was invisible for four runs because this section told the agent the pocket had
+to be aromatic.
 
 **3. Keep the two rings coplanar and directly bonded.** Substituents that twist the biaryl bond
 cost activity: fluorine on the pocket ring scores 0.69 para, 0.63 meta, 0.50 ortho. Inserting a
@@ -224,6 +269,89 @@ will cost you the best fragments available.
 - Adding a plain phenyl to a heteroaromatic *lowers* SA, consistently. A biaryl between two
   commodity rings reads as easy to make regardless of what it is attached to.
 
+## Read this before trusting any rule below: they are local, not universal
+
+Every structural rule in this brief was measured the same way — take one good molecule, change
+one thing, record what it costs. That is the right way to get an attributable number, and it is
+why the numbers here are trustworthy *as gradients at the point they were measured*. It is not
+evidence that the rule holds everywhere, and on this task at least one of them inverts.
+
+The clearest case. "Both hinge ring nitrogens are load-bearing" rests on dropping the distal one
+and watching activity collapse. It does, twice:
+
+| group on the donor ring | two-nitrogen hinge | one-nitrogen hinge |
+|---|---|---|
+| hydrogen | 0.70 | **0.12** |
+| a primary carboxamide | 0.85 | **0.28** |
+| a saturated N-linked heterocycle | 0.82 | **0.86** |
+
+In the third context the rule reverses. The same deletion that costs 0.58 twice *gains* 0.04
+once, and nothing about the first two measurements predicts it. The rule is real, conditional,
+and was written down as absolute.
+
+The practical consequence is specific and worth more than any single number here. **When two
+rules each forbid a change, that is not evidence the two changes are forbidden together.** Each
+was measured with the other feature held at its original value, so the joint case has never been
+observed. Regions that look doubly closed are exactly the regions nobody has tested, and on this
+scaffold that is where a better optimum sits: the pocket's requirement turns out to be
+conjugation rather than aromaticity (a non-aromatic ring bearing a C=C scores like a benzene,
+while the fully saturated version collapses), and dropping to two aromatic rings is worth more
+than 0.1 of QED — but only in combination with a hinge and donor that the single-variable rules
+say should not work.
+
+So: spend some budget deliberately violating two rules at once, especially when each rule's cost
+was measured on a molecule unlike the one you are building. Treat everything below as "this is
+what it cost there", not "this is what it costs".
+
+**How much of the gain needs the combination.** Once the better region was found, the obvious
+follow-up was to ask whether its three changes — conjugated non-aromatic pocket, one-nitrogen
+hinge, saturated N-linked donor — are separable. They are partly. Making only the pocket change
+on the older molecule, keeping its original hinge and donor, gives **0.58** against 0.85 for the
+original and 0.87 in the new region. So that one change recovers roughly half its value alone
+and needs the other two for the rest.
+
+That number took two attempts to get right, and the first attempt is the more instructive. I
+made the pocket change alone using an *open chain*, got 0.32, and concluded the three changes
+were an inseparable package. The chain penalty above is 0.22 on its own, so that experiment was
+measuring two things and I attributed all of it to one. **When an edit changes a feature that
+has its own known penalty, subtract that penalty before interpreting the result** — or better,
+make the edit in the form that carries no second penalty.
+
+**On finding regions at all.** Four runs and roughly two hundred designed molecules never left
+the first scaffold, because every single-variable step out of it looks fatal and the brief's
+rules said so. What found the better region was not an episode: it was a few minutes of cheap
+undirected search (`main/toolmol/ceiling_probe.py`) run between iterations, which located it in
+4,000 evaluations. Episodes are expensive and are good at *controlled comparison* — holding
+everything constant and moving one thing, which is what produced every reliable number in this
+brief. They are poor at search. Use the cheap search to find where to look, then use episodes to
+understand what you found.
+
+## Four rules that save whole episodes
+
+These come from dissecting one strong fragment with twelve single-variable edits. Each one rules
+out a class of edit in advance, which is worth more than any individual substituent result.
+
+**Nothing is additive.** Two copies of a recognised fragment, one on each ring, score *below*
+either copy alone (0.79 against 0.85 and 0.80). Two *different* recognised fragments, one per
+ring, also score below both (0.75 against 0.85 and 0.77). The activity model scores one
+arrangement; it does not count features. So do not build combinations hoping to stack gains —
+find the single best substituent and stop.
+
+**Adding anything to a molecule that already works costs more than the same group added to a
+bare one.** A fluorine on the pocket ring costs 0.03 when the donor ring is empty, but 0.08 once
+the donor ring carries a working fragment, and 0.18 when added to that donor ring alongside it.
+Budget for decoration is cheapest early and most expensive exactly when you most want it.
+
+**Recognition does not buy exemption from geometry — it is taxed harder.** Inert substituents
+lose about 0.20 moving off *para*; a recognised fragment lost 0.24 at meta and 0.32 at ortho.
+Never place a good fragment anywhere but para because the properties would prefer it elsewhere.
+
+**The hinge tolerates nothing — not substitution, not deletion, not fusion.** Beyond the
+substitution and deletion results above, fusing a benzo ring onto the far edge of the hinge
+while leaving the donor N–H, both ring nitrogens and the pocket untouched collapsed activity
+from 0.85 to **0.10**. Fused hinge cores are standard in real kinase chemistry and this model
+does not recognise them. Leave the hinge exactly as it is.
+
 ## Working method
 
 - You may issue several tool calls in one reply; they execute in order against the updated
@@ -239,6 +367,24 @@ will cost you the best fragments available.
   less QED than it appears it should, and a fourth aromatic ring costs far more.
 - When you have budget, prefer edits that differ from an existing molecule in exactly one
   respect. A matched pair answers a question; two molecules differing in three ways answer none.
+- **When a weight argument and a lipophilicity argument disagree, lipophilicity wins.** This
+  cost me four predictions in one run. Adding a methylene to reach QED's ~300 Da optimum looks
+  free and is not: on a molecule at LogP 3.7 it added 0.4 of LogP and cost 0.03 of QED, and the
+  five daltons returned nothing. Enlarging a donor ring by one atom did the same, 0.9 of LogP
+  for 0.03 of QED. Before adding any carbon for weight, price it as lipophilicity first.
+- **Assume your SA estimate is 0.2 too low for anything non-aromatic.** Six pocket rings in one
+  run, every prediction optimistic by 0.2 to 0.3. This model prices the specific ring-plus-
+  substitution pattern, not the ring: a trisubstituted dihydrofuran is not "a common fragment"
+  to it even though dihydrofuran is. Non-aromatic pockets appear to have a floor around SA 2.3
+  regardless of what you do, against ~1.8 for an aromatic one — that gap is the standing cost of
+  the aromatic-ring correction and it is worth paying, but budget for it rather than hoping.
+- **Do not predict QED for a functional group you have not already seen priced on this
+  scaffold.** The structural-alert term is invisible in the properties block, and it dominates
+  when it fires. An amidine was predicted at 0.70 and scored 0.51; a hydrazide at 0.68 and
+  scored 0.39 — both on standard alert lists, both at weights and donor counts where comparable
+  groups score 0.77. Prefer homologues of groups already measured when the point of the episode
+  is a binding comparison, and if you must try something exotic, check the result before
+  committing the episode: `undo_last_change` costs nothing and returns the modification.
 - **Before reading a ranking as a trend, check that it has a control.** This is the single
   costliest mistake made while producing this brief. Three substituted donor rings scored 0.47,
   0.53 and 0.58; that ordering was read as "larger and more polar is better" and four episodes

@@ -86,7 +86,55 @@ class GB_GA_Optimizer(BaseOptimizer):
                     jnk3 = f"  {obj.name} {obj.raw(smi):.2f}"
                     break
             lines.append(f"  {phi:.3f}{jnk3}  {smi}")
+        saturation = self._scaffold_saturation(scored)
+        if saturation:
+            lines.append(saturation)
         return "\n".join(lines)
+
+    # A scaffold is called saturated once this many molecules share it. Low enough to fire
+    # before a generation is wasted, high enough that a productive new region is not flagged
+    # while it is still being built out.
+    SATURATION_MIN = 8
+
+    def _scaffold_saturation(self, scored):
+        """Tell the agent when it is resampling a region that has stopped paying.
+
+        The prompt already lists the best molecules, but a list of good molecules that happen to
+        share a scaffold reads as encouragement rather than as a warning. Across five iterations
+        the dominant failure was not bad edits - it was spending whole generations sampling
+        substituents on a scaffold whose spread had already collapsed, because nothing in the
+        prompt distinguished "this region is rich" from "this region is exhausted".
+
+        Empty Murcko scaffolds (acyclic molecules) are skipped rather than pooled, since they
+        are not a structural class in any useful sense.
+        """
+        try:
+            from rdkit.Chem.Scaffolds import MurckoScaffold
+        except ImportError:
+            return ""
+        groups = {}
+        for smi, (phi, _idx) in scored.items():
+            mol = Chem.MolFromSmiles(smi)
+            if mol is None:
+                continue
+            try:
+                core = MurckoScaffold.MurckoScaffoldSmiles(mol=mol)
+            except (ValueError, RuntimeError):
+                continue
+            if not core:
+                continue
+            groups.setdefault(core, []).append(phi)
+        if not groups:
+            return ""
+        core, phis = max(groups.items(), key=lambda kv: len(kv[1]))
+        if len(phis) < self.SATURATION_MIN:
+            return ""
+        spread = max(phis) - min(phis)
+        return (f"  [{len(phis)} of these {len(scored)} share one scaffold, {core}, and span "
+                f"only {spread:.2f} of score. That region is largely mapped - a further "
+                f"substituent on it is likely to land in the same range. Consider changing the "
+                f"scaffold instead, including in ways individual rules advise against, since "
+                f"those rules were each measured with everything else held fixed.]")
 
     def _is_duplicate(self, smi):
         """Has this molecule already been produced or scored this run?
