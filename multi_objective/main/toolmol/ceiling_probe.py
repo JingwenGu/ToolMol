@@ -133,9 +133,27 @@ def run(n_evals=4000, pop=120, seeds=(), rng_seed=0):
                 children.append(child)
         population = population + children
 
-    rows = sorted(((v[0], v[1], k) for k, v in cache.items() if v[1]), reverse=True)
+    rows = rank(cache)
     print(f'\n{len(cache)} evaluations in {time.time() - t0:.0f}s')
     return rows
+
+
+def rank(cache):
+    """Best-first rows of (phi, parts, smiles) from a scorer cache.
+
+    Sorts on Phi alone, and that is the whole point of the function existing. The rows carry a
+    dict of per-objective parts, so a plain `sorted(..., reverse=True)` on the tuple falls through
+    to comparing those dicts whenever two molecules tie on Phi, raising TypeError - after the
+    entire search has run and with the results held only in memory.
+
+    Ties are near-certain past a few thousand evaluations and essentially impossible in a small
+    smoke test, so this failed on every real run and passed every quick check. It arrived when
+    this was refactored out of a scratch script whose tuple was all scalars. Kept as a named
+    function so a regression test can reach it without running a search; see
+    test_ceiling_probe_rank.py.
+    """
+    return sorted(((v[0], v[1], k) for k, v in cache.items() if v[1]),
+                  key=lambda r: r[0], reverse=True)
 
 
 def main():
@@ -148,9 +166,14 @@ def main():
                     help='SMILES to seed the population with, e.g. the agent run\'s best. '
                          'Repeatable. Seeding biases the probe toward refining what you already '
                          'have; omit it entirely for an unbiased look at what else exists.')
+    ap.add_argument('--rng', type=int, default=0,
+                    help='RNG seed. Run several unseeded probes with different values to test '
+                         'whether a ceiling is real: independent restarts converging on the same '
+                         'region is evidence the region is the optimum, whereas one seeded run '
+                         'converging on its own starting point is evidence of nothing.')
     args = ap.parse_args()
 
-    rows = run(args.n_evals, args.pop, tuple(args.seed))
+    rows = run(args.n_evals, args.pop, tuple(args.seed), rng_seed=args.rng)
     with open(args.out, 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f)
         w.writerow(['phi', 'jnk3', 'qed', 'sa', 'smiles'])

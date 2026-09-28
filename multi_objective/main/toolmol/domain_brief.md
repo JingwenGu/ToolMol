@@ -2,8 +2,29 @@
 
 Appended to the agent's system prompt via `--domain_brief`. Everything here was measured by
 running this task and watching the oracle respond, over five runs and ~250 designed molecules.
-It transfers *method and costs*, not answers: no winning molecule or fragment is named, because
-naming one lets a later run reproduce a result without searching and makes runs incomparable.
+
+**Who this is for.** A capable agent driving the tools episode by episode with no memory between
+episodes — in practice, a future session of the same operator who wrote it. It is not general
+guidance: iteration 6 tested it against a weaker backbone (same seed, same model, with and
+without this file) and the two arms were indistinguishable at top-10, with the brief *doubling*
+the tool-call failure rate. Its instructions presuppose an agent that can run controlled
+experiments across episodes and hold the results; one that cannot gets nothing from them. Do not
+assume it helps a model you have not measured it on.
+
+**Best molecules found so far**, named deliberately — earlier versions withheld them so runs
+could not reproduce a result without searching, which only made each cold-start session
+re-derive them:
+
+| Φ | molecule | jnk3 / QED / SA |
+|---|---|---|
+| **2.662** | `c1cc(C2=NCCC2)cc(Nc2ccc(N3CCOCC3)cc2)n1` | 0.88 / 0.939 / 2.41 |
+| 2.639 | `C1=C(c2ccnc(Nc3ccc(N4CCOCC4)cc3)c2)CCC1` | 0.87 / 0.914 / 2.31 |
+| 2.538 | `NC(=O)c1ccc(Nc2nccc(-c3ccccc3)n2)cc1` | 0.85 / 0.774 / 1.77 |
+
+A 12,000-evaluation `ceiling_probe.py` run tops out at 2.662 as well, so treat that as the
+region's ceiling. Beating it needs a *different* region, not a better substituent — start from
+the probe, not from an episode. And note the oracle recognises essentially one chemotype:
+SP600125, a real JNK3 inhibitor, scores 0.00, and the best of 4,000 library molecules is 0.32.
 
 ## 0. How to read every rule below
 
