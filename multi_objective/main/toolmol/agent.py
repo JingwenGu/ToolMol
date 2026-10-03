@@ -249,6 +249,58 @@ def _parse_local_response(text):
     return _Response(_Message(content=content or None, tool_calls=tool_calls))
 
 
+# --- "manual" backend ---------------------------------------------------------
+# Runs the exact same agent loop, but with the LLM round trip served over the
+# filesystem instead of an HTTP API: each turn is written out as a prompt file and the
+# assistant's reply is read back from a sibling JSON file. That lets an operator driving
+# the run (a human, or an LLM with shell access) BE the agent, with every other part of
+# ToolMol - toolbox dispatch, context injection, Pareto selection, oracle accounting -
+# untouched. Nothing here is reachable unless --llm_backend manual is passed.
+MANUAL_POLL_SECONDS = 2.0
+MANUAL_WAIT_SECONDS = float(os.environ.get("TOOLMOL_MANUAL_WAIT_SECONDS", 24 * 3600))
+
+
+def _render_messages(messages):
+    """Plain-text rendering of chat-completions messages, for the manual backend's prompt
+    file. Mirrors what an API-backed provider would receive, in a form a human/LLM reader
+    can act on directly."""
+    out = []
+    for m in messages:
+        role = m["role"]
+        if role == "tool":
+            out.append(f"[tool result | {m['tool_call_id']}]\n{m['content']}")
+            continue
+        header = f"[{role}]"
+        body = m.get("content") or ""
+        if m.get("tool_calls"):
+            calls = "\n".join(
+                f"  -> {tc['id']}: {tc['function']['name']}({tc['function']['arguments']})"
+                for tc in m["tool_calls"])
+            body = (body + "\n" if body else "") + calls
+        out.append(f"{header}\n{body}")
+    return "\n\n".join(out)
+
+
+def _parse_manual_response(payload, turn):
+    """Build the ._Response shape _agentic_edit expects from the operator's reply JSON:
+    {"content": <str|null>, "tool_calls": [{"name": ..., "arguments": {...}}, ...]}.
+    'arguments' may be given as a dict (convenient to write by hand) or as a JSON string,
+    the way a real provider returns it; both are normalized to the string form."""
+    if not isinstance(payload, dict):
+        raise ValueError("manual response must be a JSON object")
+    tool_calls = []
+    for i, call in enumerate(payload.get("tool_calls") or []):
+        name = call.get("name")
+        if not name:
+            raise ValueError(f"tool_calls[{i}] is missing 'name'")
+        arguments = call.get("arguments", {})
+        if not isinstance(arguments, str):
+            arguments = json.dumps(arguments)
+        tool_calls.append(_ToolCall(id=call.get("id") or f"call_{turn}_{i}",
+                                     name=name, arguments=arguments))
+    return _Response(_Message(content=payload.get("content"), tool_calls=tool_calls))
+
+
 def load_few_shot_messages(path):
     """Load a few-shot conversation history from a JSON file: a flat list of message dicts
     (role: user/assistant/tool) in the exact same shape _agentic_edit builds internally -
@@ -297,7 +349,16 @@ class ToolMolAgent:
         # the paper's literal "[PROTEIN TARGET]" phrasing applies once Boltz-2 is wired in).
         self.goal_description = "improve the configured objectives"
 
-        if backend in ("api", "responses"):
+        if backend == "manual":
+            # No client at all - see _create_manual. The exchange directory is taken from
+            # the environment rather than a new CLI flag so run.py stays a one-word change.
+            self.manual_dir = os.environ.get("TOOLMOL_MANUAL_DIR", "toolmol_manual_io")
+            os.makedirs(self.manual_dir, exist_ok=True)
+            self._manual_turn = 0
+            self._manual_episode = 0
+            self._manual_sent = 0
+            print(f"ToolMolAgent: manual backend, exchanging turns via {self.manual_dir}/", flush=True)
+        elif backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
                                   timeout=REQUEST_TIMEOUT_SECONDS, max_retries=0)
         elif backend == "transformers":
@@ -311,7 +372,7 @@ class ToolMolAgent:
             self.hf_model = AutoModelForCausalLM.from_pretrained(
                 model, torch_dtype="auto", device_map=device_map)
         else:
-            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', or 'transformers')")
+            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', 'transformers', or 'manual')")
 
     def edit_pair(self, mol1, score1, mol2, score2, mutation_rate=0.0):
         try:
@@ -333,6 +394,66 @@ class ToolMolAgent:
         if new_child is not None:
             new_child = mu.mutate(new_child, mutation_rate)
         return new_child
+
+    def _create_manual(self, messages):
+        """One agent turn, served over the filesystem. Writes the pending prompt and blocks
+        until the operator drops the reply next to it. No server round trip, so none of the
+        retry/rate-limit/deadline machinery below applies - same as _create_local."""
+        # A fresh episode is exactly the point where _agentic_edit has rebuilt `messages`
+        # from scratch (system + optional few-shot + the two-parent user prompt), so the
+        # live conversation is back to its first turn.
+        n_preamble = 2 + len(self.few_shot_messages or [])
+        if len(messages) == n_preamble:
+            self._manual_episode += 1
+            self._manual_sent = 0
+        self._manual_turn += 1
+        turn = self._manual_turn
+
+        stem = os.path.join(self.manual_dir, f"turn_{turn:05d}")
+        # Only the messages added since the previous turn go in the .txt prompt - the
+        # operator is a persistent conversational agent that already holds the earlier
+        # turns, so re-sending them every step would be pure duplication. The full message
+        # list is still written alongside it as .json, so the complete state an API-backed
+        # provider would have received is always recoverable.
+        new_messages = messages[self._manual_sent:]
+        self._manual_sent = len(messages)
+        header = (f"# ToolMol manual turn {turn} | episode {self._manual_episode} | "
+                  f"step {len([m for m in messages if m['role'] == 'assistant']) + 1}\n"
+                  f"# Reply by writing {stem}.response.json\n"
+                  f"#   {{\"content\": \"<reasoning, or FINAL ANSWER>\", "
+                  f"\"tool_calls\": [{{\"name\": ..., \"arguments\": {{...}}}}]}}\n")
+        with open(stem + ".json", "w", encoding="utf-8") as f:
+            json.dump(messages, f, indent=1)
+        tmp = stem + ".txt.partial"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(header + "\n" + _render_messages(new_messages) + "\n")
+        os.replace(tmp, stem + ".txt")  # atomic: the .txt only appears once fully written
+
+        response_path = stem + ".response.json"
+        print(f"    -> manual turn {turn} awaiting {response_path}", flush=True)
+        t0 = time.time()
+        reported_bad = None
+        while True:
+            if os.path.exists(response_path):
+                try:
+                    with open(response_path, encoding="utf-8") as f:
+                        payload = json.load(f)
+                    response = _parse_manual_response(payload, turn)
+                except (json.JSONDecodeError, ValueError) as e:
+                    # Keep waiting rather than aborting the episode: the operator can just
+                    # rewrite the file. Report each distinct problem once.
+                    if str(e) != reported_bad:
+                        reported_bad = str(e)
+                        print(f"    !! manual turn {turn}: unusable response ({e}); "
+                              f"rewrite {response_path}", flush=True)
+                    time.sleep(MANUAL_POLL_SECONDS)
+                    continue
+                print(f"    <- manual turn {turn} answered after {time.time() - t0:.0f}s", flush=True)
+                return response
+            if time.time() - t0 > MANUAL_WAIT_SECONDS:
+                raise TimeoutError(f"no manual response at {response_path} after "
+                                    f"{MANUAL_WAIT_SECONDS:.0f}s")
+            time.sleep(MANUAL_POLL_SECONDS)
 
     def _create_local(self, messages):
         # No server round-trip, so none of the OpenAI-specific retry/rate-limit/deadline
@@ -380,6 +501,8 @@ class ToolMolAgent:
         return box['response']
 
     def _create_with_retry(self, messages):
+        if self.backend == "manual":
+            return self._create_manual(messages)
         if self.backend == "transformers":
             return self._create_local(messages)
         if self.backend == "responses":
