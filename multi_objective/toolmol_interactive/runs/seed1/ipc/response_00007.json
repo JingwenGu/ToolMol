@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 here is the same pyrazolyl-acetamide/tetrahydroisoquinoline scaffold I worked on earlier, and ligand 2 (jnk3~0.03) is a tetrahydropyran-oxadiazole with SA 3.60 - a strained, low-accessibility piece I do not want to carry over, so no crossover. I will reuse the identical anchor on ligand 1 (cut the non-ring CH2-N bond 16-17 to drop the tetrahydroisoquinoline) but graft a different hinge binder this time: 7-azaindol-3-yl (1H-pyrrolo[2,3-b]pyridin-3-yl). Putting a second chemotype on the same host at the same position makes this a controlled test of which hinge binder this target actually recognizes, rather than a confounded change of both scaffold and motif. Azaindole also brings a donor NH plus pyridine-type acceptor, and keeps MW near 345.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 17,
+    "new_substructure": "[1*]c1c[nH]c2ncccc12"
+   }
+  }
+ ]
+}

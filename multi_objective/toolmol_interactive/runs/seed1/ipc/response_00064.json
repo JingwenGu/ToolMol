@@ -1,0 +1,13 @@
+{
+ "content": "The swap is clean and SA actually improved to 1.59, but LogP jumped to 4.08 because the pyridine nitrogen moved out of conjugation with the NH - which is itself a hint that the ortho arrangement was doing electronic work. QED is 0.761, again held down by the benzoyl. Atom 1 is the amide carbonyl and atom 16 is the ipso carbon of that phenyl, a non-ring bond, so I replace the ring with a methyl. The product is N-[4-(pyridin-3-ylamino)phenyl]acetamide at ~227 Da with LogP near 2.5, two aromatic rings and SA around 1.55. That makes it exactly matched to the pyridin-2-ylamino acetanilide I built earlier - same scaffold, same cap, same size, only the ring nitrogen position differs - so the pair isolates the regiochemistry question cleanly.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 1,
+    "branch_idx": 16,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

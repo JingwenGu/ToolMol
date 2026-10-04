@@ -1,0 +1,13 @@
+{
+ "content": "Both ligands are my own linker probes. Atom 0 on ligand 1 is the azine 4-methyl, the usual anchor, which restricts me to 4-methyl products - and the remaining 4-methyl tweaks are all worth less than a hundredth of Phi, so I would rather buy information. There is one number missing from the whole map. I have measured what happens when the anilide is moved, reversed, sulfonylated, thionated and turned into a urea, but never what happens when it is simply not there. Every molecule in three runs has had both an azine linkage and an acyl cap, so I cannot say how the activity divides between them: whether the azine does most of the work and the cap is a modifier, or whether both are needed together. Stripping the cap back to a free aniline answers that directly - the arylamine linkage, the meta geometry and the 4-methyl azine all stay exactly as they are, and only the cyclobutanecarboxamide goes. The molecule will be small at about 199 Da with three donors, so its Phi will not compete, but with activity already at its ceiling that is a reasonable trade for closing the last gap in the structure-activity map.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2cccc(N)c2)c1"
+   }
+  }
+ ]
+}

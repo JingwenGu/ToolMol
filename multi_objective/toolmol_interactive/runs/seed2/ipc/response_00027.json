@@ -1,0 +1,13 @@
+{
+ "content": "Self-pairing on my best-jnk3 molecule (0.43). I tried 4,6-dimethyl once already, but only on that fused thiazole-thione host which scored 0.06 and suppressed everything, so the substitution pattern itself was never actually tested - the result told me about context, not about the 4,6 pattern. Worth retesting properly on a clean benzene. Atom 19 is the cyclopropane CH of the acyl cap, bonded to the carbonyl at atom 1 over a non-ring bond, so anchoring there keeps those three carbons and discards the other nineteen atoms; the fragment I attach then rebuilds the acyl, the anilide, the central benzene and a 4,6-dimethylpyridine. C6 is the position on the far side of the ring nitrogen from the bridging NH, so this probes whether there is a second tolerated contact point, without disturbing either donor or the C4 group. Expected product: N-{4-[(4,6-dimethylpyridin-2-yl)amino]phenyl}cyclopropanecarboxamide at about 281 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 19,
+    "branch_idx": 1,
+    "new_substructure": "[1*]C(=O)Nc1ccc(Nc2cc(C)cc(C)n2)cc1"
+   }
+  }
+ ]
+}

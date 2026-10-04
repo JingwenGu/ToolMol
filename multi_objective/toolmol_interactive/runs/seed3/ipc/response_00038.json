@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the pyrimidin-2-yl probe at 0.23; atom 0 is its azine methyl over an acyclic bond. Activity on this chemotype is clearly capped - nothing I have built in three runs beats 0.52 - so with two episodes left in this generation I would rather finish decomposing the pharmacophore than chase another hundredth. I have now removed the cap and methylated the anilide nitrogen in other episodes; this one removes the azine ring nitrogen itself. Replacing the 4-methylpyridin-2-yl with a 4-methylphenyl leaves a plain diarylamine: the same two rings, the same conjugated N-H bridging them, the same meta anilide and cyclopropyl cap, the same molecular weight to within a dalton - and no ring nitrogen anywhere. Everything I believe rests on that nitrogen being ortho to the donor, but I have only ever established that by moving it, never by deleting it. Together with the other two controls this gives a clean accounting of what each piece of the molecule is worth. Expected product: about 266 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccc(Nc2cccc(NC(=O)C3CC3)c2)cc1"
+   }
+  }
+ ]
+}

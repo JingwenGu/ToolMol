@@ -1,0 +1,13 @@
+{
+ "content": "Both parents are active, so this is one case where their difference is informative rather than noise: ligand 2 reaches jnk3~0.10 but pays for it with QED 0.446 at 413 Da, while ligand 1 gets 0.08 at 319 Da with QED 0.672. Mass is clearly the wrong currency - the best Phi in the pool belongs to a 242 Da molecule. So I will upgrade the quality of the NH-azine link rather than add another ring system. Ligand 1 presents a plain pyrimidin-2-ylamino at atoms 15-21. I am replacing it with quinazolin-4-ylamino: the anilinoquinazoline is the archetypal ATP-competitive kinase recognition element, it keeps exactly the same single NH linker, and it is a fused electron-poor azine rather than a bare one. Atom 14 is the aromatic carbon carrying that nitrogen and the 14-15 bond is non-ring, so the swap is clean and costs only ~37 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 14,
+    "branch_idx": 15,
+    "new_substructure": "[1*]Nc1ncnc2ccccc12"
+   }
+  }
+ ]
+}

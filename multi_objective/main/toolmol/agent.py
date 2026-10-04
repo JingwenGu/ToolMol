@@ -249,6 +249,39 @@ def _parse_local_response(text):
     return _Response(_Message(content=content or None, tool_calls=tool_calls))
 
 
+# --- "interactive" backend: a human/agent operator stands in for the LLM ---------------
+# Same contract as every other backend (a _Response whose message carries .content /
+# .tool_calls / .reasoning), but the turn is served over the filesystem instead of over
+# HTTP: _create_interactive writes the exact message list the API backends would have
+# POSTed to request_<seq>.json inside TOOLMOL_INTERACTIVE_DIR, then blocks until an
+# operator drops the matching response_<seq>.json next to it. Nothing about the agent
+# loop, the toolbox, the oracle or the GA changes - only who produces the assistant turn.
+INTERACTIVE_DIR_ENV = "TOOLMOL_INTERACTIVE_DIR"
+INTERACTIVE_POLL_SECONDS = 0.25
+# Printed every so often while blocked so a stalled run is visible in the log. There is
+# deliberately no deadline here: the operator is a person/agent, not a server, and timing
+# them out would throw away a live episode.
+INTERACTIVE_HEARTBEAT_SECONDS = 60.0
+
+
+def _parse_interactive_response(payload):
+    """Build the _Response shape _agentic_edit expects from an operator-written response
+    file: {"content": str|None, "reasoning": str|None,
+           "tool_calls": [{"name": str, "arguments": dict|str}, ...]}.
+    arguments may be given as a JSON object (convenient to hand-write) or as the JSON
+    string the OpenAI API would return; both are normalized to the string form the loop
+    then json.loads()es, so an operator response and a provider response are handled by
+    exactly the same downstream code."""
+    tool_calls = []
+    for i, tc in enumerate(payload.get("tool_calls") or []):
+        arguments = tc.get("arguments", {})
+        arguments = arguments if isinstance(arguments, str) else json.dumps(arguments)
+        tool_calls.append(_ToolCall(id=tc.get("id") or f"call_{i}",
+                                    name=tc.get("name", ""), arguments=arguments))
+    return _Response(_Message(content=payload.get("content"), tool_calls=tool_calls,
+                              reasoning=payload.get("reasoning")))
+
+
 def load_few_shot_messages(path):
     """Load a few-shot conversation history from a JSON file: a flat list of message dicts
     (role: user/assistant/tool) in the exact same shape _agentic_edit builds internally -
@@ -300,6 +333,17 @@ class ToolMolAgent:
         if backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
                                   timeout=REQUEST_TIMEOUT_SECONDS, max_retries=0)
+        elif backend == "interactive":
+            # No client at all - see _create_interactive. The directory is read from the
+            # environment rather than threaded through run.py's argparse so that turning
+            # this backend on changes nothing about any existing call site's signature.
+            interactive_dir = os.environ.get(INTERACTIVE_DIR_ENV)
+            if not interactive_dir:
+                raise ValueError(f"backend='interactive' requires ${INTERACTIVE_DIR_ENV} to be set "
+                                 f"to a directory for the request/response files")
+            self.interactive_dir = interactive_dir
+            os.makedirs(self.interactive_dir, exist_ok=True)
+            self._interactive_seq = 0
         elif backend == "transformers":
             # Imported lazily so the "api" backend (the default) never requires torch/
             # transformers to be importable, let alone a GPU.
@@ -311,7 +355,8 @@ class ToolMolAgent:
             self.hf_model = AutoModelForCausalLM.from_pretrained(
                 model, torch_dtype="auto", device_map=device_map)
         else:
-            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', or 'transformers')")
+            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', "
+                             f"'transformers', or 'interactive')")
 
     def edit_pair(self, mol1, score1, mol2, score2, mutation_rate=0.0):
         try:
@@ -355,6 +400,46 @@ class ToolMolAgent:
         print(f"    <- local LLM call returned in {time.time() - t0:.1f}s", flush=True)
         return _parse_local_response(generated)
 
+    def _create_interactive(self, messages):
+        # No server round-trip and no deadline (see INTERACTIVE_HEARTBEAT_SECONDS): write
+        # the turn out, wait for the operator's answer, parse it into the same shape every
+        # other backend returns. The request file is written to a temp name and renamed so
+        # a reader polling the directory never sees a half-written request.
+        self._interactive_seq += 1
+        seq = self._interactive_seq
+        req_path = os.path.join(self.interactive_dir, f"request_{seq:05d}.json")
+        resp_path = os.path.join(self.interactive_dir, f"response_{seq:05d}.json")
+        tmp_path = req_path + ".tmp"
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            json.dump({"seq": seq, "model": self.model, "messages": messages,
+                       "tools": [s["function"]["name"] for s in TOOL_SCHEMAS]}, f, indent=1)
+        os.replace(tmp_path, req_path)
+
+        t0 = time.time()
+        print(f"    -> interactive turn {seq} awaiting operator ({len(messages)} messages) "
+              f"at {req_path}", flush=True)
+        next_heartbeat = INTERACTIVE_HEARTBEAT_SECONDS
+        while not os.path.exists(resp_path):
+            time.sleep(INTERACTIVE_POLL_SECONDS)
+            waited = time.time() - t0
+            if waited >= next_heartbeat:
+                print(f"    .. still waiting on {os.path.basename(resp_path)} "
+                      f"({waited:.0f}s)", flush=True)
+                next_heartbeat += INTERACTIVE_HEARTBEAT_SECONDS
+        # A rename-based writer makes the file appear complete, but tolerate a plain
+        # non-atomic write too by retrying a truncated/partial JSON read briefly.
+        for _ in range(40):
+            try:
+                with open(resp_path, encoding="utf-8") as f:
+                    payload = json.load(f)
+                break
+            except (json.JSONDecodeError, ValueError):
+                time.sleep(INTERACTIVE_POLL_SECONDS)
+        else:
+            raise ValueError(f"could not parse {resp_path} as JSON")
+        print(f"    <- interactive turn {seq} answered after {time.time() - t0:.1f}s", flush=True)
+        return _parse_interactive_response(payload)
+
     def _call_with_deadline(self, request_fn):
         """Run request_fn() (a client.*.create(...) call) in a daemon thread and enforce a
         hard wall-clock deadline via Thread.join(timeout=...), independent of whatever the
@@ -380,6 +465,8 @@ class ToolMolAgent:
         return box['response']
 
     def _create_with_retry(self, messages):
+        if self.backend == "interactive":
+            return self._create_interactive(messages)
         if self.backend == "transformers":
             return self._create_local(messages)
         if self.backend == "responses":

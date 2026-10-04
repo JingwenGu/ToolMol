@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the methylamino molecule - top activity at 0.61, drug-likeness only 0.788. Its canonical ordering runs methyl 0, nitrogen 1, azine 2 to 6 and 20, bridging nitrogen 7, central ring 8 to 12 and 19, then the anilide at 13 to 15 with the cyclopropane at 16 to 18 - so atom 16 is the cap ring CH bonded to the carbonyl at atom 14. Anchoring there keeps the best cap and frees the azine. I am putting a cyclopropyl at C4. The reading from ten substituents is that the position wants to be occupied by something larger than a methyl and is close to indifferent to electronics, and a cyclopropyl is the cheapest way to deliver bulk: all carbon, no heteroatom, no polar surface, no extra donor, and only 293 Da in total - 53 lighter than the bromine molecule. If occupancy really is the whole story this should carry full activity at a lower weight than anything else I have tried, which is exactly the trade Phi rewards now that jnk3 has capped.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 14,
+    "new_substructure": "[1*]C(=O)Nc1cccc(Nc2cc(C3CC3)ccn2)c1"
+   }
+  }
+ ]
+}

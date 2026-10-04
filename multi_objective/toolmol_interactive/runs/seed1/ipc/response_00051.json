@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 has the higher QED (0.910) but its SA is 2.80 and it has a stereocentre, so it is a worse starting point than ligand 1, which already carries activity (jnk3~0.07) with QED 0.875. The binding constraint on ligand 1 is SA 2.267 plus TPSA 95, both driven by the methanesulfonyl azetidine at atoms 0-6 and 21 - 136 Da of saturated sulfonamide contributing no aryl-NH linkage. Atom 7 is the exocyclic amide carbonyl and the 7-6 bond is non-ring, so I swap that whole group for a cyclopropyl, giving N-[4-(1H-pyrazol-3-yl)phenyl]cyclopropanecarboxamide at ~227 Da. Cyclopropanecarboxamide is a common, cheap acyl cap: it keeps molecular weight in the band QED likes rather than dropping to the ~200 a plain acetyl would give, holds LogP near 2.1, cuts TPSA to about 70 and rotatable bonds to 2, and should bring SA under 1.9 - while the anilide NH and pendant pyrazole that earned the 0.07 are untouched.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 6,
+    "new_substructure": "[1*]C1CC1"
+   }
+  }
+ ]
+}

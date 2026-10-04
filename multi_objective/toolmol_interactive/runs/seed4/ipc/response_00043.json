@@ -1,0 +1,13 @@
+{
+ "content": "This is the finding of the run. Putting a phenyl at the azine C4 took jnk3 to 0.70, far above the 0.56-to-0.61 band that ten other substituents all landed in - so the position was never a small pocket and the size ceiling I thought I had found was an artefact of only ever trying compact groups. Flat aromatic bulk is worth far more there than saturated bulk: a cyclopropyl at the same position managed only 0.57. The problem is entirely drug-likeness - this molecule is 372 Da at LogP above 5, so QED collapsed to 0.623 and its Phi of 2.220 is well short of my best. The fix is to keep the ring and make it polar. Atom 11 is the azine carbon bearing the phenyl at atom 12 over a non-ring biaryl bond, so I swap the benzene for a pyridin-3-yl: same size, same shape, same flat aromatic character, but roughly a log unit less lipophilic and with an extra acceptor. If the 0.70 survives the nitrogen, QED should recover into the 0.8s and this becomes the best molecule of the project. I will change the cap next.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 11,
+    "branch_idx": 12,
+    "new_substructure": "[1*]c1cccnc1"
+   }
+  }
+ ]
+}

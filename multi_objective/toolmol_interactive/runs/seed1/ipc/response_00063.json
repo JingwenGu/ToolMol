@@ -1,0 +1,13 @@
+{
+ "content": "Working on ligand 1 again. Every productive link I have built puts the azine nitrogen immediately adjacent to the bridging NH - pyridin-2-ylamino and pyrimidin-2-ylamino both do - which means the NH and the ring N form a coplanar donor/acceptor pair, the classic kinase hinge arrangement. I have never tested moving that nitrogen away, and the answer changes how I design every future molecule: if adjacency is required, the 2-amino regiochemistry is non-negotiable, and if it is not, then any pyridine isomer will do and I have far more positions to decorate. Atom 6 is the aromatic carbon bearing the arylamine at atom 7, a non-ring bond, so I cut it and attach pyridin-3-ylamino instead - same atom count, same donor, same monocyclic azine, with the ring nitrogen moved from ortho to meta relative to the NH. Nothing else about the molecule changes.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 6,
+    "branch_idx": 7,
+    "new_substructure": "[1*]Nc1cccnc1"
+   }
+  }
+ ]
+}

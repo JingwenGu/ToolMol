@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is a 384 Da thiazole acetamide with QED 0.610, LogP 4.82 and no activity; ligand 2 is the bis-piperidine sulfonamide, also dead. No crossover. What ligand 1 does have is atom 24, the cyclopropane CH bonded to the amide nitrogen at atom 15 over a non-ring bond - so anchoring there keeps just the three cyclopropane carbons and discards the other 24 atoms, and whatever I attach lands directly on a cyclopropyl. That is exactly the cap my best molecule uses, so in one modification I get a cyclopropanecarboxamide bearing the link. The variable I am testing is where the methyl sits on the pyridine. At the 4-position it was worth about +0.13; I have no idea whether that is a specific contact or just bulk tolerance, and moving it to the 5-position - adjacent to the ring nitrogen on the other side, still well away from both donors - separates those. Expected product: N-{4-[(5-methylpyridin-2-yl)amino]phenyl}cyclopropanecarboxamide at about 267 Da, differing from my leader only in that methyl position.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 24,
+    "branch_idx": 15,
+    "new_substructure": "[1*]C(=O)Nc1ccc(Nc2ccc(C)cn2)cc1"
+   }
+  }
+ ]
+}

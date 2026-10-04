@@ -1,0 +1,13 @@
+{
+ "content": "Self-pairing on the phenyl molecule. Atom 1 is the carbonyl, atom 22 the cyclopentane CH, and the phenyl sits at atom 12 on azine carbon 11. Cap first again, so the azine numbering survives: cyclopentyl down to cyclopropyl, 28 Da and about a log unit, activity-neutral.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 1,
+    "branch_idx": 22,
+    "new_substructure": "[1*]C1CC1"
+   }
+  }
+ ]
+}

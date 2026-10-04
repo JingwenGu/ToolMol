@@ -1,0 +1,13 @@
+{
+ "content": "QED jumped to 0.859 and SA improved to 2.07 just from that swap. Step 2 adds the fluorine. Atom 21 is an aromatic CH ortho to atom 13, which bears the arylamine, and meta to atom 10, which bears the anilide - the same substitution pattern as my leader, where that single fluorine appears to be worth real activity. The ring CH hydrogen is implicit, so the new bond displaces it.",
+ "tool_calls": [
+  {
+   "name": "add_atom",
+   "arguments": {
+    "idx": 21,
+    "element": "F",
+    "bond": "single"
+   }
+  }
+ ]
+}

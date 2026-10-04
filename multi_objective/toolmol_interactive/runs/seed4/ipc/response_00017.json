@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the charged amidine at QED 0.531, ligand 2 the toluamide host I have used twice - neither active. Atom 0 on ligand 1 is the terminal methyl of its ethyl, the anchor. This extends the linear arm of the C4 scan. A nitrile scored 0.58 and I am testing a bare ethynyl separately; a propynyl is the same linear sp-carbon arm with one more methyl on the end, so it reaches further from the ring while staying narrow. Together the three of them - nitrile, ethynyl, propynyl - tell me whether that direction has an optimum length or just keeps paying, which matters because every other good C4 group so far has been compact. It is also cheap: 291 Da and no polar surface added, so unlike the sulfonyl and iodine probes it stays in the drug-like window and could compete on Phi. The surviving methyl becomes the alkyne's terminal methyl, which is exactly the shape this host makes easy.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]C#Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"
+   }
+  }
+ ]
+}

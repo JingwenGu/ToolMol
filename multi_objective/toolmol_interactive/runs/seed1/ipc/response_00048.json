@@ -1,0 +1,13 @@
+{
+ "content": "I have established that jnk3 rises with the number of aryl-NH-(hetero)aryl linkages, but not whether what matters is the N-H donor itself or merely the nitrogen bridge joining two rings. That distinction decides every future design: if the donor is essential I must protect those NH groups, and if it is not, I can methylate them and gain QED for free, because removing a donor and lowering TPSA is exactly what QED rewards. Ligand 1 (jnk3~0.08) lets me set that test up. Step 1: methylate the pyrimidin-2-ylamino nitrogen at atom 15 by adding a single carbon to it. Its hydrogen is implicit, so adding the methyl simply replaces it and the nitrogen stays trivalent. The linkage topology - aryl, N, pyrimidinyl - is completely preserved; only the donor hydrogen is gone.",
+ "tool_calls": [
+  {
+   "name": "add_atom",
+   "arguments": {
+    "idx": 15,
+    "element": "C",
+    "bond": "single"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is an indole dipeptide with two stereocentres at SA 3.37; atom 0 is the terminal methyl of its N-ethyl, over an acyclic bond and well away from either stereocentre, so it is a clean anchor. This is the donor end of the C4 scan. A methoxy there scored 0.53 to 0.54, which already showed donors are not disqualified, but methoxy donates through oxygen and has no hydrogen of its own. A methylamino donates more strongly and brings an N-H - and this whole series lives or dies on N-H donors, since deleting either of the two it already has takes activity to zero. If there is a third interaction available near that position, this is the group that would find it. It also takes about a log unit off lipophilicity relative to the bromine molecule and keeps the weight low at 282 Da, so it is a plausible Phi contender rather than only a probe. Surviving methyl becomes the N-methyl.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]Nc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"
+   }
+  }
+ ]
+}

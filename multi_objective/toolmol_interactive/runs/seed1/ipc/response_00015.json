@@ -1,0 +1,13 @@
+{
+ "content": "The anilinopyrimidine is in and SA is still excellent at 1.96, but QED dropped 0.716 -> 0.581: MW 379, LogP 3.56, 7 rotatable bonds, TPSA 97. The two methoxys on the left-hand ring are the cheapest thing to lose - they add 60 Da, two acceptors and two rotatable bonds while doing nothing for the pharmacophore. Rather than deleting them one at a time, I can cut the non-ring CH2-aryl bond 6-5 and put a plain phenyl back, which removes all ten atoms of the dimethoxyphenyl in a single modification. That should give 1-benzyl-3-[4-(pyrimidin-2-ylamino)phenyl]urea at ~319 Da: 5 rotatable bonds, TPSA near 79, LogP near 3.3, and the urea + anilinopyrimidine pair intact as the whole point of this probe.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 6,
+    "branch_idx": 5,
+    "new_substructure": "[1*]c1ccccc1"
+   }
+  }
+ ]
+}

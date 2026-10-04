@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 has the better profile (QED 0.91) but it is the second candidate, not my working molecule, and it is jnk3-inactive, so there is nothing in it worth crossing in. Ligand 1 is the host. Its primary carboxamide at atoms 0-2 is a liability: two H-bond donors and high TPSA for no activity benefit. I will cut the non-ring aryl-carbonyl bond 3-1 to remove it and attach an N-linked pyrimidin-2-ylamino group in its place, which converts the benzene into a 2-anilinopyrimidine - the single most recurrent ATP-competitive kinase chemotype, giving the hinge NH donor plus two pyrimidine acceptors. Net: donors drop from 2 to 2 but TPSA falls, LogP stays near 2.5, MW ~392. Note this anchors on an aromatic carbon rather than an aromatic nitrogen, which is what broke an earlier attempt.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 3,
+    "branch_idx": 1,
+    "new_substructure": "[1*]Nc1ncccn1"
+   }
+  }
+ ]
+}

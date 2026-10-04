@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the aryl urea at jnk3 0.06 again, ligand 2 a fluoro ester - no crossover worth making. Atom 0 is a dimethylamino methyl over an acyclic bond. Every cap I have tested is a saturated carbocycle, and all of them - cyclopropyl, cyclobutyl, cyclopentyl, oxetanyl - score identically, which told me ring size is irrelevant but not whether the cap could do real work. This episode gives it a ring that can. A picolinamide cap puts a pyridine on the carbonyl with its ring nitrogen ortho to the carbonyl, so the molecule now presents two ortho-nitrogen azines instead of one: the established one on the arylamine, and a second at the far end. That is a direct test of whether the feature that earns activity is additive when placed somewhere genuinely different, as opposed to the bis-arylamine I tried before, which simply duplicated the same linkage and cost more QED than it gained. The cost here is about 3 Da over the cyclobutyl cap plus a third aromatic ring, so QED will fall to roughly 0.80 - meaning this only wins if jnk3 moves well past 0.52. Surviving methyl becomes the pyridine 4-methyl.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2cccc(NC(=O)c3ccccn3)c2)c1"
+   }
+  }
+ ]
+}

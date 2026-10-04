@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is my reference molecule; atom 14 is the cap cyclopropane CH bonded to the carbonyl at atom 12 over a non-ring bond, so anchoring there holds the cap at cyclopropyl, which has the best SA of any cap I measured. This is the full stack of everything that measured positive, on one molecule. Meta anilide rather than para: +0.09, the largest single effect in the series. A methyl on the central ring ortho to the anilide and para to the arylamine: +0.03. A chlorine at pyridine C4: activity-equivalent to methyl but the best QED of that whole set at 0.898, so it is a free drug-likeness gain. And nothing at pyridine C3, C5 or C6, nothing replacing the central benzene, both N-H donors unsubstituted - all positions where I measured collapses. If the meta and central-methyl effects are additive, this should land near jnk3 0.53 with QED around 0.90 and SA under 2, which would put Phi above 2.32. Expected product: about 302 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 14,
+    "branch_idx": 12,
+    "new_substructure": "[1*]C(=O)Nc1cc(Nc2cc(Cl)ccn2)ccc1C"
+   }
+  }
+ ]
+}

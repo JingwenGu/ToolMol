@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is the charged azetidine-piperazinium I have already seen: QED 0.634, SA 3.80, no aromatic rings, jnk3 zero. Crossing it in would only import bad SA. Ligand 1 is the pyrazolyl-acetamide host I have used twice before, at the same anchor (cut non-ring CH2-N bond 16-17 to drop the tetrahydroisoquinoline), which lets me run a controlled comparison. Earlier I put a bare 2-aminopyrimidin-4-yl there. The open question is whether a single small heteroaryl is enough for a fingerprint-based activity model, or whether it needs a larger, more complete pharmacophore. So this time I graft the full 4-(2-aminopyrimidin-4-yl)anilino unit instead: aryl-NH linker plus biaryl aminopyrimidine, which reproduces the whole hinge-binder-plus-aniline arrangement of real anilinopyrimidine kinase inhibitors rather than just its tip. MW ~413, still well inside the 700 ceiling, and it is the same host and same attachment point as the small-graft version, so the difference in outcome is attributable to graft size alone.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 17,
+    "new_substructure": "[1*]Nc1ccc(-c2ccnc(N)n2)cc1"
+   }
+  }
+ ]
+}

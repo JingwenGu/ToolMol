@@ -1,0 +1,13 @@
+{
+ "content": "Neither parent is good: ligand 2 has SA 4.57, and ligand 1 is a benzothiazole-2-thione whose benzo ring is fused, so since ring bonds cannot be cut, every offspring I make from it will keep that core. There is no clean molecule reachable here. So I will get information instead. Every active molecule I have measured presented the pharmacophore on a plain benzene; I do not know whether the aryl-N(H)-azine link works on any aryl ring or whether the rest of the molecule has to be unremarkable. This host answers that. Its benzo ring carries an ethoxy at atom 3 and has free CH positions at 4, 5 and 8, with 6 and 7 being the fusion carbons. Step 1: cut the non-ring 3-2 bond to drop the ethoxy and attach 4,6-dimethylpyridin-2-ylamino - which also tests a second ring methyl, since one 4-methyl was worth about +0.13 and I have never tried two.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 3,
+    "branch_idx": 2,
+    "new_substructure": "[1*]Nc1cc(C)cc(C)n1"
+   }
+  }
+ ]
+}

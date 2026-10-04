@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the cyclobutanecarboxamide variant and ligand 2 the 4-methoxy one, both at Phi 2.213. Ligand 1 is differs from my reference molecule only in having a four-membered cap ring instead of three, so its atom numbering through the cap carbon is the same: atom 14 is the cyclobutane CH bonded to the carbonyl at atom 12 over a non-ring bond. That anchor keeps the whole cyclobutane, which is exactly what I need, because the test is on the pyridine C4 substituent, not the cap. The C4 size series so far reads methyl 0.41, cyclopropyl 0.43 - a hint that slightly more bulk helps, while the linear ethyl 0.36 and branched isopropyl 0.32 both hurt, so what matters looks like a compact ring rather than volume per se. Cyclobutyl is the next ring up and the obvious next point. I attach the fragment through a pyridine C4 so the surviving cyclobutane becomes the C4 substituent, and the fragment restores a cyclopropanecarboxamide cap so the cap is held at its reference value. Expected product: N-{4-[(4-cyclobutylpyridin-2-yl)amino]phenyl}cyclopropanecarboxamide at about 307 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 14,
+    "branch_idx": 12,
+    "new_substructure": "[1*]c1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1"
+   }
+  }
+ ]
+}

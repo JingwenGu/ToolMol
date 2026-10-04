@@ -1,0 +1,13 @@
+{
+ "content": "Now remove the methanesulfonyl azetidine, which is 136 Da of saturated sulfonamide holding SA at 2.27 and TPSA at 95 while contributing no NH-azine link. Atom 7 is the exocyclic amide carbonyl and the 7-6 bond to the azetidine ring carbon is non-ring. I will attach a cyclopropyl rather than a methyl: a plain methyl would reproduce the acetanilide I have already made, whereas cyclopropanecarboxamide is a distinct, equally cheap acyl cap that keeps molecular weight at ~253 - nearer the band QED rewards than 227 - with LogP around 2.6 and only 2 rotatable bonds.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 6,
+    "new_substructure": "[1*]C1CC1"
+   }
+  }
+ ]
+}

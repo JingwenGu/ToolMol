@@ -1,0 +1,13 @@
+{
+ "content": "Self-pairing, and atom 0 is the azine 4-methyl over an acyclic bond. The single most informative episode of run 1 was a control built to fail: methylating the arylamine N-H took jnk3 from 0.10 to exactly 0.00 and proved that donor is required outright. But I only ever did that to one of the two nitrogens. The anilide N-H has never been methylated, so I have been assuming it is equally essential without evidence - and the one time I assumed symmetry like this, with meta and para, I was wrong. This episode places the surviving methyl on the anilide nitrogen, making it a tertiary amide, and leaves everything else exactly as it is: the arylamine N-H free, the meta geometry, the 4-methyl azine with bare C3 and C6, the cyclopropyl cap. If activity collapses, both donors are required and the pharmacophore is fully pinned. If it survives, the anilide is doing something other than donating, and removing that donor is worth real QED - the arylamine methylation raised QED to 0.896 even as it killed activity. A control that is cheap either way.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]N(C(=O)C1CC1)c1cccc(Nc2cc(C)ccn2)c1"
+   }
+  }
+ ]
+}

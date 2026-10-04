@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the 4-methoxy variant; atom 0 is its methoxy methyl over an acyclic bond, so anchoring there keeps one carbon and discards everything else. The activity side of this series is close to saturated - C4 is insensitive among compact groups, C5 is harmful, the cap is flat across cyclopropyl, cyclobutyl and cyclopentyl - so Phi is now limited by drug-likeness rather than by jnk3, with QED topping out around 0.89 and the SA term around 0.91. That makes an isosteric cap swap the best-expected-value move I have: an oxetane-3-carboxamide is the direct oxygen isostere of the cyclobutanecarboxamide that gave me the best QED of the run, with essentially the same shape and ring size but about a log unit less lipophilic, which is exactly the direction QED rewards from LogP 3.2. Since cap ring size measured activity-neutral three times over, I expect jnk3 to hold near 0.41 while QED improves. The surviving methyl becomes the pyridine 4-methyl. Expected product: about 283 Da, LogP near 2.2.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2ccc(NC(=O)C3COC3)cc2)c1"
+   }
+  }
+ ]
+}

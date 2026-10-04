@@ -1,0 +1,13 @@
+{
+  "seed": 2,
+  "budget": 50,
+  "config": "/Users/gujw/Desktop/Research/AI4S/RSI/RSI_context_and_memory/multi_objective/toolmol_interactive/hparams_interactive.yaml",
+  "max_obj": [
+    "jnk3",
+    "qed"
+  ],
+  "min_obj": [
+    "sa"
+  ],
+  "started": "2026-10-03 12:27:41"
+}

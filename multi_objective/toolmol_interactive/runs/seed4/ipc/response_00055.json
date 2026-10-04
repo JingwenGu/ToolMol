@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the phenyl molecule again - the most active thing I have made at 0.70, and the least drug-like of my good molecules at QED 0.623. Atom 11 carries the phenyl at atom 12; atom 22 is the cyclopentane CH on the carbonyl at atom 1. Step one swaps the benzene for a pyridazin-4-yl: two adjacent ring nitrogens, the most polar six-membered aromatic available, worth well over two log units against benzene. I am deliberately choosing a six-atom fragment so the atom count is unchanged and the cap numbering stays put for the second cut.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 11,
+    "branch_idx": 12,
+    "new_substructure": "[1*]c1ccnnc1"
+   }
+  }
+ ]
+}

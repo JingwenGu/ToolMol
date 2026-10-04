@@ -1,0 +1,49 @@
+gen_0003_oracle_38:
+  O=C(Nc1cccc(Nc2cc(Br)ccn2)c1)C1CC1:
+  - 2.379872333434997
+  - 13
+  N#Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1:
+  - 2.365994720119646
+  - 16
+  COc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1:
+  - 2.326137635431513
+  - 12
+  O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CC1:
+  - 2.3252035863966576
+  - 1
+  O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1CC1:
+  - 2.3240826131763863
+  - 10
+  O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1CCC1:
+  - 2.3156835206086557
+  - 2
+  COc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1:
+  - 2.314184728690144
+  - 15
+  Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1:
+  - 2.2861215946050635
+  - 3
+  Cc1ccnc(Nc2cccc(NC(=O)C3COC3)c2)c1:
+  - 2.2818866944761496
+  - 4
+  O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1COC1:
+  - 2.2797585932746776
+  - 14
+  O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1COC1:
+  - 2.2768454047476645
+  - 11
+  Cc1cc(Nc2cccc(NC(=O)C3CCC3)c2)ncn1:
+  - 2.2291707037237005
+  - 5
+  Cc1ccnc(Nc2cccc(C(=O)NC3CCC3)c2)c1:
+  - 2.163470148070016
+  - 6
+  Cc1ccnc(Nc2cccc(N(C)C(=O)C3CC3)c2)c1:
+  - 2.1608374860059962
+  - 7
+  Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)n1:
+  - 2.030046088339085
+  - 8
+  Cc1ccc(Nc2cccc(NC(=O)C3CC3)c2)cc1:
+  - 1.8493897285881895
+  - 9

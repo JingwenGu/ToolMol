@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the N-methyl control again, and atom 16 is its cyclopropane CH bonded to the carbonyl at atom 14 - the anchor that holds the best cap fixed. Fluorine and chlorine both measured 0.53 at C4, against 0.49 for methyl, so the position prefers a halogen but is indifferent between two halogens that differ by a factor of three in volume. Bromine extends that line: if it also lands at 0.53, the position is reading something all three halogens share and none of the alkyls do, and I can stop scanning it. If bromine falls off, there is a size limit after all and chlorine sits near it. On Phi, bromine should lose to fluorine - it is 61 Da heavier and considerably more lipophilic on a molecule already at LogP 4.2, so QED will drop a couple of hundredths - which makes this a characterisation call rather than a contender. That is the right trade with the position otherwise mapped. Expected product: about 332 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 14,
+    "new_substructure": "[1*]C(=O)Nc1cccc(Nc2cc(Br)ccn2)c1"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Self-pairing again, so pure mutation on the best molecule in the pool (Phi 1.829). Its two NH groups are not equivalent: the pyrimidin-2-ylamino NH at atom 10 sits directly on the arene and is conjugated into it, but the amide NH at atom 3 is held one CH2 away from the ring by atom 4, so it is an aliphatic amide, not an anilide. If what the model reads is an aryl-NH-(hetero)aryl linkage, then making that second NH a true anilide should be worth more than anything else I can do for 14 Da. Atom 5 is the aromatic carbon carrying the CH2 and the 5-4 bond is non-ring, so cutting it removes the CH2, the NH and the acetyl together; attaching an N-linked acetamido puts the nitrogen straight onto the ring instead. The product is N-[3-(pyrimidin-2-ylamino)phenyl]acetamide at ~228 Da - smaller, one fewer rotatable bond, SA should drop toward 1.7, and now both linkages are conjugated anilide/arylamine types. It also keeps the meta arrangement of this parent, which lets me compare against the para isomer I built on another host.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 5,
+    "branch_idx": 4,
+    "new_substructure": "[1*]NC(C)=O"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Good: QED 0.634 -> 0.721, SA 3.80 -> 2.51, charge gone, three aromatic rings where there were none. Now the same cleanup as before - the isopropoxyethyl tail on the sulfonyl (atoms 0-5) is 4 of the 6 rotatable bonds and ~100 Da of ballast. Cut the non-ring S-CH2 bond 6-5 and put a methyl there to give the methanesulfonyl azetidine at ~300 Da. This also makes the molecule structurally matched to the indazole version I built on this same scaffold, so the only difference between the two offspring is the fused core itself.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 6,
+    "branch_idx": 5,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is now the best molecule I have (Phi 1.921, jnk3 0.14) and ligand 2 is a weaker earlier design, so no crossover. What I have learned about this target is specific: the active element is an aryl-N(H)-azine link with a free donor hydrogen - methylating that NH takes activity to exactly zero - and the azine must stay monocyclic, since fusing a benzo ring onto it (quinazoline, benzothiazole) collapses jnk3 to 0.01-0.05. Of the monocyclic links, pyridin-2-ylamino is the strongest. Ligand 1 carries one of those plus an acetanilide; the acetanilide NH on its own is only worth about 0.04. So the obvious test is to upgrade the weaker half: cut the non-ring aryl-N bond 4-3 to remove the acetamido entirely and attach a second pyridin-2-ylamino in its place. That gives 3-fluoro-N,N-bis(pyridin-2-yl)benzene-1,4-diamine at ~280 Da with two identical best-in-class links, both donors intact, and only 2 H-bond donors and TPSA near 50 - so QED should stay high rather than paying the drug-likeness penalty that adding a third link cost me earlier.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 4,
+    "branch_idx": 3,
+    "new_substructure": "[1*]Nc1ccccn1"
+   }
+  }
+ ]
+}

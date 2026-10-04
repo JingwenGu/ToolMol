@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is the high-QED methanesulfonamido-pyrrolidinone I have already elaborated elsewhere; ligand 1 is new and structurally interesting in its own right - a fused chromeno-pyrrolinone with only 1 rotatable bond, 3 aromatic rings and SA 2.73. That rigid planar carbonyl-rich tricycle is a reasonable scaffold to hang a hinge binder off, and its one disposable piece is the pendant 2-fluorophenyl (atoms 4-10), which is pure lipophilic decoration. Atom 3 is the sp3 lactam carbon holding it and the 3-4 bond is non-ring, so I can swap it cleanly. I am probing 3-amino-1H-pyrazol-5-yl - the aminopyrazole hinge binder, a chemotype I have not tested yet and one that recurs in JNK inhibitor series; it presents an NH donor, a ring-N acceptor and an exocyclic NH2 in a compact 5-ring. MW actually falls to ~282 and LogP drops toward 1.5, so QED and SA both stay in good shape while the molecule gains a genuine donor/acceptor hinge motif.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 3,
+    "branch_idx": 4,
+    "new_substructure": "[1*]c1cc(N)[nH]n1"
+   }
+  }
+ ]
+}

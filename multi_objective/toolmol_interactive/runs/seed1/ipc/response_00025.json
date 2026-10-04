@@ -1,0 +1,13 @@
+{
+ "content": "Motif transplanted and the charge is gone - QED 0.634 -> 0.712, SA 3.80 -> 2.54. The remaining problem is flexibility: 8 rotatable bonds, almost all of them in the isopropoxyethyl tail on the sulfonyl (atoms 0-5), plus ~100 Da of dead weight. Cut the non-ring S-CH2 bond 6-5 and put a methyl there, giving the methanesulfonyl azetidine-3-carboxanilide at ~320 Da with 4 rotatable bonds and LogP near 0.8. That leaves the pyrazolylphenyl-amide pharmacophore as the dominant feature of a compact, highly accessible molecule.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 6,
+    "branch_idx": 5,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

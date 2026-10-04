@@ -1,0 +1,16 @@
+gen_0004_oracle_33:
+  Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1:
+  - 2.213420607551088
+  - 5
+  O=C(Nc1ccc(Nc2ccccn2)cc1)C1CC1:
+  - 2.05305361815566
+  - 1
+  O=C(Nc1ccc(Nc2ccccn2)c(F)c1)C1CC1:
+  - 1.9999978628390043
+  - 2
+  CC(=O)Nc1ccc(Nc2ccccn2)cc1:
+  - 1.9269524567867697
+  - 3
+  CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O:
+  - 1.720632826978753
+  - 4

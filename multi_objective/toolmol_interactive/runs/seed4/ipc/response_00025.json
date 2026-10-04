@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is my best molecule at Phi 2.380 and ligand 1 the acetyl probe, whose cyclopropane CH at atom 17 - bonded to the carbonyl at atom 15 over a non-ring bond - is the anchor that keeps the best cap. With jnk3 capped near 0.61 the whole game is now activity per unit of drug-likeness, and bromine wins on that ratio rather than on raw activity. Trifluoromethyl actually edged it at 0.61, but I measured that on a cyclopentyl cap, which added 28 Da and a chunk of lipophilicity for nothing - cap ring size is activity-neutral, so that was a confound of my own making. Putting the trifluoromethyl on a cyclopropyl removes it: 322 Da against 350, and the lightest cap I have. If the 0.61 holds, this is the one C4 group with a genuine activity advantage over bromine, and the question is only whether its lipophilicity - trifluoromethyl is greasy - costs more QED than the 0.01 of activity is worth. Expected product: about 322 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 17,
+    "branch_idx": 15,
+    "new_substructure": "[1*]C(=O)Nc1cccc(Nc2cc(C(F)(F)F)ccn2)c1"
+   }
+  }
+ ]
+}

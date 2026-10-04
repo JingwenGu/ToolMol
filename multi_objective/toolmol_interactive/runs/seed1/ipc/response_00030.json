@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 (jnk3~0.07, QED 0.858, MW 242) is the best molecule in the pool and it tells me something specific: its two NH linkages are not equivalent - the pyrimidin-2-ylamino NH sits directly on the aromatic ring, but the amide NH is separated from its ring by a CH2, so that one is not conjugated into the arene. The sharp question is whether a directly-conjugated anilide NH is worth more than a CH2-separated one. Ligand 1 is the dimethoxybenzyl urea (jnk3 zero, but the best SA in the pool at 1.80), and it lets me build exactly that test. Step 1: cut the non-ring aryl-CH2 bond 14-15 to drop the primary acetamide (2 donors, no benefit) and attach pyrimidin-2-ylamino, making that ring a 4-(pyrimidin-2-ylamino)phenyl.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 14,
+    "branch_idx": 15,
+    "new_substructure": "[1*]Nc1ncccn1"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the best host I have seen in this run: QED 0.910, SA 2.80, MW 307, LogP 1.13 - a methanesulfonamido-pyrrolidinone on an N-aryl ring, with plenty of room under the MW ceiling. Ligand 2 is a smaller dimethylanilide with no activity, nothing worth crossing in. The chlorine at atom 13 is the obvious sacrifice: a terminal halogen on the para position of the N-aryl ring, contributing only LogP. Atom 12 is the aromatic carbon bearing it and the 12-13 bond is non-ring, so I can swap it for a fused hinge binder. I am probing benzimidazol-2-yl here - a bidentate NH-donor/N-acceptor fused heterocycle, structurally distinct from the aminopyrimidine and azaindole hinge binders I have tested on other hosts, so this widens the chemotype sweep rather than repeating it. MW goes to ~389 with LogP near 2.6, which is still inside the drug-like window.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 12,
+    "branch_idx": 13,
+    "new_substructure": "[1*]c1nc2ccccc2[nH]1"
+   }
+  }
+ ]
+}

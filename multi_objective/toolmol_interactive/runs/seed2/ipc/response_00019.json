@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is a protonated cyclohexane carboxamide with SA 4.57 - useless. Ligand 1 is the dimethylpyrrole chloroaniline, inactive, but atom 0 is a terminal methyl on the pyrrole and the 0-1 bond is acyclic, so anchoring there keeps only that CH3 and discards the other 14 atoms. The test I want is the bis-arylamine. In run 1 a benzene carrying two unmethylated pyridin-2-ylamino links reached jnk3 0.23 against 0.15 for the single-link version, so a second link is worth roughly +0.08 - but it cost 0.09 of QED and so was a wash on Phi. Separately, a 4-methyl on the pyridine was worth about +0.13. Those two effects have never been combined. I attach the fragment through a pyridine C4 so the surviving methyl becomes one of the two 4-methyls, and the fragment supplies the phenylene, both NH linkers and the second 4-methylpyridine. Expected product: N,N'-bis(4-methylpyridin-2-yl)benzene-1,4-diamine at about 290 Da - fully symmetric, two conjugated arylamine N-H donors, both azines monocyclic with their ring nitrogen ortho to the donor, and no anilide or halogen at all.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2ccc(Nc3cc(C)ccn3)cc2)c1"
+   }
+  }
+ ]
+}

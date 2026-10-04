@@ -1,0 +1,13 @@
+{
+ "content": "That worked and QED went the right way: 0.875 -> 0.838 is a small cost for converting the pendant azole into a second aryl-NH-azine link, and SA improved 2.267 -> 2.154. Now the mass. The methanesulfonyl azetidine (atoms 0-6 plus 23) is 136 Da of saturated, polar ballast - it is what holds TPSA at 104 and costs 2 rotatable bonds, and nothing I have measured suggests sulfonamides contribute to activity here. Atom 7 is the exocyclic amide carbonyl and the 7-6 bond is non-ring, so I can cut the azetidine off and put a phenyl directly on the carbonyl, giving N-[4-(pyrimidin-2-ylamino)phenyl]benzamide at ~290 Da. That is the minimal clean realisation of the pattern I am testing: exactly two aryl-NH-aryl linkages and nothing else, TPSA near 66, 3 rotatable bonds, SA below 1.8. If activity holds at that size, Phi should clear anything in the pool.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 6,
+    "new_substructure": "[1*]c1ccccc1"
+   }
+  }
+ ]
+}

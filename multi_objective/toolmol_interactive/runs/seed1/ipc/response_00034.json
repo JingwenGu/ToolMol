@@ -1,0 +1,13 @@
+{
+ "content": "The quinazoline is in and SA is excellent at 1.85, but QED crashed to 0.477 - the fused benzo ring pushed LogP to 4.70 and the molecule to 369 Da with four aromatic rings. I have to pay for the quinazoline by deleting the benzyl urea arm, which is the part contributing nothing: atom 1 is the urea carbonyl and atom 2 is the NH joining it to the benzyl, a non-ring bond, so cutting there removes the NH, the CH2 and the whole phenyl in one modification. Putting a methyl on the carbonyl leaves N-{4-[(quinazolin-4-yl)amino]phenyl}acetamide at ~278 Da: three aromatic rings, 3 rotatable bonds, LogP back near 3.1, 2 donors. That keeps the anilinoquinazoline recognition element - the point of the probe - on a molecule small enough for QED to stay high.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 1,
+    "branch_idx": 2,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

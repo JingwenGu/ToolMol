@@ -1,0 +1,13 @@
+{
+ "content": "Benzothiazole installed, SA still 2.01, but QED is down to 0.364 - at 435 Da with LogP 5.38 the molecule is well outside drug-like space, and the sulfur-rich fused ring is what pushed LogP there. Same remedy as before, and it is a large one here: atom 8 is the urea carbonyl and atom 7 is the NH linking it to the dimethoxybenzyl, a non-ring bond, so cutting it removes the NH, the CH2, the whole benzene and both methoxys - twelve atoms, about 165 Da - in a single modification. A methyl on the carbonyl leaves N-[4-(1,3-benzothiazol-2-ylamino)phenyl]acetamide at ~283 Da: LogP near 3.8, TPSA 68, 3 rotatable bonds, 2 donors. That is the clean two-link molecule with a thiazole-class azine instead of a pyrimidine, which is exactly the comparison this episode exists to make.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 8,
+    "branch_idx": 7,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is a 470 Da bis-piperidine sulfonamide with no benzene at all and jnk3 zero; ligand 2 is a benzimidazole anilide, and fused azoles measured dead for this target. Neither is worth crossing. But ligand 1 gives me something better than a scaffold: a terminal methyl at atom 0 on an acyclic chain. Since replace_substructure keeps the anchor side and discards the branch side, anchoring on that methyl and cutting the 0-1 bond throws away all 32 remaining atoms, and whatever fragment I attach lands on a bare CH3. So in one modification I can discard this molecule entirely and build an acetanilide bearing the full link. The variant I am testing is the largest 4-alkyl I will try on the pyridine: an isopropyl. One 4-methyl was worth about +0.13, and I am separately testing ethyl and cyclopropyl this generation, so isopropyl brackets the series from above. Expected product: N-{4-[(4-isopropylpyridin-2-yl)amino]phenyl}acetamide at about 269 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]C(=O)Nc1ccc(Nc2cc(C(C)C)ccn2)cc1"
+   }
+  }
+ ]
+}

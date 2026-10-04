@@ -1,0 +1,9 @@
+# ToolMol interactive-operator runs: 20 starting molecules, 50-oracle-call budget.
+#   20 (initial pool) + 3 x 10 (offspring) = 50 distinct molecules scored.
+# max_steps 3 = up to 3 assistant turns per episode, which is enough for the prompt's
+# encouraged "crossover first, then mutate" pattern plus a FINAL ANSWER turn.
+population_size: 20
+offspring_size: 10
+mutation_rate: 0.0
+k: 10.0
+max_steps: 3

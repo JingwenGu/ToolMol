@@ -1,0 +1,13 @@
+{
+ "content": "QED is holding well at 0.841, but SA is still 2.873 and that is now the binding constraint - the sulfonamido-lactam with its stereocentre is what makes this molecule hard to make, and it contributes no NH-azine linkage of its own (the lactam nitrogen at atom 8 is tertiary, and the sulfonamide NH is aliphatic). Atom 9 is the aromatic carbon attached to that lactam nitrogen and the 9-8 bond is non-ring, so cutting it discards the entire pyrrolidinone and sulfonamide - eleven atoms - and I attach an N-linked acetamido in their place. The result is N-[3-fluoro-4-(pyridin-2-ylamino)phenyl]acetamide at ~245 Da: two aryl-NH links, no stereocentre, SA should fall under 2, TPSA near 67, LogP near 1.9. Small, flat, cheap and carrying the pyridine-versus-pyrimidine comparison I set up.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 9,
+    "branch_idx": 8,
+    "new_substructure": "[1*]NC(C)=O"
+   }
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+gen_0003_oracle_33:
+  O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CCC1:
+  - 2.303121358863785
+  - 11
+  Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1:
+  - 2.2962238464174844
+  - 1
+  Cc1ccc(Nc2cc(Cl)ccn2)cc1NC(=O)C1CC1:
+  - 2.2527822129781288
+  - 12
+  Cc1ccnc(Nc2ccc(C)c(NC(=O)C3CC3)c2)c1:
+  - 2.2345434180768553
+  - 10
+  O=C(Nc1ccc(Nc2cc(Cl)ccn2)cc1)C1CC1:
+  - 2.222400347530261
+  - 2
+  Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1:
+  - 2.213420607551088
+  - 3
+  COc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1:
+  - 2.2129745585084364
+  - 4
+  Cc1ccnc(Nc2ccc(NC(=O)C3CCC3)cc2)c1:
+  - 2.2129585176819866
+  - 5
+  Cc1ccnc(Nc2ccc(NC(=O)C3COC3)cc2)c1:
+  - 2.1987236175530724
+  - 6
+  Cc1ccc(Nc2ccc(NC(=O)C3CC3)cc2)nc1:
+  - 1.944388758698186
+  - 7
+  Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1F:
+  - 1.8976097218016006
+  - 8
+  CNS(=O)(=O)c1ccc(C(=O)N2C[C@@H](C)OCC2(C)C)cc1:
+  - 1.686283623104357
+  - 9

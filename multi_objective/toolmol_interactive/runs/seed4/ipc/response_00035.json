@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the methyl ester probe. Counting its canonical ordering, the ester takes atoms 0 to 3, the azine 4 to 8 and 22, the central ring 10 to 14 and 21, and the anilide cap is nitrogen 15, carbonyl 16, oxygen 17 and the cyclopropane at 18 to 20 - so atom 18 is the ring CH bonded to the carbonyl at atom 16 over a non-ring bond. That is the anchor that keeps the best cap. I am building the dimethylamino version here rather than waiting for the next generation. A methylamino already measured 0.61, the joint-best activity in the scan, and lost only on drug-likeness because of its extra donor; removing that hydrogen should recover most of it while keeping the bulk and the donation. At about 296 Da with two donors and LogP near 3.6 it is considerably lighter and less greasy than the bromine molecule, so if the activity holds this is the one candidate that could beat it on both terms rather than trading one for the other.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 18,
+    "branch_idx": 16,
+    "new_substructure": "[1*]C(=O)Nc1cccc(Nc2cc(N(C)C)ccn2)c1"
+   }
+  }
+ ]
+}

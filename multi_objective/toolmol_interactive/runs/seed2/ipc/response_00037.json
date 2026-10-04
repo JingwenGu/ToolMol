@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the methylsulfamoyl benzamide host again - atom 0 is its N-methyl over an acyclic bond, so anchoring there keeps one carbon and discards the other 24. I have now scanned the pyridine substituent, its position, and the acyl cap, and the C4 position is saturated while C5 is actively bad. So this episode changes something structural instead of decorative: the central ring. Every active molecule I have made uses a plain benzene between the two nitrogens. Replacing it with a pyridine whose ring nitrogen sits adjacent to the arylamine makes that linkage a di(pyridin-2-yl)amine, so both halves of the molecule present the same ortho-nitrogen-to-N-H arrangement that is the whole basis of activity here, rather than only one of them. It is also the right direction for drug-likeness: it takes about a full log unit off LogP, which is currently 3.2, without adding mass. The surviving methyl becomes the pyridine 4-methyl and the fragment supplies the aza-central ring plus the cyclopropanecarboxamide. Expected product: about 268 Da, two donors, TPSA near 76.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2ccc(NC(=O)C3CC3)cn2)c1"
+   }
+  }
+ ]
+}

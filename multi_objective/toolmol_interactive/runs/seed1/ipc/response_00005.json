@@ -1,0 +1,13 @@
+{
+ "content": "Large win: QED 0.634 -> 0.878 and SA 3.80 -> 2.69 in one edit, MW 323. One thing left to clean up: the isopropoxyethyl tail on the sulfonyl (atoms 0-5) contributes 4 of the 6 rotatable bonds and is pure flexible ballast. Cutting the non-ring S-CH2 bond 6-5 and putting a methyl there gives the methanesulfonyl azetidine, which drops rotatable bonds to 1, lowers SA further, and leaves the indazole as the dominant feature of the molecule.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 6,
+    "branch_idx": 5,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

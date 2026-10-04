@@ -1,0 +1,13 @@
+{
+ "content": "The pyrazole N at idx 3 is an aromatic ring nitrogen; cutting its biaryl bond leaves it as an NH, so re-attaching anything there exceeds nitrogen valence. Anchor on carbon instead. Better target anyway: the tetrahydroisoquinoline (atoms 17-27) is ~150 Da of purely lipophilic bulk hanging off the glycine CH2 at idx 16, and it is why LogP is 3.6. Cut the non-ring CH2-N bond 16-17 to drop it, and put the 2-aminopyrimidin-4-yl hinge binder on the CH2 instead. That leaves Ar-NH-C(=O)-CH2-(2-aminopyrimidinyl): MW falls to ~320, LogP toward 2, the amide spine is preserved, and the aminopyrimidine donor/acceptor pair is installed - so QED and SA should both improve while jnk3 gets a real chance.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 17,
+    "new_substructure": "[1*]c1ccnc(N)n1"
+   }
+  }
+ ]
+}

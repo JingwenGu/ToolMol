@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is a spiro sulfonamide with SA 4.36 - the worst accessibility I have seen - so nothing to take from it. Ligand 1 is a good host: a benzene carrying a 2,5-dimethylpyrrole at ring carbon 7, a chlorine at ring carbon 10 which is para to it, and an aniline NH2 at ring carbon 12. Three disposable groups on one ring, and only 221 Da. I already know the best pharmacophore for this target; what I do not know is whether the 4-methyl on the pyridine, which was worth about +0.13, keeps paying when made larger. This episode tests a 4-ethyl. Step 1: atom 7 is the aromatic carbon attached to the pyrrole nitrogen at atom 6, a non-ring bond, so cutting it removes the entire dimethylpyrrole and I attach 4-ethylpyridin-2-ylamino - monocyclic azine, ring nitrogen ortho to a free N-H, with the alkyl grown by one carbon.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 6,
+    "new_substructure": "[1*]Nc1cc(CC)ccn1"
+   }
+  }
+ ]
+}

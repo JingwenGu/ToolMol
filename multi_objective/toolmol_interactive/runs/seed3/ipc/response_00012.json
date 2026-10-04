@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is a benzothiazole amide on a pyrrolidinone, QED 0.688 and jnk3 0.03 - and benzothiazol-2-ylamino is a fragment I have already measured at 0.01, so there is nothing to rescue. Atom 0 is its tolyl methyl over an acyclic bond, the anchor. Having scanned the azine ring thoroughly, this episode moves to the one part of the pharmacophore I have never varied at all: the anilide linker itself. Every active molecule in two runs uses Ar-NH-C(=O)-cycloalkyl, and I have changed the cycloalkyl and found it irrelevant, but never the carbonyl. A cyclopropanesulfonamide keeps everything that I know matters - a free N-H on the ring, conjugated, with the azine linkage untouched - while replacing the planar carbonyl with a tetrahedral sulfonyl that accepts two hydrogen bonds instead of one and makes the N-H considerably more acidic. If activity survives, the linker is just a spacer and I have a whole new axis to optimise on; if it collapses, the carbonyl is part of the recognition and I should stop treating the cap as free. The surviving methyl becomes the pyridine 4-methyl. Expected product: about 303 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2cccc(NS(=O)(=O)C3CC3)c2)c1"
+   }
+  }
+ ]
+}

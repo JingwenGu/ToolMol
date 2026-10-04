@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the N-methyl anilide control. It is a striking molecule to look at: QED 0.932, the highest I have recorded anywhere, because removing that donor cuts TPSA to 45 - and jnk3 0.36, because the donor was worth 0.17. It is a good illustration that the two objectives pull in opposite directions on this scaffold. What I need from it is its cyclopropane: atom 16 is the ring CH bonded to the carbonyl at atom 14 over a non-ring bond, so anchoring there keeps the three-membered ring and discards everything else. This is the combination generation 2 pointed at but never built. Of the caps, cyclopropyl gives the best SA and it took the chloro molecule to 0.53 and Phi 2.325. Of the C4 groups, fluorine matched chlorine at 0.53 while being 18 Da lighter and half a log unit less lipophilic, which showed up as QED 0.900. Neither has been paired with the other. Putting the fluorine on the cyclopropyl molecule should keep activity at 0.53 while taking QED to about 0.90 and SA under 1.9. Expected product: about 271 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 16,
+    "branch_idx": 14,
+    "new_substructure": "[1*]C(=O)Nc1cccc(Nc2cc(F)ccn2)c1"
+   }
+  }
+ ]
+}

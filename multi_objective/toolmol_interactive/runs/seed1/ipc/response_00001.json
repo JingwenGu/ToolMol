@@ -1,0 +1,13 @@
+{
+ "content": "Both ligands are jnk3-inactive (derived jnk3 ~0.01), so crossover between them cannot create activity - it would only reshuffle two inactive scaffolds. Ligand 1 is the better host: QED 0.75, SA 2.17, MW 378, and it already carries the Ar-NH-C(=O) amide spine common to JNK3 series. Its N1-phenyl on the pyrazole (atoms 4-9, attached to pyrazole N at idx 3 by a non-ring biaryl bond) is a plain lipophilic cap contributing nothing but logP. I will swap it for a 2-aminopyrimidin-4-yl group, the canonical ATP-site hinge binder (donor/acceptor pair at the pyrimidine N1/2-NH2). MW stays ~395, and the extra ring N plus NH2 should pull logP down from 3.6 toward the QED sweet spot.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 3,
+    "branch_idx": 4,
+    "new_substructure": "[1*]c1ccnc(N)n1"
+   }
+  }
+ ]
+}

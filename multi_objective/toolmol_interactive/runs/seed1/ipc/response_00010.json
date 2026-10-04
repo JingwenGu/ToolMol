@@ -1,0 +1,12 @@
+{
+ "content": "Aromatic-carbon anchor worked, so the earlier valence failure was specific to aromatic ring nitrogen. But QED fell 0.671 -> 0.463: the molecule is now 391 Da with 4 aromatic rings, 7 rotatable bonds and LogP 3.77. The culprit is the thioether-benzoxazole arm (atoms 3-12) - a metabolically fragile CH2-S linker plus a whole extra bicycle. Cutting the non-ring CH2-S bond 2-3 removes all ten of those atoms and leaves a simple acetamide, giving N-(3-(pyrimidin-2-ylamino)benzyl)acetamide at ~242 Da: 2 aromatic rings, 3 rotatable bonds, LogP near 1.7. That should put QED back above 0.8 and SA below 2, while the 2-anilinopyrimidine motif - the point of this probe - is exactly what remains.",
+ "tool_calls": [
+  {
+   "name": "remove_substructure",
+   "arguments": {
+    "anchor_idx": 2,
+    "branch_idx": 3
+   }
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "content": "QED is up to 0.815. Step 2 installs the anilide, and the position matters: the ring runs 8-9-10-11-13-15, so atom 11 - the carbon bearing the chlorine - is para to atom 8, which carries the arylamine. That is the arrangement every active molecule I have measured uses. The chlorine itself is the right thing to sacrifice, since a halogen on this central ring measured slightly negative. So I cut the non-ring 11-12 bond and attach an N-linked cyclopropanecarboxamide there, giving a conjugated anilide N-H para to the arylamine N-H.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 11,
+    "branch_idx": 12,
+    "new_substructure": "[1*]NC(=O)C1CC1"
+   }
+  }
+ ]
+}

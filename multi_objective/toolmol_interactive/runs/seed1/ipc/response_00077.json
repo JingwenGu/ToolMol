@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is the N-methyl control I built deliberately, and it is the most useful molecule in the pool precisely because it is dead: QED 0.896, the highest drug-likeness I have, with jnk3 exactly 0.00. It proves the bridging N-H is the whole game. So the fix is to restore that hydrogen and upgrade the azine in the same cut. Atom 7 is the aromatic carbon attached to the tertiary nitrogen at atom 8, a non-ring bond, so cutting there discards the nitrogen, its fatal methyl at atom 9, and the pyrimidine together. In their place I attach 5-fluoropyridin-2-ylamino: a free N-H donor, monocyclic azine with the ring nitrogen ortho to that donor, and a fluorine on the ring. Simply reverting the methyl would reproduce a molecule I already have, whereas this gives a new one.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 8,
+    "new_substructure": "[1*]Nc1ccc(F)cn1"
+   }
+  }
+ ]
+}

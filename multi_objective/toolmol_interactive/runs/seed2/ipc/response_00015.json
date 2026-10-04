@@ -1,0 +1,13 @@
+{
+ "content": "Self-pairing, so pure mutation, and the host is a diethylisoxazole acetamide with jnk3 0.02 and SA 2.78 - nothing in it worth keeping. Atom 0 is the terminal methyl of its first ethyl group, so cutting the acyclic 0-1 bond discards all 24 remaining atoms and leaves a bare CH3 to build on. The useful trick is that I can choose where that surviving methyl ends up in the product: here I attach the fragment through a pyridine C4, so the methyl becomes the pyridine 4-methyl - the substituent measured at about +0.13 - and the rest of the fragment carries the anilide. That lets me vary the acyl cap, which is the other variable worth testing: a cyclopropanecarboxamide was worth about +0.10 over an acetyl while a propanamide was worth -0.03, so ring size on the cap clearly matters and cyclobutane is the obvious next step up. Expected product: N-{4-[(4-methylpyridin-2-yl)amino]phenyl}cyclobutanecarboxamide at about 267 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2ccc(NC(=O)C3CCC3)cc2)c1"
+   }
+  }
+ ]
+}

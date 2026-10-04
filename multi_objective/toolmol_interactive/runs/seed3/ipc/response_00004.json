@@ -1,0 +1,13 @@
+{
+ "content": "Both ligands are inactive and both are large fused systems - ligand 1 at QED 0.502 is an indoloquinoxaline, ligand 2 an isatin with a morpholinomethyl piperidine. Nothing to crossover for. But ligand 1 has a terminal methyl at atom 0 over an acyclic bond, so anchoring there keeps that one carbon and discards the other 26, and I can place the surviving methyl anywhere I like in the fragment I attach. This episode re-opens a question I may have closed too early. I ruled pyrimidine out against pyridine on a 0.10-versus-0.15 comparison - but that was measured when the whole series was barely above baseline, and the one time I generalised from a weak comparison like that (calling meta and para equivalent at jnk3 0.10) I was wrong by a wide margin once activity reached 0.41. So pyrimidine deserves one re-test on the scaffold I actually use now: meta anilide, cyclobutanecarboxamide cap, bare central ring, and the surviving methyl placed at the azine C4 where a substituent is worth about +0.13. If pyrimidine still loses here, the ring really is worse and I can stop asking. Expected product: about 282 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)n1"
+   }
+  }
+ ]
+}

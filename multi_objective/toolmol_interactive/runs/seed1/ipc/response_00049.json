@@ -1,0 +1,13 @@
+{
+ "content": "Already informative on the QED side: removing that one donor took QED from 0.672 to 0.749 and TPSA from 78.9 to 70.2, with SA barely moving. Now I finish the matched pair. Atom 7 is the urea carbonyl, atom 9 is the NH joining it to the benzyl, and the 7-9 bond is non-ring, so cutting there discards that NH, the CH2 and the phenyl while leaving the anilide NH at atom 6 intact. A methyl on the carbonyl gives N-[4-[methyl(pyrimidin-2-yl)amino]phenyl]acetamide at ~242 Da. That is the exact N-methyl analogue of the acetanilide-pyrimidinylamine I built earlier, identical in every respect except the one donor hydrogen - so the pair isolates whether the oracle is reading the N-H donor or just the nitrogen bridge. With only 1 donor, TPSA near 57 and LogP near 2.2 it should also post a very high QED, so this costs me nothing even if the answer is that the hydrogen mattered.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 7,
+    "branch_idx": 9,
+    "new_substructure": "[1*]C"
+   }
+  }
+ ]
+}

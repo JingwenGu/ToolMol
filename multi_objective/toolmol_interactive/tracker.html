@@ -1,0 +1,633 @@
+<title>ToolMol Oracle Budget Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single measured column; charts as small multiples that stack at phone width. */
+:root{
+  --plane:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --hair:rgba(11,11,11,0.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --good:#0ca30c; --crit:#d03b3b;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,0.10);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --good:#0ca30c; --crit:#d03b3b; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --plane:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,0.10);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --good:#0ca30c; --crit:#d03b3b; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink);font-family:var(--ui);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:40px 64px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-0.01em}
+h1{font-size:clamp(28px,4.4vw,40px);font-weight:700;line-height:1.1}
+h2{font-size:clamp(19px,2.3vw,23px);font-weight:600}
+h3{font-size:15px;font-weight:600}
+p{margin:0}
+a{color:var(--s1)}
+.eyebrow{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--ink2);max-width:66ch;margin-top:14px}
+.meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.meta b{color:var(--ink2);font-weight:500}
+section{margin-top:52px}
+.shead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-bottom:12px;border-bottom:1px solid var(--hair)}
+.snote{color:var(--ink2);max-width:72ch;margin-top:16px}
+
+/* stat tiles */
+.tiles{margin-top:28px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(176px,1fr))}
+.tile{background:var(--surface);border:1px solid var(--hair);border-radius:10px;padding:16px 18px;min-width:0}
+.tile .k{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:30px;font-weight:600;line-height:1.1;margin-top:8px}
+.tile .d{font-size:12.5px;color:var(--ink2);margin-top:6px}
+.up{color:var(--good);font-weight:600}
+
+/* chart cards */
+.panels{margin-top:24px;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:10px;padding:16px 16px 10px;min-width:0}
+.card .ct{font-family:var(--display);font-size:14px;font-weight:600}
+.card .cs{font-size:12px;color:var(--muted);margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:12px;font-size:12px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.key{width:14px;height:3px;border-radius:2px;flex:0 0 auto}
+.kd{width:9px;height:9px;border-radius:50%}
+figure{margin:12px 0 0;position:relative}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .09s;
+  background:var(--surface);border:1px solid var(--hair);border-radius:8px;padding:8px 10px;
+  font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:132px;z-index:4}
+.tip .tn{font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.tip .tr{display:flex;align-items:center;gap:8px;margin-top:5px;white-space:nowrap}
+.tip .tr b{margin-left:auto;font-variant-numeric:tabular-nums}
+.tip .tsmi{font-family:var(--mono);font-size:10.5px;color:var(--ink2);margin-top:6px;
+  max-width:260px;overflow-wrap:anywhere;white-space:normal}
+
+/* toggle */
+.btns{display:inline-flex;border:1px solid var(--hair);border-radius:8px;overflow:hidden;background:var(--surface)}
+.btns button{appearance:none;border:0;background:transparent;color:var(--ink2);font:inherit;
+  font-size:12.5px;padding:6px 12px;cursor:pointer}
+.btns button+button{border-left:1px solid var(--hair)}
+.btns button[aria-pressed="true"]{background:var(--s1);color:#fff;font-weight:600}
+.btns button:focus-visible{outline:2px solid var(--s1);outline-offset:-2px}
+
+/* tables */
+.tscroll{margin-top:16px;overflow-x:auto;border:1px solid var(--hair);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:right;padding:7px 11px;white-space:nowrap;border-bottom:1px solid var(--hair)}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+thead th{position:sticky;top:0;background:var(--surface);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;z-index:2}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums}
+td.smi{font-family:var(--mono);font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.sortable{cursor:pointer;user-select:none}
+.sortable:focus-visible{outline:2px solid var(--s1);outline-offset:-2px}
+.tcap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px}
+.tall{max-height:460px;overflow-y:auto}
+.chip{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;border:1px solid var(--hair);color:var(--ink2)}
+.r1{box-shadow:inset 3px 0 0 var(--s1)}
+.r2{box-shadow:inset 3px 0 0 var(--s2)}
+.r3{box-shadow:inset 3px 0 0 var(--s3)}
+.r4{box-shadow:inset 3px 0 0 var(--s4)}
+
+/* prose blocks */
+.cols{margin-top:24px;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.block{background:var(--surface);border:1px solid var(--hair);border-radius:10px;padding:18px;min-width:0}
+.block h3{display:flex;align-items:center;gap:9px}
+.dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.block ul{margin:12px 0 0;padding-left:0;list-style:none;display:grid;gap:12px}
+.block li{font-size:13.5px;color:var(--ink2);padding-left:15px;position:relative}
+.block li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--axis)}
+.block li b{color:var(--ink);font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--plane);border:1px solid var(--hair);
+  border-radius:4px;padding:1px 4px;overflow-wrap:anywhere}
+.ver{margin-top:24px;display:grid;gap:10px}
+.vrow{background:var(--surface);border:1px solid var(--hair);border-radius:10px;padding:14px 16px}
+.vrow .vh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vrow .vf{font-family:var(--mono);font-size:13px;font-weight:500}
+.vrow .vs{font-size:11.5px;color:var(--muted)}
+.vrow ol{margin:10px 0 0;padding-left:20px;display:grid;gap:7px;font-size:13.5px;color:var(--ink2)}
+.vrow ol b{color:var(--ink);font-weight:600}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--muted)}
+footer code{font-size:11.5px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="wrap">
+<header>
+  <p class="eyebrow">ToolMol &middot; interactive-operator runs</p>
+  <h1>Oracle Budget Tracker</h1>
+  <p class="lede">Every molecule scored across four 50-call ToolMol runs on the JNK3&nbsp;/&nbsp;QED&nbsp;/&nbsp;SA
+  multi-objective task, with the top-1, top-10 and top-100 average score as it moves call by call. Each run starts
+  from a fresh random pool but inherits the memory written at the end of the previous one, so the gaps between the
+  curves are what that memory was worth.</p>
+  <div class="meta">
+    <span><b>Objective</b> &Phi; = jnk3 + QED + (10&minus;SA)/9, max 3</span>
+    <span><b>Budget</b> 50 distinct molecules per run</span>
+    <span><b>Pool</b> 20 random ZINC molecules</span>
+    <span><b>Offspring</b> 10 per generation</span>
+    <span><b>Agent</b> Claude, via agent.py's interactive backend</span>
+  </div>
+</header>
+
+<section>
+  <div class="shead"><h2>Where the four runs finished</h2><span class="eyebrow">after 50 of 50 calls</span></div>
+  <div class="tiles" id="tiles"></div>
+  <p class="snote">The top-100 average is the mean over all 50 molecules scored, since no run evaluated more
+  than 100. It is the bluntest of the three measures and the one that moves last: it only rises once a whole
+  generation of offspring is good, not when a single lucky molecule lands. All three measures improved from
+  run to run, and the margin from run 2 to run 3 was larger than from run 1 to run 2.</p>
+</section>
+
+<section>
+  <div class="shead">
+    <h2>Score trajectory</h2>
+    <div class="btns" role="group" aria-label="Trajectory view">
+      <button id="vChart" aria-pressed="true">Chart</button>
+      <button id="vTable" aria-pressed="false">Table</button>
+    </div>
+  </div>
+  <div id="trajChart">
+    <div class="panels" id="trajPanels"></div>
+  </div>
+  <div id="trajTable" hidden></div>
+  <p class="snote">Each grey dot is one molecule at the call that paid for it; the three lines are the running
+  top-1, top-10 and top-100 averages over everything scored so far. A generation produces all ten of its
+  offspring before any of them is scored, so there is no feedback inside a band &mdash; the curves can only
+  step at a band boundary.</p>
+</section>
+
+<section>
+  <div class="shead"><h2>Best jnk3 so far</h2><span class="eyebrow">the objective that drove &Phi;</span></div>
+  <div class="card" style="margin-top:24px">
+    <div class="ct">Highest jnk3 score reached, by oracle call</div>
+    <div class="cs">Through run 3 this curve and the &Phi; curve moved together, because QED held near 0.89 while
+      activity climbed. Run 4 breaks that: jnk3 reaches 0.74, but the molecules that get there drop to QED 0.75,
+      so the gain does not reach &Phi;.</div>
+    <div class="legend" id="jLegend"></div>
+    <figure id="jFig"></figure>
+  </div>
+  <p class="snote">Run 1 spent its first generation on ten blind chemotype probes and left it with jnk3 0.10.
+  Run 2 skipped that sweep &mdash; the answer was already in <code>FRAGMENTS.md</code> &mdash; rebuilt run 1's
+  best molecule on call 21 and reached 0.43 in the same generation. Run 3 opened the same way and then spent its
+  budget asking whether the chemotype had a ceiling; the step at call 46 is a bromine at one position on the
+  azine, worth +0.07 on its own. Run 4's jnk3 curve climbs furthest of all, to 0.74 &mdash; and its &Phi; curve
+  barely moves after call 32, because the molecules that bought that activity paid for it in drug-likeness.</p>
+</section>
+<section>
+  <div class="shead"><h2>Every molecule scored</h2><span class="eyebrow">200 oracle calls</span></div>
+  <div class="tcap">
+    <div class="btns" role="group" aria-label="Filter by run">
+      <button class="fr" data-run="all" aria-pressed="true">Both runs</button>
+      <button class="fr" data-run="seed1" aria-pressed="false">Run 1</button>
+      <button class="fr" data-run="seed2" aria-pressed="false">Run 2</button>
+      <button class="fr" data-run="seed3" aria-pressed="false">Run 3</button>
+      <button class="fr" data-run="seed4" aria-pressed="false">Run 4</button>
+    </div>
+    <label style="font-size:12.5px;color:var(--ink2)">Find substructure
+      <input id="q" type="search" placeholder="e.g. ccnc" spellcheck="false"
+        style="font:inherit;font-size:12.5px;padding:5px 9px;border:1px solid var(--hair);
+        border-radius:7px;background:var(--surface);color:var(--ink);margin-left:7px;width:150px">
+    </label>
+  </div>
+  <div class="tscroll tall">
+    <table id="molTable"><thead><tr>
+      <th class="l">Run</th>
+      <th class="sortable" data-s="call" tabindex="0">Call</th>
+      <th class="sortable" data-s="jnk3" tabindex="0">jnk3</th>
+      <th class="sortable" data-s="qed" tabindex="0">QED</th>
+      <th class="sortable" data-s="sa" tabindex="0">SA</th>
+      <th class="sortable" data-s="phi" tabindex="0">&Phi;</th>
+      <th class="l">SMILES</th>
+    </tr></thead><tbody id="molBody"></tbody></table>
+  </div>
+  <p class="snote">Calls 1&ndash;20 of each run are the random starting pool; everything after is a designed
+  offspring. Sort by &Phi; and the entire top of the table is designed; sort by jnk3 and the bottom contains the
+  deliberate controls &mdash; the molecules built to fail, which is how the pharmacophore was pinned down.</p>
+</section>
+
+<section>
+  <div class="shead"><h2>What changed in the persistent artifacts</h2><span class="eyebrow">memory/ &middot; four files</span></div>
+  <p class="snote">These files live in <code>multi_objective/toolmol_interactive/memory/</code> and are the only
+  thing carried between runs. They are read at the start of a run and rewritten at the end of each generation.</p>
+  <div class="ver">
+    <div class="vrow">
+      <div class="vh"><span class="vf">STRATEGY.md</span><span class="vs">the playbook &middot; v1 &rarr; v6 &middot; 253 lines</span></div>
+      <ol>
+        <li><b>v1, before run 1.</b> Written from the source and from literature: &Phi; decomposed to show all
+        headroom sits in jnk3; the trick for recovering a parent's hidden jnk3 as &Phi; &minus; QED &minus; (10&minus;SA)/9;
+        tool mechanics read out of <code>toolbox.py</code>; a budget policy of probe &rarr; exploit &rarr; exploit.</li>
+        <li><b>v2, mid run 1.</b> Added the measured table of anchors <code>replace_substructure</code> refuses
+        &mdash; aromatic ring nitrogen and stereocentres &mdash; with the remove-then-add workaround, after two
+        offspring were lost to it.</li>
+        <li><b>v3, after run 1.</b> Added the two facts that reframed the whole method: a generation is a
+        <b>blind parallel batch</b> (so 50 calls buy only three feedback rounds), and &Phi; is QED-limited until
+        jnk3 clears ~0.2.</li>
+        <li><b>v4, after run 2.</b> New opening telling the next run which molecule to build first; the
+        <b>one-call pharmacophore graft</b> idiom; reusable atom indices; and the two methodological lessons that
+        falsified run 1's own rules.</li>
+        <li><b>v5, after run 3.</b> The failure mode promoted to the top of the file, now that it has recurred
+        three times: <b>a structure-activity rule is only valid in the activity band it was measured in</b>.
+        Added that deletion controls are the cheapest information available; that the choice of anchor atom
+        constrains what can be built; and that an aliphatic amide nitrogen is a usable anchor.</li>
+        <li><b>v6, after run 4.</b> The failure mode restated in its general form after a fourth instance:
+        <b>an apparent ceiling is usually the edge of what you sampled</b>, so budget one deliberately
+        out-of-range probe per generation. Added a rule to check which objective is binding before spending a
+        generation on one of them &mdash; run 4 raised activity by 0.13 and moved &Phi; by nothing.</li>
+      </ol>
+    </div>
+    <div class="vrow">
+      <div class="vh"><span class="vf">FRAGMENTS.md</span><span class="vs">what the oracle rewards &middot; empty &rarr; 434 lines &middot; 24 numbered rules</span></div>
+      <ol>
+        <li><b>Run 1 generation 1.</b> Replaced the literature priors with the first measured result: jnk3 tracks
+        the count of aryl&ndash;NH&ndash;(hetero)aryl linkages, not the presence of a kinase hinge heterocycle.
+        Added the &Phi; trap &mdash; a 0.10-jnk3 molecule at 413&nbsp;Da scores worse than a 0.07 one at 241&nbsp;Da.</li>
+        <li><b>Run 1 generations 2&ndash;3.</b> Five rules, each from a matched pair: the N&ndash;H donor is
+        required absolutely; the azine must stay monocyclic; 2-aminopyridine beats 2-aminopyrimidine; the anilide
+        must be conjugated; a third linkage does not pay.</li>
+        <li><b>Run 2 generation 1.</b> Rules 6&ndash;9: pyridine C4 is position-critical but
+        substituent-agnostic; acyl cap ring size is irrelevant; the bis-arylamine is a &Phi; dead end; the
+        pharmacophore is context-dependent and needs a plain benzene.</li>
+        <li><b>Run 2 generations 2&ndash;3.</b> Rules 10&ndash;17, a complete position map of both rings, and
+        <b>two explicit corrections to run 1's rules</b>. New start-here molecule and a fresh untested list.</li>
+        <li><b>Run 3.</b> Rules 18&ndash;21: the azine scan (exactly one ring nitrogen, ortho to the donor &mdash;
+        every diazine loses); the linker scan (optimal but not required); the <b>decomposition</b>, which reduces
+        the pharmacophore to two atoms; and a third correction, this time to "C4 is substituent-insensitive".
+        New start-here molecule, and the first untested list that names a live lead rather than loose ends.</li>
+        <li><b>Run 4.</b> Rules 22&ndash;24: C4 reads <b>occupancy, not electronics</b> (CF<sub>3</sub> and NHMe,
+        at opposite extremes, both 0.61); a flat aromatic there is worth +0.13 of activity, reaching 0.74; and it
+        is a <b>wash on &Phi;</b>, because QED charges for the third aromatic ring itself rather than for
+        lipophilicity &mdash; which is why polarising the ring cannot fix it. The untested list now names a single
+        concrete question: non-aromatic bulk at C4.</li>
+      </ol>
+    </div>
+    <div class="vrow">
+      <div class="vh"><span class="vf">RUNLOG.md</span><span class="vs">per-run history &middot; empty &rarr; 186 lines</span></div>
+      <ol>
+        <li>One block per run: the per-generation table of calls spent against best &Phi; and best jnk3, what was
+        tried, what it cost, and the single most transferable finding.</li>
+        <li>Run 2's block records the comparison that matters &mdash; it reached run 1's <em>final</em> score on
+        call 21 &mdash; and hands run 3 a concrete opening move.</li>
+        <li>Run 3's block adds the cross-run table, names the recurring failure mode as the most expensive habit
+        in the project, and hands run 4 a specific lead: the C4 series was still climbing when the budget ran out.</li>
+        <li>Run 4's block records the diminishing returns plainly (+0.090, +0.077, +0.011) and says what the run
+        actually produced: not a better molecule, but the finding that the two objectives are in direct conflict
+        at the only position where activity can still be bought.</li>
+      </ol>
+    </div>
+    <div class="vrow">
+      <div class="vh"><span class="vf">EPISODES.md</span><span class="vs">process notes &middot; empty &rarr; 107 lines</span></div>
+      <ol>
+        <li>Run 1: why generation 1 was spent on controlled probes; the two tool-anchor failures; why the
+        deliberately-dead N-methyl control was the most valuable episode of the run.</li>
+        <li>Run 2: the one-call graft idiom with its two anchor patterns; the reusable atom indices; and the note
+        that four calls spent proving pyridine C3/C6 are fatal were worth it for closing off a direction.</li>
+        <li>Run 3: deletion controls as the cheapest information available; that the anchor choice silently
+        constrains the product (a terminal-methyl anchor forces a methyl into every molecule, and methyl is the
+        worst group at the position that mattered most); and that four episodes landing within 0.01 is the signal
+        to re-open a settled variable rather than keep tweaking.</li>
+        <li>Run 4: that the run's best result came from a probe expected to fail; how to order two batched edits
+        by atom count so the second one's indices survive; and why a wrong index guess is usually safe here &mdash;
+        the realistic failure is a clean "not bonded" rejection rather than a silent mis-cut.</li>
+      </ol>
+    </div>
+    <div class="vrow">
+      <div class="vh"><span class="vf">~/.claude/&hellip;/memory/</span><span class="vs">session memory &middot; 2 new files</span></div>
+      <ol>
+        <li><code>toolmol-interactive-operator-harness.md</code> &mdash; how to run the harness, and the
+        environment pins that cost time to find: Python 3.9, and <b>scikit-learn 1.2.2</b>, without which the
+        shipped <code>jnk3_current.pkl</code> will not unpickle at all.</li>
+        <li><code>toolmol-jnk3-pharmacophore.md</code> &mdash; the solved pharmacophore and the warning that
+        textbook kinase intuition actively misleads on this oracle. Rewritten after run 3 around the
+        decomposition result: the pharmacophore is two atoms, and everything else is a modifier. Updated again
+        after run 4 with the objective conflict at C4 and the diminishing-returns figures.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="shead"><h2>Strategies, and what they returned</h2><span class="eyebrow">120 episodes</span></div>
+  <div class="cols">
+    <div class="block">
+      <h3><span class="dot" style="background:var(--good)"></span>Worked</h3>
+      <ul>
+        <li><b>Spending generation 1 on controlled probes instead of greedy edits.</b> A generation is scored
+        only after all ten offspring exist, so 50 calls buy three feedback rounds. Ten matched comparisons
+        resolved more than ten opportunistic improvements would have.</li>
+        <li><b>Reusing the same host and anchor when the sampler returned a molecule already edited.</b> Three
+        run-1 episodes landed on one pyrazolyl-acetamide; grafting different motifs at the identical atom made
+        those a controlled series rather than three unrelated attempts.</li>
+        <li><b>Building a control designed to fail.</b> N-methylating the arylamine gave jnk3 <b>0.00</b> against
+        0.10 for the otherwise identical molecule &mdash; proof the donor hydrogen is essential, at no &Phi; cost,
+        because removing a donor raised QED to 0.896. The highest-information episode of run 1.</li>
+        <li><b>Deriving each parent's hidden jnk3 from its &Phi;.</b> The prompt gives &Phi;, QED and SA, so
+        activity follows by arithmetic. It is the only per-molecule activity signal available inside an episode.</li>
+        <li><b>Carrying the memory across runs.</b> Run 2 reached run 1's final score on <b>call 21</b> and
+        finished <b>+0.09</b> higher.</li>
+        <li><b>Rebuilding the known winner in generation 1.</b> One call, and it scored identically to run 1 &mdash;
+        confirming the oracle is deterministic and putting a &Phi;-2.21 parent in the population immediately,
+        so generations 2 and 3 refined instead of searching.</li>
+        <li><b>The one-call pharmacophore graft.</b> Anchoring on a peripheral atom whose own side is one
+        carbon discards the entire host and installs a complete designed molecule in a single tool call.
+        Run 1 needed two or three.</li>
+        <li><b>Systematic position scans.</b> Mapping the pyridine ring, then the central ring, is what found
+        the meta geometry &mdash; the largest single gain of run 2.</li>
+        <li><b>Deletion controls.</b> Four calls across runs 1 and 3 &mdash; methylate each donor, remove the cap,
+        delete the azine ring nitrogen &mdash; reduced three runs of scattered findings to one sentence: a free
+        aryl N&ndash;H with a ring nitrogen ortho to it, and everything else is a modifier. None produced a good
+        molecule; all four earned their call.</li>
+        <li><b>Re-opening a settled variable when the tweaks flatten out.</b> Run 3 had four consecutive episodes
+        land within 0.01 of each other. Going back to a position declared "insensitive" in run 2 and re-scanning it
+        found bromine, worth +0.07 &mdash; the largest single gain of run 3.</li>
+        <li><b>Spending one probe per generation well outside the sampled range.</b> Run 4's phenyl-at-C4 episode
+        was framed as "find the size ceiling" and was expected to fail. It returned jnk3 <b>0.70</b> against a band
+        of 0.51&ndash;0.61 that ten substituents had occupied, and became the entire result of the run.</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3><span class="dot" style="background:var(--crit)"></span>Did not work</h3>
+      <ul>
+        <li><b>Literature chemotype intuition.</b> Indazole 0.02, carbazole 0.01, benzimidazole 0.03,
+        benzothiazole 0.01 &mdash; and the textbook anilinoquinazoline 0.05. Roughly six of run 1's thirty
+        episodes went into chemotypes that a fingerprint model simply does not reward.</li>
+        <li><b>Buying jnk3 with molecular weight.</b> The highest activity of run 1's first generation, 0.10,
+        came on a 413&nbsp;Da molecule whose QED collapsed to 0.446, scoring &Phi; 1.404 &mdash; worse than a
+        241&nbsp;Da molecule at jnk3 0.07 and &Phi; 1.829.</li>
+        <li><b>Generalising from a comparison made at low signal &mdash; three times.</b> "Meta &asymp; para"
+        (measured at jnk3 0.10, wrong by 0.09), "keep the central ring bare" (generalised from a single fluorine),
+        and "C4 is substituent-insensitive" (measured in a 0.41&ndash;0.43 band; at double the activity that
+        position spreads 0.49 to 0.60). Each was wrong, each cost part of a run, and each failed the same way.
+        A rule is only valid in the activity band it was measured in.</li>
+        <li><b>Generalising from one substituent.</b> A fluorine on the central ring hurt, so run 1 wrote
+        "keep it bare". A methyl there in fact helps the para core.</li>
+        <li><b>Assuming effects add.</b> That same central methyl is +0.03 on the para core and <b>&minus;0.06</b>
+        on the better meta core; the full four-position scan was below the bare ring everywhere. The best
+        molecule of run 2 is the simplest one.</li>
+        <li><b>Anchoring edits on the wrong atom.</b> Aromatic ring nitrogens and stereocentres both refuse
+        re-attachment on valence grounds. Two offspring lost, one of them producing no molecule at all, before
+        the mechanism was understood and written down.</li>
+        <li><b>The bis-arylamine.</b> A second azine linkage raises jnk3 to 0.34 but costs 0.16 of QED &mdash;
+        it buys activity at a worse exchange rate than the anilide it replaces.</li>
+        <li><b>Chasing small combinations once &Phi; plateaued.</b> Mid run 2, four consecutive cap and C4 swaps
+        all landed within 0.01 of each other. The plateau broke only when a structural variable &mdash; ring
+        geometry &mdash; was changed instead.</li>
+        <li><b>Taking the familiar anchor out of habit.</b> Several run-3 episodes anchored on a terminal methyl
+        because it was the idiom I knew, which forces a methyl into the product &mdash; and methyl turned out to be
+        the worst substituent at the one position that mattered. When the host carried a cycloalkyl, anchoring
+        there instead would have left the choice free.</li>
+        <li><b>Looking for a better chemotype.</b> Run 3 spent nine episodes on alternative azines and linkers.
+        Every one lost: all four diazines, the sulfonamide, the reversed amide, the urea, the thioamide, and a
+        second azine on the cap. Useful as a boundary, but it bought no molecules &mdash; the gain came from
+        re-examining the chemotype already in hand.</li>
+        <li><b>Chasing one objective without checking the arithmetic on the other.</b> Run 4's whole third
+        generation went into making the aryl-at-C4 discovery affordable &mdash; eight polar heteroaryls replacing
+        the phenyl. Activity held beautifully, up to 0.74. But every one of them landed at QED 0.71&ndash;0.75
+        regardless of polarity, because the penalty is the <b>third aromatic ring itself</b>, not lipophilicity.
+        Ten episodes, +0.13 of activity, &minus;0.14 of QED, and &Phi; did not move.</li>
+        <li><b>Believing a ceiling, four times.</b> "meta &asymp; para", "keep the central ring bare", "C4 is
+        substituent-insensitive", and "C4 tops out at 0.61" &mdash; each was the edge of what had been sampled,
+        not a limit.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="snote">Run 4 pushed activity furthest of any run &mdash; jnk3 0.74 &mdash; and gained almost nothing
+  on &Phi;. That is the clearest result of the project so far: at the one position where activity can still be
+  bought, the two objectives are in direct conflict, and the exchange rate is almost exactly 1:1. The open
+  question for run 5 is narrow and concrete &mdash; whether any <em>non-aromatic</em> group delivers aryl-like
+  bulk at that position. If none does, ~2.39 is this chemotype's ceiling under this scoring function, and saying
+  so is the useful answer.</p>
+</section>
+
+<footer>
+  Computed from <code>runs/seed1</code> through <code>runs/seed4</code>'s
+  <code>oracle_ledger.jsonl</code> &mdash;
+  one line per distinct molecule, written by the harness at the moment the objective oracles were called, so the
+  call index is the true budget position. &Phi; is recomputed here from the raw jnk3, QED and SA values using
+  <code>objectives.py</code>'s bounds. Top-<i>k</i> averages are means over the best <i>k</i> of the first
+  <i>n</i> molecules, with <i>k</i> capped at <i>n</i>.
+</footer>
+</div>
+<script>
+const D = {"seed1":{"traj":[[1,1.2997,1.2997,1.2997,0.0],[2,1.5681,1.4339,1.4339,0.01],[3,1.5681,1.4641,1.4641,0.06],[4,1.7206,1.5282,1.5282,0.06],[5,1.7206,1.5078,1.5078,0.06],[6,1.7206,1.5115,1.5115,0.06],[7,1.7206,1.5056,1.5056,0.06],[8,1.7206,1.5181,1.5181,0.06],[9,1.7206,1.4957,1.4957,0.06],[10,1.7206,1.5,1.5,0.06],[11,1.7206,1.5168,1.497,0.06],[12,1.7206,1.5427,1.5036,0.06],[13,1.7206,1.5427,1.485,0.07],[14,1.7206,1.5635,1.4957,0.07],[15,1.7206,1.5635,1.4826,0.07],[16,1.7206,1.5855,1.4954,0.07],[17,1.7206,1.5915,1.4974,0.07],[18,1.7206,1.5915,1.4877,0.07],[19,1.7206,1.5915,1.4832,0.07],[20,1.7206,1.6017,1.4903,0.07],[21,1.7206,1.6144,1.4983,0.07],[22,1.7206,1.6332,1.5083,0.07],[23,1.7206,1.6332,1.5087,0.07],[24,1.8287,1.6622,1.522,0.07],[25,1.8287,1.6622,1.5224,0.07],[26,1.8287,1.6719,1.5279,0.08],[27,1.8287,1.6719,1.5233,0.1],[28,1.8287,1.6807,1.5283,0.1],[29,1.8287,1.7005,1.5379,0.1],[30,1.8297,1.7209,1.5476,0.13],[31,1.862,1.7437,1.5577,0.13],[32,1.862,1.7517,1.5633,0.13],[33,1.862,1.7535,1.5669,0.13],[34,1.862,1.7561,1.5706,0.13],[35,1.9213,1.7801,1.5806,0.14],[36,1.9213,1.7825,1.5842,0.14],[37,1.9213,1.7987,1.5915,0.14],[38,1.9213,1.805,1.5963,0.14],[39,1.9213,1.8126,1.6014,0.14],[40,1.9213,1.8279,1.6082,0.23],[41,1.927,1.8469,1.616,0.23],[42,2.0531,1.8748,1.6264,0.25],[43,2.0531,1.8831,1.6322,0.25],[44,2.0531,1.8831,1.6354,0.25],[45,2.0531,1.8831,1.6385,0.25],[46,2.0531,1.9027,1.6463,0.25],[47,2.0531,1.9107,1.6519,0.25],[48,2.0657,1.9343,1.6605,0.28],[49,2.0657,1.9475,1.6672,0.28],[50,2.2134,1.9827,1.6781,0.41]],"rows":[[1,0.0,0.4571,2.4161,1.2997,"O=C(CCn1nnc2cc(-c3noc(Cc4ccc(Cl)cc4)n3)ccc21)N1CCCC1"],[2,0.01,0.7507,2.7336,1.5681,"O=C1N[C@@H](c2ccccc2F)c2c1oc1ccccc1c2=O"],[3,0.06,0.685,2.9842,1.5245,"Cc1nonc1CC(=O)N1CCC[C@H](C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1"],[4,0.01,0.9102,2.7965,1.7206,"CS(=O)(=O)N[C@H]1CCN(c2ccc(Cl)c(F)c2)C1=O"],[5,0.03,0.7873,4.5213,1.426,"C[C@H]([NH2+][C@H]1CCOC1)c1ccnc(Cl)c1"],[6,0.01,0.7386,2.9663,1.5301,"CCC(C)(C)NC(=O)c1ccc(NC(=O)N[C@@H](C)[C@H]2CCCO2)cc1"],[7,0.01,0.7703,3.7916,1.4701,"CSCC[C@H](NC(=O)N[C@@H]1CCCCC1(C)C)C(=O)[O-]"],[8,0.03,0.865,3.6033,1.6057,"COc1cc(-c2noc(C3C[C@@H](C)O[C@@H](C)C3)n2)ccn1"],[9,0.0,0.4732,2.4078,1.3168,"CCS(=O)(=O)c1ccc(C(=O)Nc2cc(C)nn2-c2nc3c(Cl)cccc3s2)cc1"],[10,0.02,0.7998,3.5325,1.5384,"CCCCO[C@@H]1C[C@H](NC(=O)c2occc2Br)C1(C)C"],[11,0.01,0.5822,2.1233,1.4674,"CC(C)C(=O)Nc1nc2ccc(CCC(=O)NCc3ccccc3Cl)cc2s1"],[12,0.02,0.6706,2.0313,1.576,"NC(=O)c1cccc(CNC(=O)CSc2nc3ccccc3o2)c1"],[13,0.07,0.6045,4.7132,1.2619,"O=C(N1CCOCC1)C12C[C@H]3C[C@@H](C1)CC(c1ccc([N+](=O)[O-])cc1)(C3)C2"],[14,0.01,0.7543,2.1724,1.6341,"Cc1nn(-c2ccccc2)c(C)c1NC(=O)CN1CCc2cc(F)ccc2C1"],[15,0.0,0.6713,4.3485,1.2992,"CC[NH2+][C@@H](C)[C@@H]1CCCC(C)(C)CC1"],[16,0.0,0.7975,1.9937,1.6871,"C/C=C/C(=O)NCC(=O)Nc1cccc(C)c1C"],[17,0.05,0.6013,2.0889,1.5303,"COc1ccc(CNC(=O)c2cc(OC)c(OC)cc2[N+](=O)[O-])cn1"],[18,0.0,0.634,3.7965,1.3232,"CC(C)OCCS(=O)(=O)N1CC(N2CC[NH2+]CC2)C1"],[19,0.01,0.718,3.9399,1.4013,"COc1ccc(C[C@H](C)C[NH+](C)Cc2cn3cccnc3n2)cc1"],[20,0.0,0.7157,1.8029,1.6265,"COc1ccc(CNC(=O)Nc2ccc(CC(N)=O)cc2)cc1OC"],[21,0.03,0.7656,2.2483,1.6569,"Cc1nn(-c2ccccc2)c(C)c1NC(=O)Cc1ccnc(N)n1"],[22,0.02,0.8628,2.4799,1.7184,"CS(=O)(=O)N1CC(c2ccc3[nH]ncc3c2)C1"],[23,0.06,0.5938,2.2327,1.5169,"Cc1nn(-c2ccccc2)c(C)c1NC(=O)Cc1c[nH]c2ncccc12"],[24,0.07,0.8583,1.8967,1.8287,"CC(=O)NCc1cccc(Nc2ncccn2)c1"],[25,0.03,0.7149,2.9091,1.5328,"CS(=O)(=O)N[C@H]1CCN(c2ccc(-c3nc4ccccc4[nH]3)c(F)c2)C1=O"],[26,0.08,0.6719,1.7822,1.6649,"O=C(NCc1ccccc1)Nc1ccc(Nc2ncccn2)cc1"],[27,0.1,0.4456,2.2732,1.4041,"Cc1nn(-c2ccccc2)c(C)c1NC(=O)CNc1ccc(-c2ccnc(N)n2)cc1"],[28,0.01,0.7909,2.2308,1.6641,"CS(=O)(=O)N1CC(c2ccc3c(c2)[nH]c2ccccc23)C1"],[29,0.07,0.875,2.2672,1.8042,"CS(=O)(=O)N1CC(C(=O)Nc2ccc(-c3ccn[nH]3)cc2)C1"],[30,0.13,0.7718,1.6487,1.8297,"O=C(Nc1ccc(Nc2ncccn2)cc1)c1ccccc1"],[31,0.1,0.8445,1.7423,1.862,"CC(=O)Nc1ccc(Nc2ncccn2)cc1"],[32,0.05,0.7708,1.7505,1.7374,"CC(=O)Nc1ccc(Nc2ncnc3ccccc23)cc1"],[33,0.1,0.6878,1.956,1.6816,"O=C(Nc1ccncc1)Nc1ccc(Nc2ncccn2)cc1"],[34,0.01,0.7636,1.7377,1.6916,"CC(=O)Nc1ccc(Nc2nc3ccccc3s2)cc1"],[35,0.14,0.8737,1.8313,1.9213,"CC(=O)Nc1ccc(Nc2ccccn2)c(F)c1"],[36,0.03,0.7611,1.7231,1.7108,"O=C(Nc1ccc(-c2ccn[nH]2)cc1)c1ccccc1"],[37,0.1,0.8445,1.8176,1.8537,"CC(=O)Nc1cccc(Nc2ncccn2)c1"],[38,0.0,0.896,2.0967,1.7742,"CC(=O)Nc1ccc(N(C)c2ncccn2)cc1"],[39,0.05,0.8456,1.916,1.7938,"O=C(Nc1ccc(-c2ccn[nH]2)cc1)C1CC1"],[40,0.23,0.755,1.9988,1.874,"Fc1cc(Nc2ccccn2)ccc1Nc1ccccn1"],[41,0.15,0.8473,1.633,1.927,"CC(=O)Nc1ccc(Nc2ccccn2)cc1"],[42,0.25,0.8795,1.6882,2.0531,"O=C(Nc1ccc(Nc2ccccn2)cc1)C1CC1"],[43,0.11,0.8717,1.9392,1.8774,"CC(=O)Nc1ccc(Nc2ncccn2)c(F)c1"],[44,0.0,0.8473,1.6641,1.7735,"CC(=O)Nc1ccc(Nc2cccnc2)cc1"],[45,0.01,0.8567,1.8489,1.7724,"CC(=O)Nc1ccc(Nc2nccs2)cc1"],[46,0.2,0.8966,1.8692,2.0,"O=C(Nc1ccc(Nc2ccccn2)c(F)c1)C1CC1"],[47,0.12,0.8852,1.8695,1.9086,"CCC(=O)Nc1ccc(Nc2ccccn2)c(F)c1"],[48,0.28,0.8893,1.9327,2.0657,"CC(=O)Nc1ccc(Nc2cc(C)ccn2)c(F)c1"],[49,0.2,0.8944,1.9734,1.9862,"CC(=O)Nc1ccc(Nc2ccc(F)cn2)c(F)c1"],[50,0.41,0.8913,1.7908,2.2134,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1"]],"gens":[["Initial pool",1,20],["Gen 1 - probe sweep",21,29],["Gen 2",30,39],["Gen 3",40,49],["Final call",50,50]]},"seed2":{"traj":[[1,1.6863,1.6863,1.6863,0.0],[2,1.6863,1.5435,1.5435,0.1],[3,1.6863,1.5269,1.5269,0.1],[4,1.6863,1.4953,1.4953,0.1],[5,1.6863,1.5131,1.5131,0.1],[6,1.6863,1.4932,1.4932,0.1],[7,1.6863,1.5179,1.5179,0.1],[8,1.6863,1.5248,1.5248,0.1],[9,1.6863,1.5171,1.5171,0.1],[10,1.6863,1.5272,1.5272,0.1],[11,1.6863,1.5414,1.5279,0.1],[12,1.6863,1.5414,1.5121,0.1],[13,1.6863,1.5486,1.5091,0.1],[14,1.7593,1.5844,1.527,0.1],[15,1.7593,1.5844,1.5011,0.1],[16,1.7593,1.5904,1.502,0.1],[17,1.7593,1.6062,1.5096,0.1],[18,1.7593,1.6224,1.5176,0.1],[19,1.7593,1.6224,1.5123,0.1],[20,1.7593,1.6279,1.5152,0.1],[21,2.2134,1.6957,1.5484,0.41],[22,2.2134,1.7529,1.5754,0.41],[23,2.2134,1.8152,1.6024,0.43],[24,2.2134,1.8152,1.6016,0.43],[25,2.2134,1.8672,1.6217,0.43],[26,2.2134,1.9267,1.6445,0.43],[27,2.2134,1.9581,1.6556,0.43],[28,2.2134,1.9891,1.6666,0.43],[29,2.2134,2.0426,1.6851,0.43],[30,2.2134,2.0953,1.7027,0.43],[31,2.2134,2.1035,1.7072,0.43],[32,2.2134,2.1072,1.7125,0.43],[33,2.2344,2.1428,1.7283,0.44],[34,2.2962,2.178,1.745,0.5],[35,2.2962,2.2036,1.7587,0.5],[36,2.2962,2.2096,1.77,0.5],[37,2.2962,2.2096,1.7753,0.5],[38,2.2962,2.2096,1.7785,0.5],[39,2.2962,2.2153,1.7893,0.5],[40,2.2962,2.2153,1.7901,0.5],[41,2.2962,2.2222,1.801,0.5],[42,2.2962,2.2222,1.8081,0.5],[43,2.2962,2.2222,1.8156,0.5],[44,2.2962,2.2222,1.8222,0.5],[45,2.2962,2.2222,1.8292,0.5],[46,2.3031,2.233,1.8395,0.52],[47,2.3031,2.233,1.8471,0.52],[48,2.3031,2.2384,1.8555,0.52],[49,2.3031,2.2426,1.8634,0.52],[50,2.3031,2.2428,1.8705,0.52]],"rows":[[1,0.0,0.9065,2.9815,1.6863,"CNS(=O)(=O)c1ccc(C(=O)N2C[C@@H](C)OCC2(C)C)cc1"],[2,0.1,0.5535,3.2753,1.4007,"COc1cc(-c2cc(NCC[NH+](C)C)nc3[nH]ccc23)ccc1O"],[3,0.02,0.6103,2.2308,1.4936,"O=C(Cc1csc(-c2cccc(F)c2)n1)N(Cc1ccccc1F)C1CC1"],[4,0.0,0.6151,2.9303,1.4006,"CCCCN(C)C(=O)C1CCN(C(=O)[C@@H]2CCCN(S(=O)(=O)c3ccc(C)s3)C2)CC1"],[5,0.0,0.7521,2.5122,1.5841,"Cc1cccc(NC(=O)CN2C(=O)N[C@](C)(c3cccc(Br)c3)C2=O)c1"],[6,0.0,0.5958,2.8187,1.3937,"O=C(Nc1nc2c(s1)CCC[C@H]2C(=O)NCCc1ccccc1)c1ccc2c(c1)OCO2"],[7,0.02,0.8438,2.775,1.6666,"CCc1noc(CC)c1CC(=O)NCc1ncc(C)c(OC)c1C"],[8,0.0,0.8751,3.7244,1.5724,"CCn1nc(C)c(C[NH+](C)Cc2cccc(OC(F)(F)F)c2)c1C"],[9,0.02,0.8317,4.5661,1.4555,"c1coc([C@@H](C[NH2+]C[C@@H]2CNc3ccnn3C2)N2CCCC2)c1"],[10,0.01,0.7347,2.1382,1.6183,"Cc1ccc(C)n1-c1ccc(Cl)c(N)c1"],[11,0.0,0.7901,3.292,1.5355,"CCOc1ccc2c(c1)sc(=S)n2CN1C[C@H](C)O[C@@H](C)C1"],[12,0.02,0.7149,4.5723,1.338,"NC(=O)[C@]1([NH2+]C2CC2)CCC[C@@H](OCC2CC2)C1"],[13,0.02,0.8268,4.3648,1.4729,"CCO[C@@H]1C[C@@H](N(C)S(=O)(=O)c2cn(C)cn2)C12CCCC2"],[14,0.01,0.8825,2.1983,1.7593,"CCCC(=O)N1CCC(C(=O)Nc2cccc(-c3nnnn3C)c2)CC1"],[15,0.03,0.2904,2.6371,1.1385,"Cc1nn(-c2ccccc2F)c2ncc3c(c12)C(=O)N(c1ccc(Cl)c(C(F)(F)F)c1)C3=O"],[16,0.0,0.6024,1.7829,1.5154,"Cc1ccc2nccc(Cl)c2c1"],[17,0.03,0.6984,1.8769,1.631,"Cc1ccc(C(=O)OC2CCC2)c(F)c1"],[18,0.0,0.788,2.1957,1.6551,"COC(=O)c1cccc(CCNC(=O)N2CCCN(CC(F)(F)F)CC2)c1"],[19,0.05,0.6463,3.5273,1.4155,"C[C@@H](NC(=O)c1ccccc1)/C([O-])=N/c1nc(C(F)(F)F)n[nH]1"],[20,0.03,0.6931,2.3743,1.5704,"Cn1cnc2ccc(NC(=O)c3ccc(=O)n(CC(=O)NC4CCCC4)c3)cc21"],[21,0.41,0.8913,1.7908,2.2134,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1"],[22,0.36,0.8775,1.8548,2.1426,"CCc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1"],[23,0.43,0.874,1.9836,2.1948,"O=C(Nc1ccc(Nc2cc(C3CC3)ccn2)cc1)C1CC1"],[24,0.06,0.6943,2.5356,1.5837,"Cc1cc(C)nc(Nc2ccc3c(c2)sc(=S)n3C)c1"],[25,0.32,0.8845,1.8947,2.1051,"CC(=O)Nc1ccc(Nc2cc(C(C)C)ccn2)cc1"],[26,0.41,0.894,1.8198,2.213,"Cc1ccnc(Nc2ccc(NC(=O)C3CCC3)cc2)c1"],[27,0.14,0.8913,1.7821,1.9444,"Cc1ccc(Nc2ccc(NC(=O)C3CC3)cc2)nc1"],[28,0.34,0.7381,2.0132,1.9655,"Cc1ccnc(Nc2ccc(Nc3cc(C)ccn3)cc2)c1"],[29,0.41,0.8857,1.8474,2.2015,"Cc1ccnc(Nc2ccc(NC(=O)C3CCCC3)cc2)c1"],[30,0.42,0.8843,1.8218,2.213,"COc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1"],[31,0.05,0.8961,1.9424,1.8414,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1C"],[32,0.08,0.8961,1.8729,1.8791,"Cc1cc(C)nc(Nc2ccc(NC(=O)C3CC3)cc2)c1"],[33,0.44,0.8961,1.9153,2.2344,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)c(C)c2)c1"],[34,0.5,0.8913,1.8556,2.2962,"Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[35,0.42,0.8985,1.8646,2.2224,"O=C(Nc1ccc(Nc2cc(Cl)ccn2)cc1)C1CC1"],[36,0.42,0.8582,2.0173,2.1652,"O=C(Nc1ccc(Nc2cc(C3CCC3)ccn2)cc1)C1CC1"],[37,0.19,0.8944,2.0572,1.9669,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cn2)c1"],[38,0.11,0.9017,2.027,1.8976,"Cc1ccnc(Nc2ccc(NC(=O)C3CC3)cc2)c1F"],[39,0.41,0.9053,2.0492,2.1987,"Cc1ccnc(Nc2ccc(NC(=O)C3COC3)cc2)c1"],[40,0.08,0.8627,2.0838,1.8222,"Cc1cc(C2CC2)cc(Nc2ccc(NC(=O)C3CC3)cc2)n1"],[41,0.44,0.8961,1.9141,2.2345,"Cc1ccnc(Nc2ccc(C)c(NC(=O)C3CC3)c2)c1"],[42,0.31,0.8913,1.9093,2.1002,"Cc1ccnc(Nc2ccccc2NC(=O)C2CC2)c1"],[43,0.35,0.8961,2.0181,2.133,"Cc1cc(NC(=O)C2CC2)cc(Nc2cc(C)ccn2)c1"],[44,0.32,0.8961,1.9866,2.1065,"Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2C)c1"],[45,0.34,0.8961,1.9273,2.1331,"Cc1ccnc(Nc2cc(NC(=O)C3CC3)ccc2C)c1"],[46,0.52,0.8888,1.9514,2.3031,"O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CCC1"],[47,0.41,0.8923,1.9447,2.1973,"Cc1ccnc(Nc2ccc(Cl)c(NC(=O)C3CC3)c2)c1"],[48,0.47,0.8923,1.9854,2.2528,"Cc1ccc(Nc2cc(Cl)ccn2)cc1NC(=O)C1CC1"],[49,0.46,0.8864,1.9278,2.2434,"COc1ccc(Nc2cc(C)ccn2)cc1NC(=O)C1CC1"],[50,0.43,0.8893,1.9388,2.215,"Cc1ccnc(Nc2ccc(C)c(NC(=O)C3CCC3)c2)c1"]],"gens":[["Initial pool",1,20],["Gen 1 - knowledge-led",21,30],["Gen 2",31,40],["Gen 3",41,50]]},"seed3":{"traj":[[1,1.3446,1.3446,1.3446,0.0],[2,1.6004,1.4725,1.4725,0.07],[3,1.6238,1.5229,1.5229,0.07],[4,1.6611,1.5575,1.5575,0.07],[5,1.6611,1.5177,1.5177,0.07],[6,1.6611,1.5268,1.5268,0.07],[7,1.6611,1.5277,1.5277,0.07],[8,1.6611,1.5367,1.5367,0.07],[9,1.6611,1.5332,1.5332,0.07],[10,1.6611,1.5406,1.5406,0.07],[11,1.6611,1.5529,1.5339,0.07],[12,1.6611,1.5696,1.5333,0.07],[13,1.6611,1.5853,1.5403,0.07],[14,1.6611,1.5949,1.5446,0.07],[15,1.6677,1.6091,1.5528,0.07],[16,1.6706,1.6228,1.5602,0.07],[17,1.6706,1.6228,1.5588,0.07],[18,1.6706,1.6322,1.5648,0.07],[19,1.6706,1.6322,1.5596,0.07],[20,1.6706,1.6322,1.5551,0.07],[21,2.3031,1.7025,1.5907,0.52],[22,2.3031,1.7455,1.6107,0.52],[23,2.3031,1.7876,1.6285,0.52],[24,2.3031,1.8498,1.6536,0.52],[25,2.3031,1.8952,1.6706,0.52],[26,2.3031,1.9457,1.6882,0.52],[27,2.3031,1.9959,1.7058,0.52],[28,2.3031,2.0388,1.7197,0.52],[29,2.3031,2.0785,1.7316,0.52],[30,2.3031,2.1174,1.7425,0.52],[31,2.3252,2.1477,1.7613,0.53],[32,2.3252,2.1733,1.7777,0.53],[33,2.3252,2.177,1.7873,0.53],[34,2.3252,2.177,1.7936,0.53],[35,2.3252,2.2021,1.8085,0.53],[36,2.3252,2.2021,1.8152,0.53],[37,2.3252,2.2224,1.8278,0.53],[38,2.3252,2.229,1.8366,0.53],[39,2.3252,2.229,1.8369,0.53],[40,2.3252,2.2377,1.8456,0.53],[41,2.3427,2.2591,1.8577,0.59],[42,2.3427,2.2755,1.8688,0.59],[43,2.3427,2.2868,1.8783,0.59],[44,2.3427,2.2975,1.8876,0.59],[45,2.3427,2.3072,1.8974,0.59],[46,2.3799,2.3175,1.9079,0.6],[47,2.3799,2.3175,1.9158,0.6],[48,2.3799,2.3175,1.9226,0.6],[49,2.3799,2.3207,1.9306,0.6],[50,2.3799,2.3287,1.9393,0.6]],"rows":[[1,0.0,0.6422,3.6783,1.3446,"C[NH+](C)[C@H](CNC(=O)[C@@H]1Cc2ccccc2CN1C(=O)c1ccco1)c1ccccc1"],[2,0.07,0.7138,2.6506,1.6004,"C=CCN1C(=O)CSc2cnn(CC(=O)Nc3ccccc3OCC)c(=O)c21"],[3,0.0,0.7303,1.9587,1.6238,"COc1cc(C#N)cc(Cl)c1OC"],[4,0.03,0.7584,2.146,1.6611,"O=C(CCNC(=O)c1cccc2ccoc12)Nc1cccnc1"],[5,0.0,0.5019,2.2901,1.3585,"Cc1nc2ccccc2c2c(NC(=O)c3ccco3)c3ccccc3n12"],[6,0.0,0.7531,2.6292,1.5721,"Cc1ccc(CCCC(=O)N2CC[C@@H]2c2ccc(Cl)cc2)s1"],[7,0.03,0.6877,2.6591,1.5334,"Cc1ccc(N2C[C@@H](C(=O)Nc3nc4ccc(S(C)(=O)=O)cc4s3)CC2=O)cc1"],[8,0.01,0.7562,2.4963,1.5999,"Cc1cc(C)c2c(c1)N(CN1CCC(CN3CCOCC3)CC1)C(=O)C2=O"],[9,0.0,0.7827,3.4963,1.5053,"C[C@@H]1OCC[C@H]1C(=O)N1CCCC[C@@H]1CN1CCOCC1"],[10,0.0,0.7809,2.5646,1.6071,"Cc1c(O)ccc2c1O/C(=C\\c1ccco1)C2=O"],[11,0.0,0.7309,3.3734,1.4672,"COc1ccccc1[C@@H](NC(=O)[C@H](C)c1cccs1)c1noc(C)n1"],[12,0.07,0.7407,3.564,1.5258,"C[C@H]1C[C@H](C)CN(S(=O)(=O)NCc2cn[nH]c2N)C1"],[13,0.01,0.8328,2.968,1.6241,"O=C([O-])C[C@@H](NC(=O)c1ccco1)c1ccc(OC2CCCC2)cc1"],[14,0.02,0.7396,2.4251,1.6012,"CNC(=O)c1cc(S(=O)(=O)N2CCC(C(=O)[O-])CC2)ccc1OC"],[15,0.0,0.8773,2.8866,1.6677,"Cc1cc(C)nc(N[C@H](C)C[C@H](O)c2ccccc2)n1"],[16,0.06,0.8599,3.244,1.6706,"CN(C)c1c(Cl)cccc1NC(=O)NC[C@H]1CN2CCCC[C@@H]2CO1"],[17,0.01,0.7169,2.705,1.5375,"CCOC(=O)[C@@H](F)c1cc(C)cc(C)c1"],[18,0.01,0.866,2.8874,1.6663,"COc1ccc([C@@H](O)[C@@H](C)NC(=O)c2ccc(C(F)(F)F)nc2)cc1"],[19,0.06,0.5644,2.4312,1.4654,"CCc1ccc([C@H](C)NC(=O)NNC(=O)c2ccc([N+](=O)[O-])cc2)cc1"],[20,0.01,0.6051,2.3122,1.4693,"O=C(COC(=O)Cn1[nH]c(=O)c2ccccc2c1=O)NCc1ccco1"],[21,0.52,0.8888,1.9514,2.3031,"O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CCC1"],[22,0.23,0.9029,1.9252,2.03,"Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)n1"],[23,0.25,0.9029,2.1784,2.0219,"Cc1cnnc(Nc2cccc(NC(=O)C3CCC3)c2)c1"],[24,0.44,0.9029,2.0231,2.2292,"Cc1cc(Nc2cccc(NC(=O)C3CCC3)c2)ncn1"],[25,0.29,0.9029,2.0302,2.0784,"Cc1cnc(Nc2cccc(NC(=O)C3CCC3)c2)cn1"],[26,0.37,0.8904,2.187,2.1285,"Cc1ccnc(Nc2cccc(NS(=O)(=O)C3CC3)c2)c1"],[27,0.36,0.9026,1.8919,2.1635,"Cc1ccnc(Nc2cccc(C(=O)NC3CCC3)c2)c1"],[28,0.43,0.7695,1.937,2.0954,"Cc1ccnc(Nc2cccc(NC(=O)c3ccccn3)c2)c1"],[29,0.37,0.8035,1.9777,2.0649,"Cc1ccnc(Nc2cccc(NC(=O)NC3CCC3)c2)c1"],[30,0.4,0.8039,2.3044,2.059,"Cc1ccnc(Nc2cccc(NC(=S)C3CCC3)c2)c1"],[31,0.53,0.8985,1.9293,2.3252,"O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CC1"],[32,0.49,0.894,1.8813,2.2861,"Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1"],[33,0.33,0.8944,2.1572,2.0958,"Cc1ccnc(Nc2cncc(NC(=O)C3CC3)c2)c1"],[34,0.38,0.7381,2.0738,1.9988,"Cc1ccnc(Nc2cccc(Nc3cc(C)ccn3)c2)c1"],[35,0.53,0.9002,2.0304,2.3157,"O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1CCC1"],[36,0.42,0.731,1.908,2.0501,"Cc1ccnc(Nc2cccc(N)c2)c1"],[37,0.5,0.9053,2.1107,2.2819,"Cc1ccnc(Nc2cccc(NC(=O)C3COC3)c2)c1"],[38,0.36,0.9325,2.1847,2.1608,"Cc1ccnc(Nc2cccc(N(C)C(=O)C3CC3)c2)c1"],[39,0.04,0.8748,1.589,1.8494,"Cc1ccc(Nc2cccc(NC(=O)C3CC3)c2)cc1"],[40,0.43,0.8888,2.2209,2.1832,"CC1(C(=O)Nc2cccc(Nc3cc(Cl)ccn3)c2)CC1"],[41,0.59,0.8666,2.025,2.3427,"O=C(Nc1cccc(Nc2cc(Br)ccn2)c1)C1CCC1"],[42,0.54,0.8966,2.0124,2.3241,"O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1CC1"],[43,0.51,0.9068,2.2597,2.2768,"O=C(Nc1cccc(Nc2cc(F)ccn2)c1)C1COC1"],[44,0.53,0.903,2.2854,2.2902,"N#Cc1ccnc(Nc2cccc(NC(=O)C3COC3)c2)c1"],[45,0.54,0.8843,1.8834,2.3261,"COc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[46,0.6,0.8917,2.0068,2.3799,"O=C(Nc1cccc(Nc2cc(Br)ccn2)c1)C1CC1"],[47,0.5,0.911,2.1808,2.2798,"O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1COC1"],[48,0.48,0.8868,2.128,2.2415,"COc1ccnc(Nc2cccc(NC(=O)C3COC3)c2)c1"],[49,0.53,0.8852,1.9096,2.3142,"COc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1"],[50,0.58,0.9045,2.067,2.366,"N#Cc1ccnc(Nc2cccc(NC(=O)C3CCC3)c2)c1"]],"gens":[["Initial pool",1,20],["Gen 1 - chemotype sweep",21,30],["Gen 2",31,40],["Gen 3",41,50]]},"seed4":{"traj":[[1,1.7778,1.7778,1.7778,0.01],[2,1.7778,1.6747,1.6747,0.01],[3,1.7778,1.5487,1.5487,0.01],[4,1.7778,1.5442,1.5442,0.02],[5,1.7778,1.5042,1.5042,0.07],[6,1.7778,1.4778,1.4778,0.21],[7,1.7778,1.4523,1.4523,0.21],[8,1.7778,1.4797,1.4797,0.21],[9,1.7778,1.496,1.496,0.21],[10,1.7778,1.4996,1.4996,0.21],[11,1.7778,1.5419,1.5196,0.21],[12,1.7778,1.5643,1.5199,0.21],[13,1.7778,1.5643,1.4873,0.21],[14,1.7778,1.5967,1.5002,0.21],[15,1.7778,1.6225,1.5072,0.21],[16,1.7778,1.6253,1.5099,0.21],[17,1.7778,1.6301,1.5139,0.21],[18,1.7778,1.6301,1.5139,0.21],[19,1.7778,1.6301,1.5091,0.21],[20,1.7778,1.6301,1.4945,0.21],[21,2.3799,1.7149,1.5366,0.6],[22,2.3799,1.7858,1.5695,0.6],[23,2.3799,1.8571,1.6006,0.6],[24,2.3799,1.9165,1.6244,0.6],[25,2.3799,1.9868,1.6518,0.61],[26,2.3799,2.0543,1.6767,0.61],[27,2.3799,2.1147,1.6988,0.61],[28,2.3799,2.176,1.7197,0.61],[29,2.3799,2.232,1.739,0.61],[30,2.3799,2.2797,1.7562,0.61],[31,2.3799,2.2999,1.7761,0.61],[32,2.3906,2.3135,1.7954,0.62],[33,2.3906,2.3196,1.8113,0.62],[34,2.3906,2.324,1.8261,0.62],[35,2.3906,2.324,1.8388,0.62],[36,2.3906,2.326,1.8516,0.62],[37,2.3906,2.3308,1.8646,0.62],[38,2.3906,2.3308,1.8739,0.7],[39,2.3906,2.3352,1.8856,0.7],[40,2.3906,2.3352,1.8958,0.7],[41,2.3906,2.3363,1.9059,0.71],[42,2.3906,2.3395,1.9161,0.72],[43,2.3906,2.3395,1.925,0.72],[44,2.3906,2.3398,1.9338,0.74],[45,2.3906,2.3398,1.942,0.74],[46,2.3906,2.3431,1.9507,0.74],[47,2.3906,2.3431,1.9578,0.74],[48,2.3906,2.3431,1.965,0.74],[49,2.3906,2.3431,1.9719,0.74],[50,2.3906,2.3431,1.9777,0.74]],"rows":[[1,0.01,0.8887,2.088,1.7778,"CNc1cc(C)ccc1C(=O)N(C)C1CCCC1"],[2,0.01,0.8986,4.033,1.5716,"C[C@@H]([NH2+]Cc1csc(C2CC2)n1)c1ccc(Cl)s1"],[3,0.0,0.5308,3.1064,1.2968,"CCc1ccc(CN/C(NCC(=O)N2CCCCC2)=[NH+]\\C)s1"],[4,0.02,0.6724,2.4573,1.5305,"COc1ccc(N)c(SCc2ccn(C(C)C)n2)c1"],[5,0.07,0.4508,2.588,1.3444,"O=C(NCCOc1ccc([N+](=O)[O-])cc1)[C@H]1CCCN1C(=O)c1ccco1"],[6,0.21,0.2755,2.2574,1.3458,"COc1cc(C=C2C(=O)NC(=S)NC2=O)ccc1OC(=O)c1ccccc1"],[7,0.01,0.5257,3.128,1.2993,"CC(C)[C@H](Sc1nccn1Cc1ccccn1)C(=O)N1CCN(c2ncccn2)CC1"],[8,0.0,0.7659,1.8523,1.6712,"O=C(CCC(=O)N1CCC(c2ccc(F)cc2)CC1)c1ccccc1"],[9,0.0,0.7416,2.0355,1.6266,"O=C(CNS(=O)(=O)c1cc(C(F)(F)F)ccc1Cl)Nc1ccc(F)cc1"],[10,0.0,0.7338,2.8141,1.5322,"CCN1C(=O)/C(=N/NC(=O)[C@@H](C)Oc2ccc(Cl)cc2C)c2cc(OC)ccc21"],[11,0.0,0.886,2.4961,1.7198,"O=C(N[C@@H]1CCOc2ccccc21)C1CCN(C(=O)c2ccc(F)cc2)CC1"],[12,0.03,0.7564,3.368,1.5233,"CCNC(=O)[C@@H]1C[C@@H](NC(=O)c2[nH]c3c(C)cc(C)cc3c2C)CN1CC"],[13,0.02,0.3544,3.5103,1.0955,"C[NH+](C)CCCN1C(=O)C(=O)/C(=C(/O)c2ccc3c(c2)OCCO3)[C@H]1c1cccc(O)c1"],[14,0.0,0.8558,2.6897,1.6681,"C[C@H]1CCc2c(C(=O)NCc3ccc(CN4CCOCC4)cc3)csc2C1"],[15,0.03,0.79,2.9407,1.6044,"Cc1nc([C@H]2CCCCN2C(=O)c2cccnc2)ncc1C(=O)N1CCOCC1"],[16,0.0,0.6917,2.2641,1.5512,"COCc1noc(-c2cc3ccccc3o2)n1"],[17,0.01,0.7471,2.6071,1.5785,"C[C@H]1C(=O)N(CC(=O)Nc2ccc(S(C)(=O)=O)cc2)C(=O)N1c1ccc(F)cc1"],[18,0.01,0.8658,4.2652,1.513,"C[C@@H]1CCC[C@H](OCC(=O)NCc2[nH+]ccn2C)C1"],[19,0.01,0.742,3.9625,1.4228,"C[NH+](CCCN1C(=O)NC(C)(C)C1=O)[C@@H]1CCCN(c2ccccc2)C1"],[20,0.02,0.6002,4.6347,1.2163,"[O-]C1=c2ccccc2=[NH+]C2=[NH+]C[C@@H](CSc3ccc(Cl)cc3)N21"],[21,0.6,0.8917,2.0068,2.3799,"O=C(Nc1cccc(Nc2cc(Br)ccn2)c1)C1CC1"],[22,0.56,0.8223,2.0949,2.2606,"CSc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[23,0.56,0.8295,1.945,2.2845,"CC(=O)c1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[24,0.57,0.7313,2.1603,2.1723,"O=C(Nc1cccc(Nc2cc(I)ccn2)c1)C1CCCC1"],[25,0.61,0.8191,2.093,2.3076,"O=C(Nc1cccc(Nc2cc(C(F)(F)F)ccn2)c1)C1CCCC1"],[26,0.59,0.844,2.1929,2.3015,"C#Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[27,0.51,0.879,2.0552,2.2717,"CS(=O)(=O)c1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[28,0.58,0.8471,2.2875,2.284,"CC#Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[29,0.61,0.7875,2.0568,2.2801,"CNc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[30,0.53,0.8298,1.9415,2.2552,"COC(=O)c1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[31,0.59,0.9006,2.0486,2.3741,"N#Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[32,0.62,0.8875,2.0518,2.3906,"O=C(Nc1cccc(Nc2cc(C(F)(F)F)ccn2)c1)C1CC1"],[33,0.57,0.891,2.2543,2.3216,"O=C(Nc1cccc(Nc2cc(Br)ccn2)c1)C1COC1"],[34,0.57,0.8745,2.1555,2.3161,"C=Cc1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[35,0.56,0.8289,2.0806,2.2689,"O=C(Nc1cccc(Nc2cc(C3CC3)ccn2)c1)C1CCCC1"],[36,0.55,0.872,2.0943,2.3004,"CN(C)c1ccnc(Nc2cccc(NC(=O)C3CCCC3)c2)c1"],[37,0.56,0.8891,2.0578,2.3315,"CN(C)c1ccnc(Nc2cccc(NC(=O)C3CC3)c2)c1"],[38,0.7,0.6229,1.9233,2.2203,"O=C(Nc1cccc(Nc2cc(-c3ccccc3)ccn2)c1)C1CCCC1"],[39,0.57,0.874,2.0422,2.3282,"O=C(Nc1cccc(Nc2cc(C3CC3)ccn2)c1)C1CC1"],[40,0.55,0.8736,2.1796,2.2926,"O=C(Nc1cccc(Nc2cc(C(F)F)ccn2)c1)C1CC1"],[41,0.71,0.7397,2.2414,2.3118,"O=C(Nc1cccc(Nc2cc(-c3cccnc3)ccn2)c1)C1COC1"],[42,0.72,0.7461,2.1946,2.3333,"O=C(Nc1cccc(Nc2cc(-c3cncnc3)ccn2)c1)C1CC1"],[43,0.68,0.7343,2.0399,2.2987,"O=C(Nc1cccc(Nc2cc(-c3ccncc3)ccn2)c1)C1CC1"],[44,0.74,0.7084,2.233,2.3114,"Cn1cc(-c2ccnc(Nc3cccc(NC(=O)C4CCCC4)c3)c2)cn1"],[45,0.7,0.7485,2.3094,2.3031,"Cn1cnc(-c2ccnc(Nc3cccc(NC(=O)C4CC4)c3)c2)c1"],[46,0.74,0.7461,2.2821,2.3436,"O=C(Nc1cccc(Nc2cc(-c3ccnnc3)ccn2)c1)C1CC1"],[47,0.7,0.7402,2.4,2.2847,"Cn1cc(-c2ccnc(Nc3cccc(NC(=O)C4COC4)c3)c2)cn1"],[48,0.7,0.7466,2.2893,2.3033,"O=C(Nc1cccc(Nc2cc(-c3cnco3)ccn2)c1)C1CC1"],[49,0.71,0.7466,2.4065,2.3003,"O=C(Nc1cccc(Nc2cc(-c3cnoc3)ccn2)c1)C1CC1"],[50,0.66,0.7492,2.3241,2.262,"Cn1cc(-c2ccnc(Nc3cccc(NC(=O)C4CC4)c3)c2)nn1"]],"gens":[["Initial pool",1,20],["Gen 1 - C4 scan",21,30],["Gen 2",31,40],["Gen 3 - aryl series",41,50]]}};
+const META = {seed1:{label:'Run 1 — seed 1', sv:'var(--s1)', cls:'r1', n:'Run 1'},
+              seed2:{label:'Run 2 — seed 2', sv:'var(--s2)', cls:'r2', n:'Run 2'},
+              seed3:{label:'Run 3 — seed 3', sv:'var(--s3)', cls:'r3', n:'Run 3'},
+              seed4:{label:'Run 4 — seed 4', sv:'var(--s4)', cls:'r4', n:'Run 4'}};
+const SER = [{k:1,name:'Top-1',    sv:'var(--s1)'},
+             {k:2,name:'Top-10',   sv:'var(--s2)'},
+             {k:3,name:'Top-100',  sv:'var(--s3)'}];
+const f4 = v => v.toFixed(4), f2 = v => v.toFixed(2), f3 = v => v.toFixed(3);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const shortGen = nm => nm.startsWith('Initial') ? 'pool'
+  : nm.startsWith('Gen 1') ? 'gen 1' : nm.startsWith('Gen 2') ? 'gen 2'
+  : nm.startsWith('Gen 3') ? 'gen 3' : '';
+
+/* ---------- stat tiles ---------- */
+(function tiles(){
+  const R=['seed1','seed2','seed3','seed4'].map(k=>D[k].traj.at(-1));
+  const matched=D.seed4.traj.find(t=>t[1]>=R[2][1])[0];
+  const t=[];
+  R.forEach((r,i)=>t.push({k:'Run '+(i+1)+' \u2014 best \u03a6', v:f4(r[1]),
+    d:(i? '<span class="up">+'+(r[1]-R[i-1][1]).toFixed(4)+'</span> \u00b7 ':'')+'jnk3 '+f2(r[4])}));
+  t.push({k:'Best jnk3 reached', v:f2(R[3][4]), d:'0.41 \u2192 0.52 \u2192 0.60 \u2192 0.74'});
+  t.push({k:'Run 4 top-10 average', v:f4(R[3][2]), d:'run 1 '+f4(R[0][2])+' \u00b7 run 3 '+f4(R[2][2])});
+  t.push({k:'Run 4 matched run 3 on call', v:String(matched),
+          d:'run 3 needed all 50 to reach '+f4(R[2][1])});
+  document.getElementById('tiles').innerHTML=t.map(x=>
+    '<div class="tile"><div class="k">'+x.k+'</div><div class="v">'+x.v+'</div><div class="d">'+x.d+'</div></div>').join('');
+})();
+
+/* ---------- generic line-chart plumbing ---------- */
+function axes(W,H,M,yt,yfmt,xt){
+  let s='';
+  yt.forEach(v=>{
+    const y=M.v2y(v).toFixed(1);
+    s+='<line x1="'+M.L+'" y1="'+y+'" x2="'+(W-M.R)+'" y2="'+y+'" style="stroke:var(--grid);stroke-width:1"/>';
+    s+='<text x="'+(M.L-9)+'" y="'+y+'" text-anchor="end" dominant-baseline="middle" style="fill:var(--muted);font-size:10.5px;font-variant-numeric:tabular-nums">'+yfmt(v)+'</text>';
+  });
+  s+='<line x1="'+M.L+'" y1="'+(H-M.B)+'" x2="'+(W-M.R)+'" y2="'+(H-M.B)+'" style="stroke:var(--axis);stroke-width:1"/>';
+  xt.forEach(n=>{
+    const x=M.n2x(n).toFixed(1);
+    s+='<text x="'+x+'" y="'+(H-M.B+15)+'" text-anchor="middle" style="fill:var(--muted);font-size:10.5px;font-variant-numeric:tabular-nums">'+n+'</text>';
+  });
+  s+='<text x="'+M.n2x(25.5)+'" y="'+(H-M.B+31)+'" text-anchor="middle" style="fill:var(--muted);font-size:10.5px">oracle calls</text>';
+  return s;
+}
+function bands(gens,W,H,M){
+  let s='';
+  gens.forEach((g,i)=>{
+    if(i<gens.length-1){
+      const x=M.n2x(g[2]+0.5).toFixed(1);
+      s+='<line x1="'+x+'" y1="'+M.T+'" x2="'+x+'" y2="'+(H-M.B)+'" style="stroke:var(--grid);stroke-width:1"/>';
+    }
+    const lab=shortGen(g[0]);
+    if(lab) s+='<text x="'+M.n2x((g[1]+g[2])/2)+'" y="'+(M.T-6)+'" text-anchor="middle" style="fill:var(--muted);font-size:9.5px;letter-spacing:.04em">'+lab+'</text>';
+  });
+  return s;
+}
+const path = pts => 'M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L');
+
+/* ---------- trajectory panels ---------- */
+function trajPanel(key){
+  const d=D[key], W=520,H=300;
+  const M={L:44,R:66,T:24,B:40};
+  const ymin=1.20, ymax=2.45;
+  M.n2x = n => M.L+(n-1)/49*(W-M.L-M.R);
+  M.v2y = v => (H-M.B)-(v-ymin)/(ymax-ymin)*(H-M.B-M.T);
+  let g = bands(d.gens,W,H,M) + axes(W,H,M,[1.2,1.5,1.8,2.1,2.4],v=>v.toFixed(1),[1,10,20,30,40,50]);
+  /* raw molecules: recessive context layer */
+  g += d.rows.map(r=>'<circle cx="'+M.n2x(r[0]).toFixed(1)+'" cy="'+M.v2y(r[4]).toFixed(1)+'" r="2.4" style="fill:var(--axis)"/>').join('');
+  SER.forEach(s=>{
+    g += '<path d="'+path(d.traj.map(t=>[M.n2x(t[0]),M.v2y(t[s.k])]))+'" style="fill:none;stroke:'+s.sv+';stroke-width:2;stroke-linejoin:round;stroke-linecap:round"/>';
+  });
+  const last=d.traj.at(-1);
+  g += '<circle cx="'+M.n2x(50).toFixed(1)+'" cy="'+M.v2y(last[1]).toFixed(1)+'" r="4" style="fill:var(--s1);stroke:var(--surface);stroke-width:2"/>';
+  g += '<text x="'+(W-M.R+9)+'" y="'+M.v2y(last[1]).toFixed(1)+'" dominant-baseline="middle" style="fill:var(--ink);font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums">'+f4(last[1])+'</text>';
+  g += '<g id="hv-'+key+'" style="opacity:0"><line y1="'+M.T+'" y2="'+(H-M.B)+'" style="stroke:var(--axis);stroke-width:1"/>'+
+       SER.map(s=>'<circle r="4" style="fill:'+s.sv+';stroke:var(--surface);stroke-width:2"/>').join('')+'</g>';
+  g += '<rect id="ov-'+key+'" x="'+M.L+'" y="'+M.T+'" width="'+(W-M.L-M.R)+'" height="'+(H-M.T-M.B)+'" style="fill:transparent" />';
+  return {svg:'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Top-k average Φ by oracle call, '+META[key].n+'">'+g+'</svg>', M};
+}
+
+(function traj(){
+  const host=document.getElementById('trajPanels');
+  const leg='<div class="legend" style="margin:0 0 4px"><span><span class="kd" style="background:var(--axis)"></span>individual molecule</span>'+
+    SER.map(s=>'<span><span class="key" style="background:'+s.sv+'"></span>'+s.name+' average Φ</span>').join('')+'</div>';
+  host.insertAdjacentHTML('beforebegin',leg);
+  Object.keys(META).forEach(key=>{
+    const p=trajPanel(key);
+    host.insertAdjacentHTML('beforeend',
+      '<div class="card"><div class="ct">'+META[key].label+'</div>'+
+      '<div class="cs">final top-1 '+f4(D[key].traj.at(-1)[1])+'</div>'+
+      '<figure id="fig-'+key+'">'+p.svg+'<div class="tip" id="tip-'+key+'"></div></figure></div>');
+    wire(key,p.M);
+  });
+})();
+
+function wire(key,M){
+  const fig=document.getElementById('fig-'+key), svg=fig.querySelector('svg');
+  const ov=document.getElementById('ov-'+key), hv=document.getElementById('hv-'+key), tip=document.getElementById('tip-'+key);
+  const d=D[key];
+  const show=(n,clientX,clientY)=>{
+    const t=d.traj[n-1], r=d.rows[n-1];
+    hv.style.opacity='1';
+    hv.querySelector('line').setAttribute('x1',M.n2x(n)); hv.querySelector('line').setAttribute('x2',M.n2x(n));
+    hv.querySelectorAll('circle').forEach((c,i)=>{c.setAttribute('cx',M.n2x(n));c.setAttribute('cy',M.v2y(t[i+1]));});
+    const gen=(d.gens.find(g=>n>=g[1]&&n<=g[2])||['',0,0])[0];
+    tip.innerHTML='<div class="tn">call '+n+' · '+gen+'</div>'+
+      SER.map(s=>'<div class="tr"><span class="key" style="background:'+s.sv+'"></span>'+s.name+'<b>'+f4(t[s.k])+'</b></div>').join('')+
+      '<div class="tr" style="border-top:1px solid var(--hair);margin-top:7px;padding-top:6px"><span class="kd" style="background:var(--axis)"></span>this molecule<b>'+f4(r[4])+'</b></div>'+
+      '<div class="tr" style="color:var(--muted);font-size:11px">jnk3 '+f2(r[1])+' · QED '+f3(r[2])+' · SA '+f2(r[3])+'</div>'+
+      '<div class="tsmi">'+esc(r[5])+'</div>';
+    const fr=fig.getBoundingClientRect(), sr=svg.getBoundingClientRect();
+    const px=sr.left-fr.left+M.n2x(n)/520*sr.width;
+    tip.style.opacity='1';
+    const tw=tip.offsetWidth;
+    tip.style.left=Math.max(2,Math.min(fr.width-tw-2, px - tw/2))+'px';
+    tip.style.top='6px';
+  };
+  const hide=()=>{hv.style.opacity='0';tip.style.opacity='0';};
+  const toN=cx=>{
+    const sr=svg.getBoundingClientRect();
+    const vx=(cx-sr.left)/sr.width*520;
+    return Math.max(1,Math.min(50,Math.round(1+(vx-M.L)/(520-M.L-M.R)*49)));
+  };
+  ov.addEventListener('pointermove',e=>show(toN(e.clientX),e.clientX,e.clientY));
+  ov.addEventListener('pointerdown',e=>show(toN(e.clientX),e.clientX,e.clientY));
+  ov.addEventListener('pointerleave',hide);
+  svg.setAttribute('tabindex','0');
+  let cur=50;
+  svg.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+      cur=Math.max(1,Math.min(50,cur+(e.key==='ArrowRight'?1:-1)));
+      const sr=svg.getBoundingClientRect();
+      show(cur, sr.left+M.n2x(cur)/520*sr.width, sr.top); e.preventDefault();
+    } else if(e.key==='Escape') hide();
+  });
+  svg.addEventListener('blur',hide);
+}
+
+/* ---------- trajectory table view ---------- */
+(function trajTable(){
+  let rows='';
+  Object.keys(META).forEach(key=>{
+    D[key].gens.forEach(g=>{
+      const t=D[key].traj[Math.min(g[2],D[key].traj.length)-1];
+      rows+='<tr class="'+META[key].cls+'"><td class="l">'+META[key].n+'</td><td class="l">'+g[0]+'</td>'+
+        '<td class="num">'+g[2]+'</td><td class="num">'+f4(t[1])+'</td><td class="num">'+f4(t[2])+'</td>'+
+        '<td class="num">'+f4(t[3])+'</td><td class="num">'+f2(t[4])+'</td></tr>';
+    });
+  });
+  document.getElementById('trajTable').innerHTML=
+    '<div class="tscroll"><table><thead><tr><th class="l">Run</th><th class="l">Stage</th>'+
+    '<th>Calls spent</th><th>Top-1 Φ</th><th>Top-10 Φ</th><th>Top-100 Φ</th><th>Best jnk3</th>'+
+    '</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const bc=document.getElementById('vChart'), bt=document.getElementById('vTable');
+  const set=chart=>{
+    document.getElementById('trajChart').hidden=!chart;
+    document.getElementById('trajTable').hidden=chart;
+    bc.setAttribute('aria-pressed',String(chart)); bt.setAttribute('aria-pressed',String(!chart));
+  };
+  bc.addEventListener('click',()=>set(true)); bt.addEventListener('click',()=>set(false));
+})();
+
+/* ---------- jnk3 chart ---------- */
+(function jnk3(){
+  const W=1040,H=250,M={L:44,R:70,T:24,B:40};
+  const ymax=0.8;
+  M.n2x=n=>M.L+(n-1)/49*(W-M.L-M.R);
+  M.v2y=v=>(H-M.B)-v/ymax*(H-M.B-M.T);
+  let g=bands(D.seed4.gens,W,H,M)+axes(W,H,M,[0,0.2,0.4,0.6,0.8],v=>v.toFixed(1),[1,10,20,30,40,50]);
+  Object.keys(META).forEach(key=>{
+    const d=D[key];
+    g+='<path d="'+path(d.traj.map(t=>[M.n2x(t[0]),M.v2y(t[4])]))+'" style="fill:none;stroke:'+META[key].sv+';stroke-width:2;stroke-linejoin:round"/>';
+    const last=d.traj.at(-1);
+    g+='<circle cx="'+M.n2x(50).toFixed(1)+'" cy="'+M.v2y(last[4]).toFixed(1)+'" r="4" style="fill:'+META[key].sv+';stroke:var(--surface);stroke-width:2"/>';
+    g+='<text x="'+(W-M.R+9)+'" y="'+M.v2y(last[4]).toFixed(1)+'" dominant-baseline="middle" style="fill:var(--ink);font-size:11.5px;font-weight:600">'+META[key].n.replace('Run ','R')+' '+f2(last[4])+'</text>';
+  });
+  document.getElementById('jFig').innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Best jnk3 score reached by oracle call, both runs">'+g+'</svg>';
+  document.getElementById('jLegend').innerHTML=Object.keys(META).map(k=>
+    '<span><span class="key" style="background:'+META[k].sv+'"></span>'+META[k].label+'</span>').join('')+
+    '<span style="color:var(--muted)">band labels mark generations</span>';
+})();
+
+/* ---------- molecule table ---------- */
+(function molTable(){
+  const all=[];
+  Object.keys(META).forEach(k=>D[k].rows.forEach(r=>all.push({run:k,call:r[0],jnk3:r[1],qed:r[2],sa:r[3],phi:r[4],smi:r[5]})));
+  let sortKey='phi', desc=true, runFilter='all', q='';
+  const body=document.getElementById('molBody');
+  const draw=()=>{
+    const rows=all.filter(r=>(runFilter==='all'||r.run===runFilter) &&
+        (!q||r.smi.toLowerCase().includes(q)))
+      .sort((a,b)=>{const d=a[sortKey]-b[sortKey];return desc?-d:d;});
+    body.innerHTML=rows.map(r=>'<tr class="'+META[r.run].cls+'">'+
+      '<td class="l"><span class="chip">'+META[r.run].n+'</span></td>'+
+      '<td class="num">'+r.call+'</td><td class="num">'+f2(r.jnk3)+'</td><td class="num">'+f3(r.qed)+'</td>'+
+      '<td class="num">'+f2(r.sa)+'</td><td class="num" style="font-weight:600">'+f4(r.phi)+'</td>'+
+      '<td class="smi">'+esc(r.smi)+'</td></tr>').join('')
+      || '<tr><td class="l" colspan="7" style="color:var(--muted)">No molecule matches that substring.</td></tr>';
+  };
+  document.querySelectorAll('#molTable .sortable').forEach(th=>{
+    const go=()=>{const k=th.dataset.s; if(k===sortKey) desc=!desc; else {sortKey=k;desc=true;} draw();};
+    th.addEventListener('click',go);
+    th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+  });
+  document.querySelectorAll('.fr').forEach(b=>b.addEventListener('click',()=>{
+    runFilter=b.dataset.run;
+    document.querySelectorAll('.fr').forEach(o=>o.setAttribute('aria-pressed',String(o===b)));
+    draw();
+  }));
+  document.getElementById('q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();draw();});
+  draw();
+})();
+</script>

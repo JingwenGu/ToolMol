@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 2 is the high-QED azetidine anilide I built earlier; ligand 1 is the benzyl urea anilinopyrimidine. The pattern I have established is that jnk3 rises with the count of aryl-NH-(hetero)aryl linkages: one link gives about 0.07, two give 0.08-0.10. The untested question is whether a third link keeps paying, and ligand 1 is one edit away from answering it. It currently has two usable links (the urea NH on the anilide side and the pyrimidin-2-ylamino NH); its third NH is wasted because it connects to a CH2, not to a ring. Atom 1 is the urea carbonyl and atom 2 is that CH2-bearing NH, a non-ring bond, so cutting there discards the NH, the CH2 and the phenyl together. In their place I attach an N-linked pyridin-4-ylamino, which converts the urea into a diaryl urea and makes every one of the three NH groups a genuine aryl-to-azine linker. It also costs almost nothing in mass (~306 Da) and pulls LogP from 3.54 down near 2.2, so QED should hold up better than the 413 Da route ligand 2 came from.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 1,
+    "branch_idx": 2,
+    "new_substructure": "[1*]Nc1ccncc1"
+   }
+  }
+ ]
+}

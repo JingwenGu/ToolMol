@@ -1,0 +1,13 @@
+{
+ "content": "Ligand 1 is a tetrahydrofuran carboxamide on a piperidine-morpholine, SA 3.50 and jnk3 zero; ligand 2 is an aminopyrazole sulfamide at SA 3.56. Both are synthetically expensive and inactive. Atom 0 on ligand 1 is a terminal methyl over an acyclic bond - note the branch side carries the stereocentre, not the anchor, so the cut is clean - and keeping that one carbon discards the other 20. This completes a systematic scan I started this generation: holding everything else fixed, where does a second ring nitrogen want to be relative to the donor? Pyridazine puts it adjacent to the ortho nitrogen, pyrimidin-2-yl puts it on the far side of the N-H carbon, pyrimidin-4-yl puts it meta to the donor, and pyrazine - this episode - puts it para. Four placements plus the pyridine baseline is a complete map of the diazines, which is the same approach that paid off when I scanned the pyridine ring and then the central ring. The surviving methyl goes para to the N-H carbon and the meta anilide and cyclobutyl cap are unchanged. Expected product: about 282 Da.",
+ "tool_calls": [
+  {
+   "name": "replace_substructure",
+   "arguments": {
+    "anchor_idx": 0,
+    "branch_idx": 1,
+    "new_substructure": "[1*]c1cnc(Nc2cccc(NC(=O)C3CCC3)c2)cn1"
+   }
+  }
+ ]
+}

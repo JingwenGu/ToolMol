@@ -1,0 +1,3 @@
+{
+ "content": "Exactly the intended molecule, and QED 0.889 with SA 1.95 match the previous run's values for it to three decimals, so the oracle is reproducing as expected. Worth noting mechanically: anchoring on an amide nitrogen worked cleanly here. The two anchors I know fail - aromatic ring nitrogens and stereocentres - both fail because the cut leaves them with explicit hydrogens; an sp3 amide N keeps its hydrogen implicit and re-attaches fine, which widens the set of usable anchors. FINAL ANSWER: O=C(Nc1cccc(Nc2cc(Cl)ccn2)c1)C1CCC1"
+}
