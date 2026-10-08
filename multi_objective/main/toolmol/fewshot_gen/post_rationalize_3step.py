@@ -41,10 +41,6 @@ def phi_and_raw(smi):
     return total, raw
 
 
-PICKS = [357, 165, 84, 64, 132, 114, 383, 424, 318, 69]
-
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-MODEL = "gpt-5.4"
 GOAL_DESCRIPTION = "maximize jnk3, qed scores; minimize sa score"
 
 
@@ -112,17 +108,26 @@ def parse_response(content, n_steps):
     return out
 
 
-def build_examples():
-    beam_results = {json.loads(l)['snap_id']: json.loads(l)
-                    for l in open(os.path.join(HERE, 'beam3_results.jsonl'), encoding='utf-8')}
+def build_examples(client, model, beam_results_path, snapshots_path):
+    # Picks come from whichever snap_ids beam_search_3step.py actually wrote to
+    # --out (in file order), rather than a separately-maintained PICKS list here -
+    # the two lists drifting apart was a real footgun (they had to be kept in sync
+    # by hand) and beam_results.jsonl is already the authoritative "what was searched".
+    beam_results = {}
+    with open(beam_results_path, encoding='utf-8') as f:
+        for line in f:
+            d = json.loads(line)
+            beam_results[d['snap_id']] = d
+    picks = list(beam_results.keys())
+
     raw_idx = {}
-    with open(os.path.join(HERE, 'snapshots_gpt54.jsonl'), encoding='utf-8') as f:
+    with open(snapshots_path, encoding='utf-8') as f:
         for line in f:
             d = json.loads(line)
             raw_idx[(d['gen'], d['pair'], d['step'])] = d
 
     results = []
-    for sid in PICKS:
+    for sid in picks:
         br = beam_results[sid]
         raw = raw_idx[(br['gen'], br['pair'], br['step'])]
         mol1_smi = br['working_smi_before']
@@ -155,7 +160,7 @@ def build_examples():
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": public_user_msg + private_instruction},
         ]
-        resp = client.chat.completions.create(model=MODEL, messages=messages, temperature=0)
+        resp = client.chat.completions.create(model=model, messages=messages, temperature=0)
         content = resp.choices[0].message.content or ""
         parsed = parse_response(content, len(path_steps))
 
@@ -179,7 +184,30 @@ def build_examples():
 
 
 if __name__ == '__main__':
-    out = build_examples()
-    json.dump(out, open(os.path.join(HERE, 'fewshot_examples_3step.json'), 'w', encoding='utf-8'),
-               indent=2, ensure_ascii=False)
-    print(f"\nwrote {len(out)} examples to fewshot_examples_3step.json")
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--model', default='gpt-5.4',
+                     help='model that both wrote the episode being post-rationalized and will '
+                          'later read these few-shot examples in-context - e.g. openai/gpt-oss-120b '
+                          'for a local vLLM server (pair with --base-url/--api-key-env below). No '
+                          'tools/tool_choice are passed on this call (free-text generation only), '
+                          'so this works over plain /v1/chat/completions even for gpt-oss, whose '
+                          'tool_calls field is otherwise unreliable there - see agent.py\'s '
+                          '"responses" backend notes.')
+    ap.add_argument('--base-url', default=None,
+                     help='override API base URL, e.g. http://localhost:8000/v1 for a local vLLM '
+                          'server. Default (None) talks to the real OpenAI API.')
+    ap.add_argument('--api-key-env', default='OPENAI_API_KEY',
+                     help='env var holding the API key. A local vLLM server ignores the value but '
+                          'still needs the var set to something (e.g. OPENAI_API_KEY=not-needed).')
+    ap.add_argument('--beam-results', default=os.path.join(HERE, 'beam3_results.jsonl'),
+                     help='beam_search_3step.py --out file to post-rationalize')
+    ap.add_argument('--snapshots', default=os.path.join(HERE, 'snapshots_gpt54.jsonl'),
+                     help='snapshots.jsonl matching --beam-results, for the parent2 lookup')
+    ap.add_argument('--out', default=os.path.join(HERE, 'fewshot_examples_3step.json'))
+    args = ap.parse_args()
+
+    client = OpenAI(api_key=os.environ[args.api_key_env], base_url=args.base_url)
+    out = build_examples(client, args.model, args.beam_results, args.snapshots)
+    json.dump(out, open(args.out, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+    print(f"\nwrote {len(out)} examples to {args.out}")

@@ -45,7 +45,7 @@ How `../fewshot_examples/regret_gpt54_3step_v1.json` was built, in order:
    python build_fewshot_library_3step.py
    ```
 
-## A known imprecision, not yet fixed
+## A known imprecision, not yet fixed - documented and enforced as an assumption
 
 `beam_search_3step.py` generates `crossover_molecules` candidates against each beam node's
 *current* working molecule. The live agent (`agent.py`'s `_agentic_edit`) actually always
@@ -54,5 +54,14 @@ evolved working molecule - confirmed by reading the code, not by assumption. Thi
 affect the 10 results actually produced here, since `crossover_molecules` only ever won the
 beam at step 1 in all 10 cases (where the working molecule and parent1 are identical by
 construction) - but it would matter for a future run of this script where crossover wins at
-step 2 or 3. Worth fixing in `_gen_candidates_main`/`_gen_candidates` before reusing this
-beyond the original 10-molecule investigation.
+step 2 or 3.
+
+Rather than fix the underlying mismatch, the current state of things is: **it is assumed that
+crossover only happens at the first step**, and that assumption is enforced, not just hoped
+for - `run_one_molecule()` in `beam_search_3step.py` calls `_assert_crossover_only_at_step1()`
+on every `best_depth2`/`best_depth3`/`best_overall` candidate, and raises immediately if
+crossover ever wins beyond depth 1. A future run on different input molecules that violates
+the assumption will fail loudly instead of silently writing a wrong `beam3_results.jsonl`
+entry. If that assertion ever fires, fix `_gen_candidates_main`/`_gen_candidates` (generate
+crossover candidates against the frozen parent1 at every level, not the evolving working
+molecule) before rerunning.
