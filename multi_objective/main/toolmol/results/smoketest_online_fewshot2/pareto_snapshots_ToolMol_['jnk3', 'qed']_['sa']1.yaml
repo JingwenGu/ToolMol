@@ -1,0 +1,40 @@
+gen_0001_oracle_33:
+  Cc1ccccc1C(=O)Nc1ccc2c(N3CCCC3)ncnc2c1:
+  - 1.8758209979676095
+  - 4
+  O=C(NCCc1ccncc1)N1CCOc2ccccc2C1:
+  - 1.8343857819884617
+  - 10
+  O=C(NCc1ccccc1)c1cccc(F)c1:
+  - 1.824877312913869
+  - 13
+  Cc1nn(C)cc1C(=O)Nc1ccc(C(=O)NC2CC2)cc1:
+  - 1.820826760237073
+  - 11
+  O=C(NCc1ccccc1)c1cccc(S(=O)(=O)N2CCCCCC2)c1:
+  - 1.794215962606581
+  - 3
+  CC(=O)Nc1ccc(NCc2ccccc2F)c(C(F)(F)F)c1:
+  - 1.7902818539076009
+  - 5
+  O=C(NCc1ccccc1)c1cccc(S(=O)(=O)N2CCCNCC2)c1:
+  - 1.7823496155762344
+  - 8
+  Cc1ccc2nc(N3CCC(C(=O)NCC(C)(C)CO)CC3)nc(C)c2c1:
+  - 1.7164645992434133
+  - 2
+  CCCC(C)N(C)C(=O)NCc1cn2cccnc2n1:
+  - 1.695397805481159
+  - 9
+  CC(=O)Nc1ccc(NC(=O)CCc2cnn(-c3ccccc3)c2)cc1:
+  - 1.627162667851269
+  - 6
+  CCc1nsc(C(O)c2ccnc(Cl)c2)n1:
+  - 1.6154993591455553
+  - 12
+  COc1cc(-c2noc(C3C[C@@H](C)O[C@@H](C)C3)n2)ccn1:
+  - 1.6057105277517754
+  - 1
+  CC1(C)[C@@H]2CC[C@@]1(C)C(=O)N(Cc1ccc(-c3ccncc3)c(O)c1)C2=O:
+  - 1.5532233995517597
+  - 7
