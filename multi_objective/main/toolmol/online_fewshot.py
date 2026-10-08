@@ -87,33 +87,10 @@ def _ring_free_atom_indices(mol):
     return [a.GetIdx() for a in mol.GetAtoms() if any(not b.IsInRing() for b in a.GetBonds())]
 
 
-def _gen_candidates(mol, group_smiles, mol2_smi):
-    n = mol.GetNumAtoms()
-    for idx in range(n):
-        for el in ELEMENTS:
-            for bond in BONDS:
-                yield 'add_atom', {'idx': idx, 'element': el, 'bond': bond}
-            yield 'replace_atom', {'idx': idx, 'element': el}
-        for frag in group_smiles:
-            for bond in BONDS:
-                yield 'add_substructure', {'idx': idx, 'substructure': frag, 'bond': bond}
-    for bond in mol.GetBonds():
-        if bond.IsInRing():
-            continue
-        a1, a2 = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
-        for anchor, branch in ((a1, a2), (a2, a1)):
-            yield 'remove_substructure', {'anchor_idx': anchor, 'branch_idx': branch}
-            for frag in group_smiles:
-                yield 'replace_substructure', {'anchor_idx': anchor, 'branch_idx': branch, 'new_substructure': frag}
-    if mol2_smi:
-        mol2 = _Chem.MolFromSmiles(mol2_smi)
-        for i1 in _ring_free_atom_indices(mol):
-            for i2 in _ring_free_atom_indices(mol2):
-                yield 'crossover_molecules', {'idx1': i1, 'idx2': i2}
-
-
 def _call_tool(tool_name, working_smi, mol2_smi, args):
     if tool_name == 'crossover_molecules':
+        # Crossover candidates only exist at beam level 1 (see _gen_candidates_main), where
+        # working_smi is the frozen original parent1 - exactly what the live agent crosses over.
         return _toolbox.crossover_molecules(working_smi, args['idx1'], mol2_smi, args['idx2'])
     return getattr(_toolbox, tool_name)(working_smi, **args)
 
@@ -137,9 +114,13 @@ def _eval_one(task):
             'delta': phi - baseline_phi, 'raw': raw}
 
 
-def _gen_candidates_main(mol, mol2_smi, group_smiles):
-    # Mirrors _gen_candidates but importable/usable from the main process (task-list
-    # building doesn't need the pool workers' globals).
+def _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover=False):
+    """Every single-tool action available from `mol`. crossover_molecules is only included when
+    asked: in the live agent it always acts on the frozen original parent1 and replaces the
+    working molecule with the result, so a crossover after earlier edits silently discards them -
+    and scoring it against an evolved molecule (as this search once did at levels 2-3) produces
+    paths the live model cannot reproduce. Callers therefore enable it at level 1 only, where
+    `mol` is the frozen parent1."""
     from rdkit import Chem
     n = mol.GetNumAtoms()
     for idx in range(n):
@@ -158,17 +139,18 @@ def _gen_candidates_main(mol, mol2_smi, group_smiles):
             yield 'remove_substructure', {'anchor_idx': anchor, 'branch_idx': branch}
             for frag in group_smiles:
                 yield 'replace_substructure', {'anchor_idx': anchor, 'branch_idx': branch, 'new_substructure': frag}
-    if mol2_smi:
+    if include_crossover and mol2_smi:
         mol2 = Chem.MolFromSmiles(mol2_smi)
         for i1 in _ring_free_atom_indices(mol):
             for i2 in _ring_free_atom_indices(mol2):
                 yield 'crossover_molecules', {'idx1': i1, 'idx2': i2}
 
 
-def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100):
+def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100, include_crossover=False):
     from rdkit import Chem
     mol = Chem.MolFromSmiles(smi)
-    tasks = [(smi, mol2_smi, baseline_phi, t, a) for t, a in _gen_candidates_main(mol, mol2_smi, group_smiles)]
+    tasks = [(smi, mol2_smi, baseline_phi, t, a)
+             for t, a in _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover)]
     if not tasks:
         return []
     results = pool.map(_eval_one, tasks, chunksize=chunksize)
@@ -177,13 +159,14 @@ def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100):
 
 def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles):
     """Same algorithm as fewshot_gen/beam_search_3step.py's run_one_molecule, trimmed to
-    just what the online buffer needs (no per-depth bookkeeping, no file I/O)."""
+    just what the online buffer needs (no per-depth bookkeeping, no file I/O). Crossover is
+    searched at level 1 only - see _gen_candidates_main."""
     from rdkit import Chem
     base_phi, base_raw = pool.apply(_phi_and_raw, (working_smi,))
     if base_phi is None:
         return None
 
-    level1 = _expand(pool, working_smi, parent2_smi, base_phi, group_smiles)
+    level1 = _expand(pool, working_smi, parent2_smi, base_phi, group_smiles, include_crossover=True)
     for r in level1:
         r['path'] = [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': r['phi'], 'raw': r['raw']}]
     beam1 = sorted(level1, key=lambda r: -r['delta'])[:beam_width]
