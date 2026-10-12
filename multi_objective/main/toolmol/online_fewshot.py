@@ -222,6 +222,38 @@ def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles,
 
 
 # ---------------------------------------------------------------------------
+# Exact-duplicate check
+# ---------------------------------------------------------------------------
+
+def _canon(smi):
+    """Canonical SMILES, so the same molecule written two ways compares equal. Falls back to
+    the string itself when it cannot be parsed."""
+    try:
+        m = Chem.MolFromSmiles(smi)
+        return Chem.MolToSmiles(m) if m is not None else smi
+    except Exception:
+        return smi
+
+
+def _pair_key(working_smi, parent2_smi):
+    return (_canon(working_smi), _canon(parent2_smi) if parent2_smi else None)
+
+
+def _exact_duplicate_reason(final_smi, seen_finals):
+    """None, or why this beam-search result is an exact repeat of something the buffer has
+    already shown. The aggregate diversity gates compare set-level averages against a floor
+    relative to the population, so they cannot see a single repeat among ~20 molecules (one
+    run needed ~60 copies of one molecule to trip the floor); the step-identity gate tolerates
+    up to max_repeats shared steps. Only an exact comparison catches an identical destination.
+    `seen_finals` is the run-long history of canonical final molecules - every entry that has
+    ever been in the buffer, including seeded/loaded ones and ones since evicted."""
+    if _canon(final_smi) in seen_finals:
+        return ("exact duplicate: this final molecule is already in the buffer, or was in it "
+                "earlier in the run")
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Diversity gates
 # ---------------------------------------------------------------------------
 
@@ -324,6 +356,11 @@ class OnlineFewShotBuffer:
         self._episode_log = []      # [(working_smi, parent2_smi), ...] - unbounded for this run
         self._episode_count = 0
         self._buffer_entries = []   # [{messages, path, base_phi, working_smi, parent2_smi}, ...]
+        # Run-long history for the exact-duplicate check: canonical final molecules and
+        # (start, parent2) pairs of every entry that has ever been in the buffer. Unlike
+        # _buffer_entries this is never evicted, and it is saved with the buffer state.
+        self._seen_finals = set()
+        self._seen_pairs = set()
         self._thread = None
         self._stop = threading.Event()  # set by shutdown() so an in-flight cycle ends after its current attempt
         self._population_diversity_ref = None  # set via update_population_diversity()
@@ -341,6 +378,13 @@ class OnlineFewShotBuffer:
             self._load_state(load_buffer_file)
         self._save_state()
 
+    def _register_history(self, entries):
+        """Record entries in the exact-duplicate history (caller holds no lock needed at
+        construction; the cycle thread calls this under self._lock)."""
+        for e in entries:
+            self._seen_finals.add(_canon(e['final_smi']))
+            self._seen_pairs.add(_pair_key(e['working_smi'], e.get('parent2_smi')))
+
     def _save_state(self, entries=None):
         """Write the buffer's full entries (messages, exact tool args, full SMILES, delta, and
         the cycle/episode each was accepted at) to state_file, replacing it atomically. The run
@@ -351,11 +395,13 @@ class OnlineFewShotBuffer:
         if not self.state_file:
             return
         try:
-            if entries is None:
-                with self._lock:
+            with self._lock:
+                if entries is None:
                     entries = list(self._buffer_entries)
+                seen_finals = sorted(self._seen_finals)
+                seen_pairs = sorted([list(p) for p in self._seen_pairs], key=str)
             payload = {'saved_at_episode': self._episode_count, 'cycles_started': self.n_updates_started,
-                       'entries': entries}
+                       'entries': entries, 'seen_finals': seen_finals, 'seen_pairs': seen_pairs}
             tmp = self.state_file + '.tmp'
             with open(tmp, 'w', encoding='utf-8') as f:
                 json.dump(payload, f, indent=1, ensure_ascii=False,
@@ -376,6 +422,11 @@ class OnlineFewShotBuffer:
             if missing:
                 raise ValueError(f"{path}: entry {i} is missing {sorted(missing)}")
         self._buffer_entries = entries[-self.buffer_size:]
+        # history: whatever the saved run had seen (older files have none) plus every entry loaded
+        self._register_history(entries)
+        if isinstance(payload, dict):
+            self._seen_finals.update(payload.get('seen_finals', []))
+            self._seen_pairs.update(tuple(p) for p in payload.get('seen_pairs', []))
         self.log(f"  [online-fewshot] loaded {len(self._buffer_entries)} buffer example(s) from {path}:",
                  flush=True)
         for i, e in enumerate(self._buffer_entries):
@@ -403,6 +454,7 @@ class OnlineFewShotBuffer:
                 'final_smi': path_steps[-1]['smi'], 'phi': path_steps[-1]['phi'],
             })
         self._buffer_entries = entries[-self.buffer_size:]
+        self._register_history(entries)
         self.log(f"  [online-fewshot] seeded buffer with {len(self._buffer_entries)} static "
                  f"example(s) from {path}:", flush=True)
         for i, e in enumerate(self._buffer_entries):
@@ -503,12 +555,31 @@ class OnlineFewShotBuffer:
                 existing_deltas = [e['delta'] for e in self._buffer_entries]
                 existing_lens = [len(e['path']) for e in self._buffer_entries]
                 pop_div_ref = self._population_diversity_ref
+                cycle_seen_finals = set(self._seen_finals)
+                cycle_seen_pairs = set(self._seen_pairs)
 
             candidates = list(recent_pool)
             self._rng.shuffle(candidates)
             extra = [c for c in fallback_pool if c not in candidates]
             self._rng.shuffle(extra)
             candidates.extend(extra)
+
+            # exact-duplicate pre-filter: drop (start, parent2) pairs already accepted earlier in
+            # the run, and repeats of the same pair within this cycle. The beam search is
+            # deterministic in its inputs, so re-running such a pair repeats a ~3-minute search
+            # that cannot produce anything new. Skipped pairs cost no attempt.
+            unique, seen_here, n_skipped = [], set(), 0
+            for c in candidates:
+                key = _pair_key(*c)
+                if key in cycle_seen_pairs or key in seen_here:
+                    n_skipped += 1
+                    continue
+                seen_here.add(key)
+                unique.append(c)
+            candidates = unique
+            if n_skipped:
+                self.log(f"  [online-fewshot] skipped {n_skipped} candidate(s): (start, parent2) pair already "
+                         f"accepted earlier in the run or repeated in this window", flush=True)
 
             accepted = []
             accepted_paths = []
@@ -542,6 +613,11 @@ class OnlineFewShotBuffer:
                                              gate_log=self._gate_log if self.gate_mode != 'off' else None)
                 if result is None:
                     self.log("  [online-fewshot] reject (beam search found nothing usable)", flush=True)
+                    continue
+
+                dup_reason = _exact_duplicate_reason(result['path'][-1]['smi'], cycle_seen_finals)
+                if dup_reason:
+                    self.log(f"  [online-fewshot] reject ({dup_reason})", flush=True)
                     continue
 
                 # step-length gate: a 1-step "sequence" doesn't demonstrate multi-step
@@ -601,6 +677,8 @@ class OnlineFewShotBuffer:
                     continue
 
                 accepted.append(entry)
+                cycle_seen_finals.add(_canon(final_smi))
+                cycle_seen_pairs.add(_pair_key(working_smi, parent2_smi))
                 accepted_paths.append(result['path'])
                 accepted_mols.append(working_smi)
                 accepted_mols.append(parent2_smi)
@@ -618,6 +696,7 @@ class OnlineFewShotBuffer:
                         e['episode_at_accept'] = self._episode_count
                     self._buffer_entries.extend(accepted)
                     self._buffer_entries = self._buffer_entries[-self.buffer_size:]
+                    self._register_history(accepted)
                     buffer_snapshot = list(self._buffer_entries)
                     self._pending_injections.extend(e['final_smi'] for e in accepted)
                 self.n_updates_completed += 1
