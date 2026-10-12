@@ -33,6 +33,16 @@ MUST_PASS = [
     ("furan",             "c1ccoc1",                                                     "ok"),
     ("phenyl azide",      "[N-]=[N+]=Nc1ccccc1",                                         "ok"),
     ("artemisinin",       "C[C@@H]1CC[C@H]2[C@@H](C)C(=O)O[C@@H]3O[C@@]4(C)CC[C@@H]1[C@@]23OO4", "hard"),
+    # Regression: a double bond on a ring-FUSION atom is not a Bredt violation. The
+    # first anti-Bredt rule rejected all of these (and ~1% of ZINC) as 'fatal'.
+    ("cholesterol",       "CC(C)CCC[C@@H](C)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2CC=C4[C@@]3(CC[C@@H](C4)O)C)C", "ok"),
+    ("testosterone",      "C[C@]12CC[C@H]3[C@H]([C@@H]1CC[C@@H]2O)CCC4=CC(=O)CC[C@]34C", "ok"),
+    ("progesterone",      "CC(=O)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2CCC4=CC(=O)CC[C@]34C)C", "ok"),
+    ("Wieland-Miescher",  "CC12CCC(=O)C=C1CCCC2=O",                                     "ok"),
+    ("bicyclo[2.2.2]oct-2-ene", "C1CC2CCC1C=C2",                                       "ok"),
+    ("bicyclo[3.3.1]non-1-ene", "C1CC2CCCC(=C1)C2",                                    "ok"),  # S=7, isolable
+    ("fused 5-6 enone (ZINC)", "C=C(C)CN(C)C(=O)CN1CC2=C(C1=O)[C@@H](c1ccc(Cl)cc1Cl)NC(=O)N2CC", "ok"),
+    ("indene",            "C1=Cc2ccccc2C1",                                             "ok"),
 ]
 
 # (name, smiles, verdict required)
@@ -44,7 +54,7 @@ MUST_FAIL = [
     ("cyclopropyne",      "C1#CC1",                                  "fatal"),
     ("benzyne",           "C1#CC=CC=C1",                             "fatal"),
     ("anti-Bredt [5,5]",  "C1CC2=CCC1C2",                            "fatal"),
-    ("bicyclo[2.2.2]ene", "C1CC2CCC1C=C2",                           "fatal"),
+    ("bicyclo[2.2.2]oct-1-ene", "C1CC2CCC1=CC2",                     "fatal"),  # alkene AT the bridgehead
     ("cyclic allene",     "C1CCC=C=CC1",                             "fatal"),
     ("1,2-dioxetane",     "C1COO1",                                  "hard"),
     ("geminal diol",      "OC(O)c1ccccc1",                           "hard"),
@@ -52,6 +62,23 @@ MUST_FAIL = [
 ]
 
 RANK = {"ok": 0, "hard": 1, "fatal": 2, "invalid": 3}
+
+# Every molecule in ZINC is a real, purchasable compound, so none may be 'fatal'. A fixed
+# sample catches false positives the hand-picked panel above can't think of. 'hard' is
+# allowed (aminals etc. are real); only 'fatal'/'invalid' fail. Skipped if data/zinc.tab
+# is absent. Run from multi_objective/ (single_objective/ ships the same file).
+ZINC_SAMPLE, ZINC_SEED = 5000, 0
+ZINC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "zinc.tab")
+
+
+def zinc_sample():
+    import csv
+    import random
+    if not os.path.exists(ZINC_PATH):
+        return None
+    with open(ZINC_PATH, newline="") as f:
+        smiles = [row[0] for row in csv.reader(f, delimiter="\t")][1:]   # row 0 is the header
+    return random.Random(ZINC_SEED).sample(smiles, min(ZINC_SAMPLE, len(smiles)))
 
 
 def main():
@@ -70,12 +97,24 @@ def main():
         print(f"  {'FAIL' if bad else 'pass'}  {name:20s} {v:7s} {'; '.join(r)[:48]}")
         if bad:
             failures.append(f"{name}: got '{v}', expected at least '{need}'")
+    sample = zinc_sample()
+    if sample is None:
+        print(f"\nZINC sample: SKIPPED ({os.path.normpath(ZINC_PATH)} not found)")
+    else:
+        flagged = [(smi, check(smi)) for smi in sample]
+        flagged = [(smi, v, r) for smi, (v, r) in flagged if v in ("fatal", "invalid")]
+        print(f"\nZINC sample ({len(sample)} real molecules, seed {ZINC_SEED}): "
+              f"{len(flagged)} fatal/invalid (must be 0)")
+        for smi, v, r in flagged[:10]:
+            print(f"  FAIL  {v:7s} {'; '.join(r)[:48]}  {smi}")
+            failures.append(f"ZINC molecule called '{v}': {smi}")
     print()
     if failures:
         for f in failures:
             print("FAILURE:", f)
         return 1
-    print(f"all {len(MUST_PASS) + len(MUST_FAIL)} panel molecules behaved as expected")
+    print(f"all {len(MUST_PASS) + len(MUST_FAIL)} panel molecules"
+          + (" and the ZINC sample" if sample is not None else "") + " behaved as expected")
     print("known gap: trans-cycloalkenes in rings <=7 are not caught "
           "(rdkit drops E/Z stereo in small rings)")
     return 0

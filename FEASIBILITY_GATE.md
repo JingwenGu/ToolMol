@@ -89,15 +89,31 @@ Three modes: `off` rejects nothing; `fatal` rejects `fatal` + `invalid`; `strict
 
 ### Validated
 
-`main/test_feasibility_gate.py` — 30 molecules, exit-code driven. 18 real drugs and natural
-products (aspirin, imatinib, sunitinib, penicillin G, morphine, camphor, cubane, caffeine,
-vitamin C, norbornene, trans-cyclooctene, β-lactam, azetidine, oxetane, pyrrole, furan, phenyl
-azide, artemisinin) must never be `fatal`; 12 impossible or non-isolable structures (azete,
-cyclobutadiene, oxete, cyclopropyne, benzyne, anti-Bredt, bicyclo[2.2.2]oct-1-ene, cyclic
-allene, 1,2-dioxetane, gem-diol, triazane) must never be `ok`. All 30 pass.
+`main/test_feasibility_gate.py` — 38 hand-picked molecules plus a ZINC sample, exit-code
+driven. 26 real drugs, natural products and fused-ring compounds (aspirin, imatinib, sunitinib,
+penicillin G, morphine, camphor, cubane, caffeine, vitamin C, norbornene, trans-cyclooctene,
+β-lactam, azetidine, oxetane, pyrrole, furan, phenyl azide, artemisinin, **cholesterol,
+testosterone, progesterone, Wieland–Miescher ketone, bicyclo[2.2.2]oct-2-ene,
+bicyclo[3.3.1]non-1-ene, a fused 5-6 enone from ZINC, indene**) must never be `fatal`; 12
+impossible or non-isolable structures (azete, cyclobutadiene, oxete, cyclopropyne, benzyne,
+anti-Bredt bicyclo[2.2.1]hept-1-ene, bicyclo[2.2.2]oct-1-ene, cyclic allene, 1,2-dioxetane,
+gem-diol, triazane) must never be `ok`. A fixed sample of **5,000 ZINC molecules** (seed 0;
+`data/zinc.tab`, skipped if absent) must contain no `fatal`/`invalid` verdict, because every ZINC
+compound is real and purchasable. All pass.
 
 **The gate is only useful if its false-positive rate on real chemistry stays at zero. Re-run
 this panel after touching any threshold.**
+
+*Changelog, 2026-10-12 (anti-Bredt fix).* The first version treated any atom on two rings as a
+bridgehead, so a double bond at a ring-**fusion** atom was called `fatal`. That rejected
+cholesterol, testosterone and progesterone, and **221 of a 20,000-molecule ZINC sample (1.1%)**;
+it also flagged the one starting-pool molecule that appears in every ToolMol run's result file.
+The original 30-molecule panel had no fused-ring alkene, so it could not see this. The rule now
+requires a genuinely bridged bicycle (two SSSR rings sharing ≥3 atoms) and applies Fawcett's S
+(see Known limitations). With the fix, the same ZINC sample gives 0 `fatal`, and the audit of the
+five finished runs flags only the five azete-type molecules in `inject m=5`. One former test case
+was mislabelled: `C1CC2CCC1C=C2` is bicyclo[2.2.2]oct-**2**-ene (stable, alkene not at the
+bridgehead); the real oct-1-ene is `C1CC2CCC1=CC2`.
 
 ```bash
 cd MOLLEO/multi_objective && python main/test_feasibility_gate.py
@@ -107,9 +123,13 @@ cd MOLLEO/multi_objective && python main/test_feasibility_gate.py
 
 - **trans-cycloalkenes in rings ≤7 are NOT caught.** RDKit does not retain E/Z stereo on bonds
   in small rings, so `_trans_small_ring_alkene` cannot fire there. `C1CC/C=C/C1` returns `ok`.
-- The anti-Bredt size threshold (two smallest rings summing to ≤13) is *heuristic*. It
-  correctly rejects bicyclo[2.2.2]oct-1-ene and correctly passes norbornene; raising it will
-  start rejecting isolable large-bridge alkenes.
+- Anti-Bredt: a bridgehead is an atom on two SSSR rings sharing ≥3 atoms (merely fused or spiro
+  rings are never flagged). Fawcett's S = r1 + r2 − shared − 2 is the sum of the three bridge
+  lengths; a bridgehead alkene is `fatal` for S ≤ 6 and allowed for S ≥ 7. The S ≥ 7 cut is
+  *heuristic*: it rejects bicyclo[2.2.2]oct-1-ene (S=6) and bicyclo[2.2.1]hept-1-ene (S=5),
+  passes bicyclo[3.3.1]non-1-ene (S=7, isolable) and norbornene (alkene not at the bridgehead).
+  It is evaluated per pair of SSSR rings, so a large polycyclic cage is judged by its smallest
+  bridged sub-bicycle only.
 - `hard` contains real drugs. Do not reject on it unless you mean to.
 - Aromatic systems are skipped — rdkit sanitization already validated them.
 

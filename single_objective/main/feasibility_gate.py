@@ -19,11 +19,10 @@ exist at room temperature? Two tiers:
            N-N-N chains. Artemisinin is 'hard' (endoperoxide), so this tier is
            advisory: do not reject on it unless you mean to.
 
-Validated against a panel of 16 real drugs/natural products (aspirin, imatinib,
-sunitinib, penicillin G, morphine, camphor, cubane, artemisinin, caffeine,
-vitamin C, norbornene, trans-cyclooctene, beta-lactam, azetidine, oxetane,
-pyrrole, furan - all 'ok' except artemisinin 'hard') and 13 impossible or
-non-isolable structures (all 'fatal' or 'hard').
+Validated by main/test_feasibility_gate.py: a panel of real drugs, natural
+products and fused-ring steroids/enones that must never be 'fatal', a panel of
+impossible or non-isolable structures that must never be 'ok', and a fixed sample
+of 5000 ZINC molecules (all purchasable, so none may be 'fatal').
 
 Known limitation: trans-cycloalkenes in rings <=7 are NOT caught, because RDKit
 does not retain E/Z stereo on bonds in small rings. This is a stability gate only
@@ -104,22 +103,43 @@ def _ring_flags(mol):
 
 
 def _anti_bredt(mol):
-    """Bredt's rule: a double bond at the bridgehead of a small bicyclic cage.
-    The size threshold (two smallest rings summing to <=13) is a heuristic - it
-    rejects bicyclo[2.2.2]oct-1-ene, which is correct, and will reject
-    genuinely isolable large-bridge alkenes if raised."""
+    """Bredt's rule: a double bond at the bridgehead of a small BRIDGED bicycle.
+
+    A bridgehead is an atom on two SSSR rings that share three or more atoms (a
+    shared bridge plus both bridgeheads). Rings that share only one bond are
+    merely FUSED - their junction atoms may freely carry a double bond (cholesterol,
+    testosterone, every Wieland-Miescher-type enone), and rings sharing one atom are
+    spiro. An earlier version treated any atom on two rings as a bridgehead and so
+    rejected steroids and ~1% of ZINC.
+
+    For a bridged pair, Fawcett's S is the sum of the three bridge lengths,
+    S = r1 + r2 - shared - 2. A bridgehead alkene is isolable only for S >= 7
+    (bicyclo[3.3.1]non-1-ene, S = 7, is a real compound); S <= 6 (bicyclo[2.2.2]oct-1-ene,
+    bicyclo[2.2.1]hept-1-ene) is not. The S >= 7 cut is the heuristic part. It is
+    evaluated per pair of SSSR rings, so very large polycyclic cages are judged by
+    their smallest bridged sub-bicycle only."""
     out = []
-    ri = mol.GetRingInfo()
-    for atom in mol.GetAtoms():
-        idx = atom.GetIdx()
-        if ri.NumAtomRings(idx) < 2 or atom.GetIsAromatic():
-            continue
-        if not any(b.GetBondType() == Chem.BondType.DOUBLE and not b.GetIsAromatic()
-                   for b in atom.GetBonds()):
-            continue
-        sizes = sorted(len(r) for r in ri.AtomRings() if idx in r)
-        if len(sizes) >= 2 and sizes[0] + sizes[1] <= 13:
-            out.append((f"anti-Bredt alkene at bridgehead (rings {sizes[:2]})", "fatal"))
+    rings = [set(r) for r in mol.GetRingInfo().AtomRings()]
+    seen = set()
+    for i in range(len(rings)):
+        for j in range(i + 1, len(rings)):
+            shared = rings[i] & rings[j]
+            if len(shared) < 3:
+                continue                      # fused (2 shared) or spiro (1): not bridged
+            s_num = len(rings[i]) + len(rings[j]) - len(shared) - 2
+            if s_num >= 7:
+                continue
+            union = rings[i] | rings[j]
+            for idx in shared:
+                atom = mol.GetAtomWithIdx(idx)
+                if idx in seen or atom.GetIsAromatic():
+                    continue
+                if sum(1 for n in atom.GetNeighbors() if n.GetIdx() in union) < 3:
+                    continue                  # a bridge atom, not a bridgehead
+                if any(b.GetBondType() == Chem.BondType.DOUBLE and not b.GetIsAromatic()
+                       and b.GetOtherAtomIdx(idx) in union for b in atom.GetBonds()):
+                    seen.add(idx)
+                    out.append((f"anti-Bredt alkene at bridgehead (S={s_num})", "fatal"))
     return out
 
 
