@@ -37,6 +37,7 @@ import random
 import re
 import threading
 import time
+from collections import Counter
 from multiprocessing import Pool
 
 from openai import OpenAI
@@ -58,14 +59,22 @@ _objectives = None
 _group_smiles = None
 _Chem = None
 _toolbox = None
+_gate_mode = 'off'
+_rejects = None
 
 
-def _pool_init():
-    global _objectives, _group_smiles, _Chem, _toolbox
+def _pool_init(gate_mode='off'):
+    """gate_mode is the --feasibility_gate setting (main/feasibility_gate.py). With anything
+    other than 'off', _eval_one drops every beam candidate the gate rejects - at every search
+    level, since the live agent is shown each intermediate molecule too."""
+    global _objectives, _group_smiles, _Chem, _toolbox, _gate_mode, _rejects
     from rdkit import Chem as _C
     from main.toolmol import toolbox as _tb
+    from main.feasibility_gate import rejects as _r
     _Chem = _C
     _toolbox = _tb
+    _rejects = _r
+    _gate_mode = gate_mode
     _group_smiles = list(FUNCTIONAL_GROUPS.values())
     _objectives = build_objectives(['jnk3', 'qed', 'sa'])
 
@@ -107,6 +116,10 @@ def _eval_one(task):
         out_smi = _Chem.MolToSmiles(result.mol)
     except Exception:
         return None
+    if _gate_mode != 'off':
+        gated, reasons = _rejects(out_smi, _gate_mode)
+        if gated:
+            return {'gated': reasons}     # not scored: it can never become a path step
     phi, raw = _phi_and_raw(out_smi)
     if phi is None:
         return None
@@ -146,7 +159,10 @@ def _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover=False):
                 yield 'crossover_molecules', {'idx1': i1, 'idx2': i2}
 
 
-def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100, include_crossover=False):
+def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100, include_crossover=False,
+            gate_log=None):
+    """gate_log: optional collections.Counter; candidates the feasibility gate pruned are
+    tallied into it by reason."""
     from rdkit import Chem
     mol = Chem.MolFromSmiles(smi)
     tasks = [(smi, mol2_smi, baseline_phi, t, a)
@@ -154,10 +170,21 @@ def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100, incl
     if not tasks:
         return []
     results = pool.map(_eval_one, tasks, chunksize=chunksize)
-    return [r for r in results if r is not None]
+    out = []
+    for r in results:
+        if r is None:
+            continue
+        if 'gated' in r:
+            if gate_log is not None:
+                for reason in r['gated']:
+                    gate_log[reason] += 1
+                gate_log['(candidates pruned)'] += 1
+            continue
+        out.append(r)
+    return out
 
 
-def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles):
+def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles, gate_log=None):
     """Same algorithm as fewshot_gen/beam_search_3step.py's run_one_molecule, trimmed to
     just what the online buffer needs (no per-depth bookkeeping, no file I/O). Crossover is
     searched at level 1 only - see _gen_candidates_main."""
@@ -166,14 +193,15 @@ def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles)
     if base_phi is None:
         return None
 
-    level1 = _expand(pool, working_smi, parent2_smi, base_phi, group_smiles, include_crossover=True)
+    level1 = _expand(pool, working_smi, parent2_smi, base_phi, group_smiles, include_crossover=True,
+                     gate_log=gate_log)
     for r in level1:
         r['path'] = [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': r['phi'], 'raw': r['raw']}]
     beam1 = sorted(level1, key=lambda r: -r['delta'])[:beam_width]
 
     level2 = []
     for node in beam1:
-        res = _expand(pool, node['smi'], parent2_smi, base_phi, group_smiles)
+        res = _expand(pool, node['smi'], parent2_smi, base_phi, group_smiles, gate_log=gate_log)
         for r in res:
             r['path'] = node['path'] + [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': r['phi'], 'raw': r['raw']}]
         level2.extend(res)
@@ -181,7 +209,7 @@ def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles)
 
     level3 = []
     for node in beam2:
-        res = _expand(pool, node['smi'], parent2_smi, base_phi, group_smiles)
+        res = _expand(pool, node['smi'], parent2_smi, base_phi, group_smiles, gate_log=gate_log)
         for r in res:
             r['path'] = node['path'] + [{'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': r['phi'], 'raw': r['raw']}]
         level3.extend(res)
@@ -257,7 +285,7 @@ class OnlineFewShotBuffer:
                  goal_description="improve the configured objectives",
                  diversity_evaluator=None, diversity_floor_frac=0.6,
                  signature_max_repeats=2, seed_examples_file=None,
-                 state_file=None, load_buffer_file=None, log=print):
+                 state_file=None, load_buffer_file=None, gate_mode='off', log=print):
         if seed_examples_file and load_buffer_file:
             raise ValueError("seed_examples_file and load_buffer_file are mutually exclusive - "
                              "both choose what the buffer starts with.")
@@ -273,7 +301,9 @@ class OnlineFewShotBuffer:
 
         self._group_smiles = list(FUNCTIONAL_GROUPS.values())
         self._objectives = build_objectives(['jnk3', 'qed', 'sa'])
-        self._pool = Pool(processes=workers, initializer=_pool_init)
+        self.gate_mode = gate_mode
+        self._gate_log = Counter()   # beam candidates pruned by the feasibility gate, by reason
+        self._pool = Pool(processes=workers, initializer=_pool_init, initargs=(gate_mode,))
         self._client = OpenAI(api_key=os.environ[api_key_env])
         self._llm_model = llm_model
         self._goal_description = goal_description
@@ -508,7 +538,8 @@ class OnlineFewShotBuffer:
                         continue
 
                 result = _beam_search_3step(self._pool, working_smi, parent2_smi,
-                                             self.beam_width, self._group_smiles)
+                                             self.beam_width, self._group_smiles,
+                                             gate_log=self._gate_log if self.gate_mode != 'off' else None)
                 if result is None:
                     self.log("  [online-fewshot] reject (beam search found nothing usable)", flush=True)
                     continue
@@ -596,6 +627,12 @@ class OnlineFewShotBuffer:
                     buffer_snapshot = list(self._buffer_entries)
             self.log(f"  [online-fewshot] update cycle: {len(accepted)}/{self.sample_size} accepted "
                      f"in {attempts} attempt(s), {time.time()-t0:.1f}s", flush=True)
+            if self.gate_mode != 'off':
+                pruned = self._gate_log.get('(candidates pruned)', 0)
+                by_reason = ', '.join(f"{n} x {r}" for r, n in self._gate_log.most_common()
+                                      if r != '(candidates pruned)') or 'none'
+                self.log(f"  [online-fewshot] feasibility gate ({self.gate_mode}) has pruned {pruned} beam "
+                         f"candidate(s) so far this run: {by_reason}", flush=True)
             self.log(f"  [online-fewshot] buffer now holds {len(buffer_snapshot)}/{self.buffer_size} example(s):",
                      flush=True)
             for i, e in enumerate(buffer_snapshot):

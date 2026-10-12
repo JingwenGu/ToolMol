@@ -79,6 +79,7 @@ class GB_GA_Optimizer(BaseOptimizer):
                     seed_examples_file=getattr(args, "online_fewshot_seed_file", None),
                     state_file=os.path.join(args.output_dir, "online_fewshot_buffer.json"),
                     load_buffer_file=getattr(args, "online_fewshot_load_buffer", None),
+                    gate_mode=getattr(args, "feasibility_gate", "off"),
                 )
 
     def reset(self):
