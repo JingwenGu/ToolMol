@@ -1,4 +1,6 @@
 import os
+import json
+from collections import Counter
 import yaml
 import random
 import torch
@@ -8,6 +10,7 @@ from rdkit.Chem import Draw
 import tdc
 from tdc.generation import MolGen
 from main.utils.chem import *
+from main.feasibility_gate import rejects
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
 class Objdict(dict):
@@ -284,6 +287,10 @@ class BaseOptimizer:
         # self.pool = joblib.Parallel(n_jobs=self.n_jobs)
         self.smi_file = args.smi_file
         self.oracle = Oracle(args=self.args)
+        # Structural feasibility gate (main/feasibility_gate.py). 'off' by default,
+        # so every existing invocation is unaffected unless --feasibility_gate is passed.
+        self.gate_mode = getattr(args, 'feasibility_gate', 'off')
+        self._reset_gate_log()
         if self.smi_file is not None:
             self.all_smiles = self.load_smiles_from_file(self.smi_file)
         else:
@@ -299,18 +306,65 @@ class BaseOptimizer:
     #         return self.pool(delayed(canonicalize)(s.strip()) for s in f)
             
     def sanitize(self, mol_list):
+        """Deduplicate by canonical SMILES and, when the feasibility gate is on,
+        drop molecules the gate rejects. With self.gate_mode == 'off' (the default)
+        the behaviour is identical to before the gate existed."""
         new_mol_list = []
         smiles_set = set()
+        gated = []
         for mol in mol_list:
             if mol is not None:
                 try:
                     smiles = Chem.MolToSmiles(mol)
                     if smiles is not None and smiles not in smiles_set:
                         smiles_set.add(smiles)
-                        new_mol_list.append(mol)
+                        rejected, reasons = rejects(smiles, self.gate_mode)
+                        if rejected:
+                            gated.append((mol, smiles, reasons))
+                        else:
+                            new_mol_list.append(mol)
                 except ValueError:
                     print('bad smiles')
+        if gated:
+            self._record_gate_rejections(gated)
+            if not new_mol_list:
+                # Never hand an empty population downstream - select_pareto_front and
+                # make_mating_pool both assume at least one molecule. Keep the rejected
+                # set for this generation rather than crashing, and say so.
+                print('feasibility gate (%s) rejected every one of %d molecules; keeping '
+                      'them this generation to avoid an empty population'
+                      % (self.gate_mode, len(gated)))
+                return [m for m, _, _ in gated]
         return new_mol_list
+
+    def _reset_gate_log(self):
+        self.gate_rejections = Counter()
+        self.gate_rejected_molecules = []
+
+    def _record_gate_rejections(self, gated):
+        for _, smiles, reasons in gated:
+            for reason in reasons:
+                self.gate_rejections[reason] += 1
+            self.gate_rejected_molecules.append({'smiles': smiles, 'reasons': reasons})
+
+    def save_gate_log(self, suffix=None):
+        """Dump what the feasibility gate rejected. How often a backend proposes
+        impossible chemistry is itself a result, and gated molecules never reach
+        mol_buffer, so this is the only place that number survives."""
+        if self.gate_mode == 'off' or not self.gate_rejected_molecules:
+            return
+        name = 'feasibility_rejections.json' if suffix is None \
+            else 'feasibility_rejections_' + suffix + '.json'
+        output_file_path = os.path.join(self.args.output_dir, name)
+        with open(output_file_path, 'w') as f:
+            json.dump({'mode': self.gate_mode,
+                       'n_rejected': len(self.gate_rejected_molecules),
+                       'by_reason': dict(self.gate_rejections),
+                       'molecules': self.gate_rejected_molecules}, f, indent=2)
+        print('feasibility gate (%s): rejected %d molecules -> %s'
+              % (self.gate_mode, len(self.gate_rejected_molecules), output_file_path))
+        for reason, n in self.gate_rejections.most_common():
+            print('  %5d  %s' % (n, reason))
         
     def sort_buffer(self):
         self.oracle.sort_buffer()
@@ -353,9 +407,11 @@ class BaseOptimizer:
         random.seed(seed)
         self.seed = seed 
         self.oracle.task_label = self.args.mol_lm + "_" + str(self.args.max_obj) + '_' + str(self.args.min_obj) + str(seed)
+        self._reset_gate_log()
         self._optimize(config)
         if self.args.log_results:
             self.log_result()
         self.save_result(self.args.mol_lm + "_" + str(self.args.max_obj) + '_' + str(self.args.min_obj) + str(seed))
+        self.save_gate_log(self.oracle.task_label)
         self.reset()
 
