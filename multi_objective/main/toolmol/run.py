@@ -16,6 +16,7 @@ from main.toolmol.oracle import ToolMolOracle
 from main.toolmol.agent import ToolMolAgent
 from main.toolmol.sampling import make_mating_pool_phi
 from main.toolmol.online_fewshot import OnlineFewShotBuffer
+from main.toolmol.online_sft import OnlineSFTManager
 
 SNAPSHOT_EVERY = 10  # record the current Pareto front every k generations
 
@@ -40,6 +41,7 @@ class GB_GA_Optimizer(BaseOptimizer):
 
         self.mol_lm = None
         self.online_buffer = None
+        self.sft_manager = None
         # SMILES -> 'injected' (a beam-search-discovered molecule, never yet touched by an LLM
         # edit) | 'injected+llm' (descends from an injected molecule via at least one further
         # LLM edit) | 'llm' (no beam-search ancestry at all - includes both the original random
@@ -72,6 +74,7 @@ class GB_GA_Optimizer(BaseOptimizer):
                     workers=args.online_fewshot_workers,
                     llm_model=args.llm_model,
                     api_key_env=args.llm_api_key_env,
+                    base_url=args.llm_base_url,
                     goal_description=self.mol_lm.goal_description,
                     diversity_evaluator=self.oracle.diversity_evaluator,
                     diversity_floor_frac=args.online_fewshot_diversity_floor,
@@ -80,7 +83,42 @@ class GB_GA_Optimizer(BaseOptimizer):
                     state_file=os.path.join(args.output_dir, "online_fewshot_buffer.json"),
                     load_buffer_file=getattr(args, "online_fewshot_load_buffer", None),
                     gate_mode=getattr(args, "feasibility_gate", "off"),
+                    min_buffer_to_expose=getattr(args, "online_fewshot_min_to_expose", 1),
                 )
+
+                if getattr(args, "online_fewshot_mode", "prompt") == "sft":
+                    if args.llm_backend != "api":
+                        raise ValueError("--online_fewshot_mode sft requires --llm_backend api "
+                                          "(the manager restarts the vLLM server it talks to)")
+                    if not getattr(args, "online_sft_vllm_pidfile", None):
+                        raise ValueError("--online_fewshot_mode sft requires --online_sft_vllm_pidfile")
+                    extra_args = (args.online_sft_vllm_extra_args.split()
+                                  if getattr(args, "online_sft_vllm_extra_args", None) else [])
+                    port = args.llm_base_url.rstrip("/").rsplit(":", 1)[-1].split("/")[0]
+                    self.sft_manager = OnlineSFTManager(
+                        buffer=self.online_buffer,
+                        agent=self.mol_lm,
+                        # served_model (args.llm_model) is what's actually being served right
+                        # now - on a fresh run that's the same as base_model, but on a resumed
+                        # chain link args.llm_model is a previous round's checkpoint path while
+                        # online_sft_base_model carries the true original model forward, so
+                        # future rounds still always restart from there, not from the resumed
+                        # checkpoint (see OnlineSFTManager.__init__'s docstring note).
+                        base_model=getattr(args, "online_sft_base_model", None) or args.llm_model,
+                        served_model=args.llm_model,
+                        round_offset=getattr(args, "online_sft_round_offset", 0),
+                        port=int(port),
+                        vllm_pidfile=args.online_sft_vllm_pidfile,
+                        output_dir=args.output_dir,
+                        trigger_every=args.online_sft_trigger_every,
+                        epochs=args.online_sft_epochs,
+                        learning_rate=args.online_sft_learning_rate,
+                        vllm_bin=args.online_sft_vllm_bin,
+                        vllm_extra_args=extra_args,
+                        tensor_parallel_size=args.online_sft_tensor_parallel_size,
+                        hf_repo=getattr(args, "online_sft_hf_repo", None),
+                        hf_private=getattr(args, "online_sft_hf_private", False),
+                    )
 
     def reset(self):
         del self.oracle
@@ -169,7 +207,10 @@ class GB_GA_Optimizer(BaseOptimizer):
                     # that cycle produced. Sync still happens before edit_pair, not during it,
                     # so an update never lands mid-call.
                     self.online_buffer.record_episode(m0_smi, m1_smi)
-                    self.mol_lm.few_shot_messages = self.online_buffer.few_shot_messages
+                    if self.sft_manager is not None:
+                        self.sft_manager.maybe_finetune()
+                    else:
+                        self.mol_lm.few_shot_messages = self.online_buffer.few_shot_messages
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: starting edit_pair", flush=True)
                 child_mol = self.mol_lm.edit_pair(
                     m0, smi_to_score[m0_smi],

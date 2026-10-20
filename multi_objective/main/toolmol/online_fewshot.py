@@ -313,16 +313,25 @@ def _passes_diversity_gate(candidate_path, existing_paths, max_repeats):
 
 class OnlineFewShotBuffer:
     def __init__(self, buffer_size=10, update_every=100, sample_size=2, beam_width=5,
-                 workers=8, llm_model="gpt-5.4", api_key_env="OPENAI_API_KEY",
+                 workers=8, llm_model="gpt-5.4", api_key_env="OPENAI_API_KEY", base_url=None,
                  goal_description="improve the configured objectives",
                  diversity_evaluator=None, diversity_floor_frac=0.6,
                  signature_max_repeats=2, seed_examples_file=None,
-                 state_file=None, load_buffer_file=None, gate_mode='off', log=print):
+                 state_file=None, load_buffer_file=None, gate_mode='off', log=print,
+                 min_buffer_to_expose=1):
         if seed_examples_file and load_buffer_file:
             raise ValueError("seed_examples_file and load_buffer_file are mutually exclusive - "
                              "both choose what the buffer starts with.")
         self.state_file = state_file
         self.buffer_size = buffer_size
+        # few_shot_messages returns None (no few-shot text at all) below this many entries,
+        # even though the buffer itself has already accepted some - guards against a cold-started
+        # run overfitting its early episodes to one or two idiosyncratic examples before the
+        # buffer has enough entries to look like a genuine sample. Default 1 preserves the
+        # original behavior (expose as soon as the buffer is non-empty); seeding past this
+        # threshold (via seed_examples_file/load_buffer_file) makes few-shot text visible from
+        # episode 1, same as before.
+        self.min_buffer_to_expose = min_buffer_to_expose
         self.update_every = update_every
         self.sample_size = sample_size
         self.beam_width = beam_width
@@ -336,7 +345,7 @@ class OnlineFewShotBuffer:
         self.gate_mode = gate_mode
         self._gate_log = Counter()   # beam candidates pruned by the feasibility gate, by reason
         self._pool = Pool(processes=workers, initializer=_pool_init, initargs=(gate_mode,))
-        self._client = OpenAI(api_key=os.environ[api_key_env])
+        self._client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url)
         self._llm_model = llm_model
         self._goal_description = goal_description
 
@@ -371,6 +380,10 @@ class OnlineFewShotBuffer:
 
         self.n_updates_started = 0
         self.n_updates_completed = 0
+        # Monotonic count of entries ever accepted into the buffer (unlike len(_buffer_entries),
+        # never decreases when the FIFO evicts). OnlineSFTManager diffs this against the value at
+        # its last fine-tune to decide when enough new entries have accumulated to trigger another.
+        self.n_entries_accepted_total = 0
 
         if seed_examples_file:
             self._seed_from_file(seed_examples_file)
@@ -504,10 +517,34 @@ class OnlineFewShotBuffer:
     @property
     def few_shot_messages(self):
         with self._lock:
+            if len(self._buffer_entries) < self.min_buffer_to_expose:
+                return None
             msgs = []
             for entry in self._buffer_entries:
                 msgs.extend(entry['messages'])
             return msgs if msgs else None
+
+    def export_entries(self):
+        """The buffer's current entries (each a dict with a 'messages' conversation - see
+        _build_messages), for OnlineSFTManager to turn into an SFT training set. Unlike
+        few_shot_messages, this ignores min_buffer_to_expose - that gate is about hiding a
+        thin buffer from the live agent's prompt, not about whether there's enough to train
+        on; the caller decides its own minimum."""
+        with self._lock:
+            return list(self._buffer_entries)
+
+    def update_llm_model(self, model):
+        """Repoint the post-rationalization calls (_build_example) at a different served
+        model - needed by OnlineSFTManager after it swaps the vLLM server over to a fresh
+        fine-tuned checkpoint, since the checkpoint's own path (not the original base model
+        id this buffer was constructed with) is what that server now actually serves under.
+        Missing this update was a real bug, caught live: the SFT run's online-fewshot buffer
+        kept requesting model="Qwen/Qwen3-4B-Instruct-2507" after round 1 swapped the server
+        over to the local checkpoint, and vLLM returned 404 "model does not exist" on every
+        single post-rationalization call from then on - 177 of the run's 337 rejections
+        (53%) were this, not genuine quality/diversity failures, silently preventing every
+        later round from ever triggering."""
+        self._llm_model = model
 
     def drain_injections(self):
         """Return and clear the queue of beam-search-discovered molecules (final_smi of each
@@ -700,6 +737,7 @@ class OnlineFewShotBuffer:
                     buffer_snapshot = list(self._buffer_entries)
                     self._pending_injections.extend(e['final_smi'] for e in accepted)
                 self.n_updates_completed += 1
+                self.n_entries_accepted_total += len(accepted)
                 self._save_state(buffer_snapshot)
             else:
                 with self._lock:
@@ -712,7 +750,9 @@ class OnlineFewShotBuffer:
                                       if r != '(candidates pruned)') or 'none'
                 self.log(f"  [online-fewshot] feasibility gate ({self.gate_mode}) has pruned {pruned} beam "
                          f"candidate(s) so far this run: {by_reason}", flush=True)
-            self.log(f"  [online-fewshot] buffer now holds {len(buffer_snapshot)}/{self.buffer_size} example(s):",
+            exposed = len(buffer_snapshot) >= self.min_buffer_to_expose
+            self.log(f"  [online-fewshot] buffer now holds {len(buffer_snapshot)}/{self.buffer_size} example(s) "
+                     f"({'visible to agent' if exposed else f'hidden until >= {self.min_buffer_to_expose}'}):",
                      flush=True)
             for i, e in enumerate(buffer_snapshot):
                 self.log(f"    [{i}] {_summarize_entry(e)}", flush=True)
