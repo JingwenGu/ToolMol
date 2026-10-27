@@ -109,11 +109,33 @@ Three changes made it work:
 ### A front of one, and why `--population_floor` exists
 
 Injected molecules are strong by construction, and in this arm compliant molecules tie at
-1 on every maintain axis - so dominance is decided by the improve axes alone and one
-injected winner can dominate the entire population. The front then collapses to a single
-molecule and the GA can only cross it with itself.
+1 on every maintain axis - so dominance is decided by the improve axes alone. An injected
+winner can therefore dominate the whole population, the front collapses to a single
+molecule, and the GA can only cross it with itself.
 
-That exposed an inherited bug. The improvement/patience check sat inside
+**How likely that is, measured.** Same code, same molecules, 40 random draws of 95 (one
+generation's candidate set at the real config):
+
+| formulation | mean front | min | max | ever 1? |
+|---|---|---|---|---|
+| 3 continuously-varying axes (jnk3/qed/sa-like) | 11.7 | 6 | 22 | never |
+| C-MuMO: 2 improve + 1 plateaued maintain | 5.7 | 3 | 11 | never |
+
+The plateau halves the front, but **neither formulation reached 1 at the real config**.
+The collapse was observed with `hparams_smoketest.yaml` (population 8, offspring 4): twelve
+candidates, one dropped by the violator pre-filter, and the injected winner dominated the
+remaining seven. Same combination and seed without injection held at 4. So this is a rare
+event needing both a small population and an injected winner - not something to expect at
+60/35.
+
+It is worth understanding anyway, because it says what injection does to the front.
+Ordinary offspring are single-tool edits, better on one axis and worse on another, so they
+join the front rather than displacing anyone - which is why fronts normally grow and the
+other arms never shrank. A beam-search winner is selected to maximize the *sum* of axes, so
+it is high on all of them at once. It is the only thing in the loop that can evict many
+members at a stroke.
+
+Rare or not, it exposed an inherited bug. The improvement/patience check sat inside
 `if len(self.oracle) > 1`, so at a front of one it never ran, while the budget had also
 stopped growing (only front members are charged, and the front was no longer changing).
 **The run span forever** - observed at 4,878 generations with `population=1`. The guard is
