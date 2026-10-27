@@ -190,6 +190,32 @@ up to N with the next-best molecules by Phi. **Off by default**, because it chan
 inherited survival semantics, and a loud warning fires whenever it would have helped.
 Pass `--population_floor 4` whenever you inject.
 
+## What the pilot changed  [2026-10-27]
+
+One episode driven by hand through the spool backend, two turns, and it earned its keep.
+
+- **Three of the per-objective-feedback edits had never been saved.** A multi-edit script
+  hit a failed assertion on its last change, so Python raised before the write and the
+  earlier three were discarded; only the failed one got re-applied. The prompt had been
+  falling back to `Goal: I want to maximize QED, PlogP, BBBP scores` with no breakdown at
+  all. Recovered, and each edit now verified by re-reading the file rather than trusting
+  the assert.
+- **`goal_description` was built too early.** It was set in `__init__`, which runs before
+  `assign_evaluator`, so `self.oracle.objectives` did not exist and `_goal_description`
+  silently listed `args.max_obj`. It now runs right after `assign_evaluator`, and the run
+  prints the goal so this cannot hide again.
+- **Intermediate turns had no objective feedback.** After a tool call the agent saw rdkit
+  descriptors but no BBBP, no Phi, no maintain status - it could break the constraint it
+  had just been told to preserve and not know. `agent.breakdown_fn` now renders the working
+  molecule's own breakdown into every reminder message.
+- **PlogP's axis was weighted at two thirds of a probability axis.** See `span = D_p / 0.1`
+  in `objectives.py`.
+- **Cosmetics:** a double period where the goal block met the template, and a redundant
+  `Score: 2.5325904221752205` line above `Phi 2.533 of 3.0`.
+
+Both tool paths were exercised: `crossover_molecules` and `add_atom` each executed and
+returned a correct result message and atom table.
+
 ## Two inherited loose ends
 
 Both came with the OPFS copy and neither affects the C-MuMO path; recorded so they are not

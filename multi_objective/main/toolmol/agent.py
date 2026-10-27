@@ -68,7 +68,9 @@ def _score_block(score, breakdown):
     costing it, which is unusable once maintain axes are in play."""
     if breakdown is None:
         return f"Score: {score}"
-    return f"Score: {score}\n{breakdown}"
+    # No "Score: 2.5325904221752205" line above it: the breakdown's own first line already
+    # gives Phi, to three decimals instead of seventeen.
+    return breakdown
 
 
 def _format_context(mol):
@@ -322,6 +324,9 @@ class ToolMolAgent:
         # (adapted wording for the Phase 1-3 cheap-oracle stand-ins - see plan ambiguity #9 -
         # the paper's literal "[PROTEIN TARGET]" phrasing applies once Boltz-2 is wired in).
         self.goal_description = "improve the configured objectives"
+        # Optional: smi -> per-objective breakdown text, set by the run (see
+        # main/toolmol/run.py). None leaves every prompt exactly as it was.
+        self.breakdown_fn = None
 
         if backend == "stub":
             # No model at all: every turn returns "no tool call", which drops the episode
@@ -684,8 +689,20 @@ class ToolMolAgent:
                             f"allowed). Output FINAL ANSWER if you have made sufficient "
                             f"modifications, or continue with another tool call to keep refining. "
                             f"Ensure that desired properties are maintained.")
+            # The working molecule's own objective breakdown, when the caller supplied a
+            # hook. Without it the agent saw rdkit descriptors but not the axes it is
+            # scored on - so after an edit it could not tell whether it had broken a
+            # maintain constraint, which is most of the blindness per-objective feedback
+            # was meant to remove.
+            working_smi = Chem.MolToSmiles(working_mol)
+            scored = ""
+            if self.breakdown_fn is not None:
+                try:
+                    scored = "\n" + self.breakdown_fn(working_smi)
+                except Exception as e:  # noqa: BLE001 - never fail an episode over feedback
+                    print(f"    breakdown_fn failed: {type(e).__name__} {e}", flush=True)
             reminder_msg = {"role": "user", "content": (
-                f"{reminder}\nCurrent SMILES: {Chem.MolToSmiles(working_mol)}\n"
+                f"{reminder}\nCurrent SMILES: {working_smi}{scored}\n"
                 f"{_format_context(working_mol)}")}
             messages.append(reminder_msg)
             track_context(reminder_msg)

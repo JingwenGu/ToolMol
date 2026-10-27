@@ -184,6 +184,15 @@ class GB_GA_Optimizer(BaseOptimizer):
 
         self.oracle.assign_evaluator(self.args)
         self.mol_lm.max_steps = config["max_steps"]
+        # AFTER assign_evaluator, not in __init__: the objectives do not exist yet there, so
+        # _goal_description silently fell back to listing args.max_obj ("maximize QED,
+        # PlogP, BBBP scores") instead of the C-MuMO instruction with its targets.
+        self.mol_lm.goal_description = _goal_description(args=self.args,
+                                                         objectives=self.oracle.objectives)
+        print(f"goal:\n{self.mol_lm.goal_description}", flush=True)
+        # Feedback on the agent's OWN intermediate molecules, not just the two parents.
+        self.mol_lm.breakdown_fn = lambda smi: cmumo_feedback.breakdown(
+            self.oracle.objectives, smi)
 
         if getattr(self.args, "resume_from", None):
             # Reconstruct the true starting population by re-running select_pareto_front()
@@ -230,6 +239,8 @@ class GB_GA_Optimizer(BaseOptimizer):
 
             population_smiles = starting_population
             population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
+            # One batched oracle round trip for the seed population.
+            cmumo_objectives.prefetch([Chem.MolToSmiles(m) for m in population_mol if m])
             population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
         # Everything the run ever considers, not just what reaches a front - see
@@ -277,10 +288,13 @@ class GB_GA_Optimizer(BaseOptimizer):
                     self.online_buffer.record_episode(m0_smi, m1_smi)
                     self.mol_lm.few_shot_messages = self.online_buffer.few_shot_messages
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: starting edit_pair", flush=True)
+                objs = self.oracle.objectives
                 child_mol = self.mol_lm.edit_pair(
                     m0, smi_to_score[m0_smi],
                     m1, smi_to_score[m1_smi],
-                    config["mutation_rate"])
+                    config["mutation_rate"],
+                    breakdown1=cmumo_feedback.breakdown(objs, m0_smi),
+                    breakdown2=cmumo_feedback.breakdown(objs, m1_smi))
                 offspring_mol.append(child_mol)
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: edit_pair done", flush=True)
 

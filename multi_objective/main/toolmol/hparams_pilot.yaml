@@ -1,0 +1,8 @@
+# Deliberately tiny, for a pilot driven through the claude spool backend where every agent
+# turn is answered by hand. offspring_size 2 means one generation is 2 episodes, so a
+# couple of generations is enough to check the prompt and the tool-call path.
+population_size: 6
+offspring_size: 2
+mutation_rate: 0.0
+k: 10.0
+max_steps: 3

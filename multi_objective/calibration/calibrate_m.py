@@ -40,8 +40,10 @@ ZINC = paths.ZINC
 # Bounds for the improve-axis rescale to [0,1], 1 = best. Probabilities are (0,1) or
 # inverted. PlogP is unbounded, so it gets the ToolMol treatment it gave dG: a clamp wide
 # enough that nothing observed reaches it (200 ZINC molecules spanned -6.66 to +3.38).
+# Must match main/toolmol/objectives.py: span = D_p / 0.1, so one tolerance-sized
+# improvement is worth 0.1 of Phi on every improve axis.
 IMPROVE_BOUNDS = {
-    "PlogP": (-10.0, 5.0),
+    "PlogP": (-5.0, 5.0),
 }
 
 # The C-MuMO property combinations, in their task codes.

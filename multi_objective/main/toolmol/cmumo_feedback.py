@@ -42,7 +42,7 @@ def goal_text(objectives):
     return (f"{head}.\nThe objectives, with their targets:\n{lines}\n"
             f"A MAINTAIN property scores full marks anywhere inside its range, so pushing "
             f"it further than that buys nothing - spend the modifications on the IMPROVE "
-            f"properties instead.")
+            f"properties instead")
 
 
 def breakdown(objectives, smi):

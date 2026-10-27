@@ -43,10 +43,27 @@ CALIBRATED_ALPHA = {
 }
 CLAMP_C = 5.0
 
-# Bounds for the improve rescale. Probabilities use their natural (0,1). PlogP is unbounded
-# and gets the treatment ToolMol gave dG: a clamp wide enough that nothing observed reaches
-# it (1000 ZINC molecules spanned -6.66 to +3.38).
-IMPROVE_BOUNDS = {"PlogP": (-10.0, 5.0)}
+# Bounds for the improve rescale. Probabilities use their natural (0,1).
+#
+# PlogP is unbounded, and the clamp width silently weights the axis: Phi is a sum of
+# rescaled values, so an axis spanning S raw units contributes D_p/S per tolerance-sized
+# improvement. The first choice here, (-10, 5), spanned 15 - so a full published D_p of
+# 1.0 moved Phi by 0.067 while the same D_p of QED moved it by 0.100, i.e. PlogP was
+# weighted at two thirds of a probability axis for no stated reason. Spotted in a pilot
+# prompt, where raw 0.661 and 0.670 both rendered as score 0.711.
+#
+# The rule, applied here and worth applying to any future unbounded axis:
+#
+#     span = D_p / 0.1
+#
+# so that one tolerance-sized improvement moves Phi by 0.1 on every improve axis, matching
+# a [0,1] property whose D_p is 0.1. For PlogP (D_p = 1.0) that is a span of 10.
+#
+# (-5, 5) measured over 13,188 cached molecules: clips 1.0% at the bottom and nothing at
+# the top (max observed 4.43), so the headroom an improve axis needs is intact. The sample
+# includes beam-search products as well as ZINC, which is the distribution the search
+# actually visits.
+IMPROVE_BOUNDS = {"PlogP": (-5.0, 5.0)}
 
 # Every property is a legal objective name; the per-name bounds here are what the improve
 # path uses and what any code inspecting OBJECTIVE_BOUNDS expects to find.
