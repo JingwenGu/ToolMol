@@ -11,12 +11,17 @@ Seeding from random ZINC instead asks a vaguer question: on a random draw 71% of
 are already compliant on AMP and 76% on LIV, so a "maintain" axis is mostly satisfied by
 accident and the improve axes start wherever they happen to start.
 
-    python seed_pool.py --combination BPQ --n 500 --out seeds/BPQ.smi
-    python seed_pool.py --improve QED MUT --maintain BBBP CARC --n 500 --out seeds/x.smi
+    python seed_pool.py --combination BPQ --n 500 --out ../../assets/seeds/BPQ.smi
+    python seed_pool.py --improve QED MUT --maintain BBBP CARC --n 500 --out ../../assets/seeds/x.smi
 
 Then:
 
-    run.py ... --combination BPQ --smi_file seeds/BPQ.smi
+    run.py ... --combination BPQ --smi_file ../../assets/seeds/BPQ.smi
+
+**Write the pool to the assets directory, which is outside the repository** - two levels up
+from here, not one. `../assets` from this directory is the repo root, and a pool written
+there gets committed; that happened once. `cmumo_oracles.paths.ASSETS` is the reliable
+answer, and the repo's root .gitignore now catches the mistake.
 
 **The output is shuffled**, because the GA takes the FIRST `population_size` lines of a
 --smi_file, not a random sample of it (main/toolmol/run.py). An unshuffled pool would make

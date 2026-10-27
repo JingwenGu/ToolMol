@@ -1,0 +1,8 @@
+# Assets live OUTSIDE this repository, beside it, so nothing heavy or generated can be
+# committed by accident - see multi_objective/cmumo_oracles/paths.py and setup_assets.py.
+#
+# This entry exists because `mkdir ../assets/seeds` run from multi_objective/ lands HERE,
+# at the repo root, not beside the repo. It did once, and a generated seed pool got
+# committed before being moved out.
+/assets/
+/seeds/

@@ -82,12 +82,15 @@ property better than Th_p. Random ZINC asks a vaguer question (71% of a random d
 already compliant on AMP, 76% on LIV), so a maintain axis would be satisfied by accident.
 
 ```bash
-python seed_pool.py --combination BPQ --n 500 --scan 6000 --out seeds/BPQ.smi
-run.py ... --combination BPQ --smi_file seeds/BPQ.smi
+python seed_pool.py --combination BPQ --n 500 --scan 6000 --out ../../assets/seeds/BPQ.smi
+run.py ... --combination BPQ --smi_file ../../assets/seeds/BPQ.smi
 ```
 
 For BPQ, 1,952 of 6,000 ZINC molecules match. The output is **shuffled**, because the GA
-takes the first `population_size` lines of a `--smi_file`, not a random sample.
+takes the first `population_size` lines of a `--smi_file`, not a random sample. Write it to
+the assets directory, **two** levels up - `../assets` from here is the repo root, and a
+pool written there gets committed (which happened once; the root `.gitignore` now catches
+it).
 
 This also needed `BaseOptimizer.load_smiles_from_file`, which was **commented out
 upstream** - so `--smi_file` raised `AttributeError` and the design's seeding path had
