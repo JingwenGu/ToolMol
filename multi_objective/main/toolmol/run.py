@@ -55,6 +55,36 @@ def _goal_description(args, objectives=None):
     return "; ".join(parts)
 
 
+def _apply_population_floor(oracle, front, candidates, floor):
+    """Top a collapsed front back up to `floor` with the next-best molecules by Phi.
+
+    A front of one is a real risk in this arm rather than a curiosity: compliant molecules
+    tie at 1 on every maintain axis, so dominance is decided by the improve axes alone, and
+    one molecule that is best on both dominates the whole population. Injecting a
+    beam-search winner - which is strong by construction - is the most direct way to cause
+    it. The GA can then only cross that molecule with itself, so the search is over.
+
+    Off by default (floor 0), because it changes the inherited GA's survival semantics.
+    The warning below fires whenever it would have helped."""
+    if len(front) >= 2:
+        return front
+    if not floor or floor < 2:
+        print(f"  WARNING: the Pareto front collapsed to {len(front)} molecule(s). The GA "
+              f"can only cross it with itself from here, so expect no further progress. "
+              f"Pass --population_floor (e.g. 4) to top the front up with the next-best "
+              f"molecules by Phi.", flush=True)
+        return front
+    in_front = {Chem.MolToSmiles(m) for m in front}
+    rest = sorted((c for c in dict.fromkeys(candidates) if c not in in_front),
+                  key=lambda smi: oracle.evaluate(smi), reverse=True)
+    added = [Chem.MolFromSmiles(smi) for smi in rest[:max(0, floor - len(front))]]
+    added = [m for m in added if m is not None]
+    if added:
+        print(f"  population floor: front was {len(front)}, topped up with {len(added)} "
+              f"molecule(s) by Phi to {len(front) + len(added)}", flush=True)
+    return list(front) + added
+
+
 def _prefilter_violators(oracle, mols, reject_at):
     """Drop offspring whose maintain axes are past reject_at * M before the Pareto front is
     computed (design section 3, mitigation 2). This is what collapses the effective front
@@ -207,7 +237,12 @@ class GB_GA_Optimizer(BaseOptimizer):
         while True:
             generation += 1
 
-            if len(self.oracle) > 1:
+            # `>= 1`, not `> 1`. With `> 1` a front that collapses to a single molecule
+            # skipped BOTH this and the improvement check below, so patience never
+            # incremented while the budget had also stopped growing (only front members are
+            # charged, and the front was not changing) - the run span forever. Observed at
+            # 4878 generations with population=1 after a dominant molecule was injected.
+            if len(self.oracle) >= 1:
                 self.sort_buffer()
                 old_score = np.mean([item[1][0] for item in list(self.mol_buffer.items())])
             else:
@@ -290,8 +325,12 @@ class GB_GA_Optimizer(BaseOptimizer):
                 print(f"  pre-front: dropped {n_dropped} violator(s), capped {n_capped}, "
                       f"{len(population_mol)} molecule(s) into select_pareto_front", flush=True)
             # Pareto optimal set
+            candidates = [Chem.MolToSmiles(mol) for mol in population_mol]
             self.oracle.clean_buffer()
-            population_mol = self.oracle.select_pareto_front([Chem.MolToSmiles(mol) for mol in population_mol])
+            population_mol = self.oracle.select_pareto_front(candidates)
+            population_mol = _apply_population_floor(
+                self.oracle, population_mol, candidates,
+                getattr(self.args, "population_floor", 0))
             # stats
             population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
             population_tuples = list(zip(population_scores, population_mol))
@@ -315,7 +354,7 @@ class GB_GA_Optimizer(BaseOptimizer):
             ### happens once per generation (after a full batch of offspring completes and
             ### the Pareto front is recomputed), not mid-generation, so the final generation
             ### may slightly overshoot max_oracle_calls.
-            if len(self.oracle) > 1:
+            if len(self.oracle) >= 1:
                 self.sort_buffer()
                 new_score = np.mean([item[1][0] for item in list(self.mol_buffer.items())])
                 if (new_score - old_score) < 1e-3:

@@ -55,24 +55,37 @@ _Chem = None
 
 
 def _pool_init():
-    global _objectives, _group_smiles, _toolbox, _Chem
+    """Worker setup. Builds NO objectives: scoring moved to the parent so a beam level is
+    one batched oracle call rather than one per candidate, and so N workers do not mean N
+    ADMET-AI processes. See expand() and online_fewshot._pool_init."""
+    global _group_smiles, _toolbox, _Chem
     from rdkit import Chem as _C
     from main.toolmol import toolbox as _tb
     from main.toolmol.fg_lookup import FUNCTIONAL_GROUPS
-    from main.toolmol.objectives import build_objectives
     _Chem = _C
     _toolbox = _tb
     _group_smiles = list(FUNCTIONAL_GROUPS.values())
-    _objectives = build_objectives(['jnk3', 'qed', 'sa'])
+
+
+_PARENT_OBJECTIVES = None
+
+
+def _parent_objectives():
+    global _PARENT_OBJECTIVES
+    if _PARENT_OBJECTIVES is None:
+        from main.toolmol.objectives import configured_objectives
+        _PARENT_OBJECTIVES = configured_objectives()
+    return _PARENT_OBJECTIVES
 
 
 def _phi_and_raw(smi):
-    m = _Chem.MolFromSmiles(smi)
-    if m is None:
+    """Parent-side. Assumes prefetch() has already batched this molecule."""
+    from rdkit import Chem
+    if Chem.MolFromSmiles(smi) is None:
         return None, None
     raw = {}
     total = 0.0
-    for obj in _objectives:
+    for obj in _parent_objectives():
         r = obj.raw(smi)
         raw[obj.name] = r
         total += obj.rescaled(r)
@@ -120,9 +133,10 @@ def _call_tool(tool_name, working_smi, mol1_smi, mol2_smi, args):
     return getattr(_toolbox, tool_name)(working_smi, **args)
 
 
-def _eval_one(task):
-    """task = (working_smi, mol1_smi, mol2_smi, baseline_phi, tool_name, args) -> result dict or None"""
-    working_smi, mol1_smi, mol2_smi, baseline_phi, tool_name, args = task
+def _transform_one(task):
+    """task = (working_smi, mol1_smi, mol2_smi, tool_name, args) -> {tool, args, smi} or None.
+    Applies the tool only; the parent scores the level."""
+    working_smi, mol1_smi, mol2_smi, tool_name, args = task
     try:
         result = _call_tool(tool_name, working_smi, mol1_smi, mol2_smi, args)
     except Exception:
@@ -133,21 +147,29 @@ def _eval_one(task):
         out_smi = _Chem.MolToSmiles(result.mol)
     except Exception:
         return None
-    phi, raw = _phi_and_raw(out_smi)
-    if phi is None:
-        return None
-    return {'tool': tool_name, 'args': args, 'smi': out_smi, 'phi': phi,
-            'delta': phi - baseline_phi, 'raw': raw}
+    return {'tool': tool_name, 'args': args, 'smi': out_smi}
 
 
 def expand(pool, smi, mol1_smi, mol2_smi, baseline_phi, chunksize=200):
     from rdkit import Chem
+    from main.toolmol import objectives as cmumo_objectives
     mol = Chem.MolFromSmiles(smi)
-    tasks = [(smi, mol1_smi, mol2_smi, baseline_phi, t, a)
+    tasks = [(smi, mol1_smi, mol2_smi, t, a)
              for t, a in _gen_candidates_main(mol, mol1_smi, mol2_smi)]
     n_tried = len(tasks)
-    results = pool.map(_eval_one, tasks, chunksize=chunksize)
-    results = [r for r in results if r is not None]
+    transformed = [r for r in pool.map(_transform_one, tasks, chunksize=chunksize)
+                   if r is not None]
+    if not transformed:
+        return [], n_tried
+    # One batched oracle call for the whole level.
+    cmumo_objectives.prefetch([r['smi'] for r in transformed])
+    results = []
+    for r in transformed:
+        phi, raw = _phi_and_raw(r['smi'])
+        if phi is None:
+            continue
+        results.append({'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': phi,
+                        'delta': phi - baseline_phi, 'raw': raw})
     return results, n_tried
 
 
@@ -207,7 +229,9 @@ def run_one_molecule(pool, snap_id, snap, beam_width, log):
     parent1 = working_smi  # frozen for the whole search - see _gen_candidates' crossover note
     parent2 = snap['parent2']
     # compute baseline via a worker call to stay consistent with pool workers' objective defs
-    base_phi, base_raw = pool.apply(_phi_and_raw, (working_smi,))
+    from main.toolmol import objectives as cmumo_objectives
+    cmumo_objectives.prefetch([working_smi])
+    base_phi, base_raw = _phi_and_raw(working_smi)
 
     t0 = time.time()
     level1, n1 = expand(pool, working_smi, parent1, parent2, base_phi)

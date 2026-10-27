@@ -49,6 +49,8 @@ Two foot-guns in the invocation, both inherited:
 | `calibration/` | moved in from `cmumo/`: `calibrate_m.py` and the sweep's two JSON results |
 | `PROPERTIES.md` | moved in from `cmumo/README.md`: the property table, the oracle traps, the calibration |
 | `setup_assets.py`, `.gitignore` | new: link the assets in, keep them and run output out of git |
+| `spool_client.py` | new: agent interface to a `claude` run, plus `beam` and `inject` |
+| `main/toolmol/online_fewshot.py`, `fewshot_gen/*` | objective set from the env; scoring moved from the pool workers to a batched parent-side call per beam level |
 | `main/toolmol/objectives.py` | replaced: `ImproveObjective` (linear rescale) + `MaintainObjective` (the hinge), reading the batched `PropertyEvaluator` |
 | `main/toolmol/cmumo_feedback.py` | new: the run's instruction, and the per-episode per-objective breakdown |
 | `main/toolmol/combinations.py` | new: the C-MuMO task codes and the occupancy rule that splits each into improve / maintain |
@@ -68,6 +70,60 @@ PROPERTIES.md                 the property table, the four oracle traps, the cal
 results/                      run output (gitignored; holds only .gitkeep)
 oracle/ data/                 symlinks into ../assets (gitignored)
 ```
+
+## Beam search and injection
+
+Wired for C-MuMO on 2026-10-27. The brute-force 3-step search and the injection path came
+with the OPFS arm but could not run here: three call sites hardcoded
+`build_objectives(['jnk3', 'qed', 'sa'])`, which raises against this property table.
+
+```bash
+export TOOLMOL_CLAUDE_SPOOL=<spool dir>          # only needed for injection
+python spool_client.py beam "CCOc1ccccc1" --beam 5 --inject
+python spool_client.py inject "CCOc1ccccc1"
+python spool_client.py status
+```
+
+`spool_client.py` is also the agent's interface to a `--llm_backend claude` run (`next`,
+`reply`), written fresh for this arm rather than ported from the surrogate-oracle sandbox,
+whose client carried that experiment's adapter/budget/forecast machinery.
+
+Three changes made it work:
+
+- **The objective set comes from the environment.** `objectives.configured_objectives()`
+  reads `CMUMO_IMPROVE` / `CMUMO_MAINTAIN`, which `configure()` exports so spawned pool
+  workers inherit them. Applied to `online_fewshot.py` (two sites),
+  `fewshot_gen/beam_search_3step.py` and `fewshot_gen/post_rationalize_3step.py`, whose
+  module-level build made the module unimportable.
+- **Scoring moved out of the pool workers.** They now only apply tools (pure rdkit) and
+  return SMILES; the parent prefetches the whole beam level in one batched oracle call and
+  scores it. Measured: a width-3 search scored **3,321 molecules in 20 ADMET-AI batch
+  calls with zero per-molecule fallbacks**. Before, each candidate was its own round trip
+  and each of N workers built its own evaluator, so N copies of torch.
+- **Searching stays free against the oracle budget.** The beam search scores through
+  `build_objectives` directly, never `ToolMolOracle.score_smi`, so nothing enters
+  `mol_buffer` until a molecule is injected and admitted to the front. Search *volume* is
+  therefore a behavioural difference from a timer-driven arm, not just the trigger. Record
+  it with results.
+
+### A front of one, and why `--population_floor` exists
+
+Injected molecules are strong by construction, and in this arm compliant molecules tie at
+1 on every maintain axis - so dominance is decided by the improve axes alone and one
+injected winner can dominate the entire population. The front then collapses to a single
+molecule and the GA can only cross it with itself.
+
+That exposed an inherited bug. The improvement/patience check sat inside
+`if len(self.oracle) > 1`, so at a front of one it never ran, while the budget had also
+stopped growing (only front members are charged, and the front was no longer changing).
+**The run span forever** - observed at 4,878 generations with `population=1`. The guard is
+now `>= 1`, so patience fires correctly at any front size.
+
+Correct is not the same as useful, though: a run that stops right after a good injection
+is barely better than one that spins. `--population_floor N` tops a collapsed front back
+up to N with the next-best molecules by Phi. **Off by default**, because it changes the
+inherited survival semantics, and a loud warning fires whenever it would have helped.
+Pass `--population_floor 4` whenever you inject.
 
 ## Two inherited loose ends
 

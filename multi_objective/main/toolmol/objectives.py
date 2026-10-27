@@ -185,6 +185,22 @@ def _make_evaluator(name):
     return _eval
 
 
+def configured_objectives():
+    """The objective set this process was configured with, improve axes first.
+
+    The beam search used to hardcode `build_objectives(['jnk3', 'qed', 'sa'])`, which
+    raises against this property table. It needs whatever set the run was configured with,
+    and it runs in pool workers that may be spawned rather than forked - so the split has
+    to come from the environment, which `configure()` writes and children inherit.
+    """
+    if not ALL_CONFIGURED:
+        raise RuntimeError(
+            "no objective set configured: CMUMO_IMPROVE / CMUMO_MAINTAIN are both empty. "
+            "run.py sets them via objectives.configure(); set them yourself when calling "
+            "the beam search outside a run.")
+    return build_objectives(ALL_CONFIGURED)
+
+
 def build_objectives(names):
     objectives = []
     for name in names:

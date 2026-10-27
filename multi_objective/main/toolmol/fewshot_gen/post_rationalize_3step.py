@@ -22,11 +22,21 @@ sys.path.insert(0, os.path.join(MULTI_OBJECTIVE_DIR, "main", "toolmol"))
 
 from rdkit import Chem
 from main.toolmol.agent import SYSTEM_PROMPT, _format_context, _canonicalize
-from main.toolmol.objectives import build_objectives
+from main.toolmol.objectives import configured_objectives
 from main.toolmol.toolbox import TOOL_DISPATCH
 from openai import OpenAI
 
-objectives = build_objectives(['jnk3', 'qed', 'sa'])
+_objectives = None
+
+
+def objectives():
+    """Lazy and env-driven. Built at import time from a hardcoded ['jnk3','qed','sa'] until
+    2026-10-27, which raises against the C-MuMO property table and made this module
+    unimportable."""
+    global _objectives
+    if _objectives is None:
+        _objectives = configured_objectives()
+    return _objectives
 
 
 def phi_and_raw(smi):
@@ -34,7 +44,7 @@ def phi_and_raw(smi):
         return None, None
     raw = {}
     total = 0.0
-    for obj in objectives:
+    for obj in objectives():
         r = obj.raw(smi)
         raw[obj.name] = r
         total += obj.rescaled(r)

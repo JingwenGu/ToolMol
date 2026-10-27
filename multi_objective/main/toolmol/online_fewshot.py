@@ -45,7 +45,8 @@ from rdkit import Chem
 from main.toolmol.agent import SYSTEM_PROMPT, _format_context, _canonicalize
 from main.toolmol.toolbox import TOOL_DISPATCH
 from main.toolmol.fg_lookup import FUNCTIONAL_GROUPS
-from main.toolmol.objectives import build_objectives
+from main.toolmol import objectives as cmumo_objectives
+from main.toolmol.objectives import configured_objectives
 
 ELEMENTS = ['C', 'N', 'O', 'F', 'Cl', 'Br', 'S']
 BONDS = ['single', 'double', 'triple']
@@ -61,22 +62,41 @@ _toolbox = None
 
 
 def _pool_init():
-    global _objectives, _group_smiles, _Chem, _toolbox
+    """Worker setup. Deliberately builds NO objectives.
+
+    Workers used to score every candidate themselves, which was free when the objectives
+    were rdkit QED/SA plus a local sklearn model. Under the C-MuMO property set each score
+    is an ADMET-AI forward pass behind a subprocess, so N workers meant N copies of torch
+    and one round trip per candidate. Scoring now happens once per beam level, batched, in
+    the parent - see _expand. Workers only apply tools, which is pure rdkit."""
+    global _group_smiles, _Chem, _toolbox
     from rdkit import Chem as _C
     from main.toolmol import toolbox as _tb
     _Chem = _C
     _toolbox = _tb
     _group_smiles = list(FUNCTIONAL_GROUPS.values())
-    _objectives = build_objectives(['jnk3', 'qed', 'sa'])
+
+
+_PARENT_OBJECTIVES = None
+
+
+def _parent_objectives():
+    """The parent's own objective set, from the environment, built once per process."""
+    global _PARENT_OBJECTIVES
+    if _PARENT_OBJECTIVES is None:
+        _PARENT_OBJECTIVES = configured_objectives()
+    return _PARENT_OBJECTIVES
 
 
 def _phi_and_raw(smi):
-    m = _Chem.MolFromSmiles(smi)
-    if m is None:
+    """Phi and the per-objective raw values, in the PARENT. Assumes the molecule has been
+    through cmumo_objectives.prefetch(), so each raw() is a cache lookup."""
+    from rdkit import Chem
+    if Chem.MolFromSmiles(smi) is None:
         return None, None
     raw = {}
     total = 0.0
-    for obj in _objectives:
+    for obj in _parent_objectives():
         r = obj.raw(smi)
         raw[obj.name] = r
         total += obj.rescaled(r)
@@ -95,8 +115,10 @@ def _call_tool(tool_name, working_smi, mol2_smi, args):
     return getattr(_toolbox, tool_name)(working_smi, **args)
 
 
-def _eval_one(task):
-    working_smi, mol2_smi, baseline_phi, tool_name, args = task
+def _transform_one(task):
+    """Apply one tool in a worker and return the resulting SMILES. No scoring - that is the
+    parent's job now (see _pool_init)."""
+    working_smi, mol2_smi, tool_name, args = task
     try:
         result = _call_tool(tool_name, working_smi, mol2_smi, args)
     except Exception:
@@ -107,11 +129,7 @@ def _eval_one(task):
         out_smi = _Chem.MolToSmiles(result.mol)
     except Exception:
         return None
-    phi, raw = _phi_and_raw(out_smi)
-    if phi is None:
-        return None
-    return {'tool': tool_name, 'args': args, 'smi': out_smi, 'phi': phi,
-            'delta': phi - baseline_phi, 'raw': raw}
+    return {'tool': tool_name, 'args': args, 'smi': out_smi}
 
 
 def _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover=False):
@@ -147,14 +165,33 @@ def _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover=False):
 
 
 def _expand(pool, smi, mol2_smi, baseline_phi, group_smiles, chunksize=100, include_crossover=False):
+    """One beam level: enumerate every single-tool action, apply them in the pool, then
+    score the whole level in a single batched oracle call.
+
+    The batching is the point. A level is thousands of candidates; scored one at a time
+    under the C-MuMO oracles that is thousands of round trips, so every distinct SMILES in
+    the level goes through prefetch() together before any raw() is read."""
     from rdkit import Chem
     mol = Chem.MolFromSmiles(smi)
-    tasks = [(smi, mol2_smi, baseline_phi, t, a)
+    tasks = [(smi, mol2_smi, t, a)
              for t, a in _gen_candidates_main(mol, mol2_smi, group_smiles, include_crossover)]
     if not tasks:
         return []
-    results = pool.map(_eval_one, tasks, chunksize=chunksize)
-    return [r for r in results if r is not None]
+    transformed = [r for r in pool.map(_transform_one, tasks, chunksize=chunksize)
+                   if r is not None]
+    if not transformed:
+        return []
+
+    cmumo_objectives.prefetch([r['smi'] for r in transformed])
+
+    scored = []
+    for r in transformed:
+        phi, raw = _phi_and_raw(r['smi'])
+        if phi is None:
+            continue
+        scored.append({'tool': r['tool'], 'args': r['args'], 'smi': r['smi'], 'phi': phi,
+                       'delta': phi - baseline_phi, 'raw': raw})
+    return scored
 
 
 def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles):
@@ -162,7 +199,8 @@ def _beam_search_3step(pool, working_smi, parent2_smi, beam_width, group_smiles)
     just what the online buffer needs (no per-depth bookkeeping, no file I/O). Crossover is
     searched at level 1 only - see _gen_candidates_main."""
     from rdkit import Chem
-    base_phi, base_raw = pool.apply(_phi_and_raw, (working_smi,))
+    cmumo_objectives.prefetch([working_smi])
+    base_phi, base_raw = _phi_and_raw(working_smi)
     if base_phi is None:
         return None
 
@@ -272,7 +310,7 @@ class OnlineFewShotBuffer:
         self.log = log
 
         self._group_smiles = list(FUNCTIONAL_GROUPS.values())
-        self._objectives = build_objectives(['jnk3', 'qed', 'sa'])
+        self._objectives = configured_objectives()
         self._pool = Pool(processes=workers, initializer=_pool_init)
         self._client = OpenAI(api_key=os.environ[api_key_env])
         self._llm_model = llm_model

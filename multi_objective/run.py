@@ -66,6 +66,12 @@ def main():
                         help='drop offspring violating any maintain axis by more than this '
                              'many multiples of M, before the Pareto front (design 3.2). '
                              'Defaults to the clamp C, where the hinge already scores 0.')
+    parser.add_argument('--population_floor', type=int, default=0,
+                        help='if the Pareto front collapses below 2, top it back up to this '
+                             'many molecules with the next-best by Phi. Off by default, '
+                             'since it changes the inherited survival semantics; 4 is a '
+                             'sensible value when injecting beam-search winners, which can '
+                             'dominate the whole population and end the search.')
     parser.add_argument('--front_cap', type=int, default=40,
                         help='cap candidates entering the front, highest Phi first (design '
                              '3.3). A safety valve: calibration measured fronts at 6-10 of '
