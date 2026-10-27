@@ -1,7 +1,7 @@
 # The ten C-MuMO properties
 
 Written 2026-10-26, moved into the arm 2026-10-27. Implements section 5 of
-`../../CMUMO_PORT_DESIGN.md`. **Oracles only** — no GA, no agent, no run.
+`CMUMO_PORT_DESIGN.md` (in the AI4S workspace, outside this repo). **Oracles only** — no GA, no agent, no run.
 
 ## Where things are
 
@@ -130,7 +130,7 @@ ZINC pool. No agent calls, no GA.
 ../../RSI/.venv-toolmol39/bin/python calibration/calibrate_m.py --n 1000 --chosen  # chosen only
 ```
 
-Results and the decisions they produced are in `../../CMUMO_PORT_DESIGN.md` section 2;
+Results and the decisions they produced are in `CMUMO_PORT_DESIGN.md` (in the AI4S workspace, outside this repo) section 2;
 raw data in `calibration/calibration.json` (sweep) and `calibration/chosen_config.json`. Short version:
 **C = 5** and insensitive, **alpha = 1** for BBBP/AMP/MUT/PlogP, **alpha = 0.25** for
 CARC and LIV (D_p = D_p makes them inert), **HIA dropped**, and the population cap is a

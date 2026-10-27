@@ -2,7 +2,7 @@
 
 Written 2026-10-26, reorganized 2026-10-27 to be committable on its own. Sourced from
 `RSI/OPFS_context1/multi_objective` (which carries the `claude` backend and the injection
-spool). Implements sections 2-5 and 7 of `../../CMUMO_PORT_DESIGN.md`. **Not a sandbox** —
+spool). Implements sections 2-5 and 7 of `CMUMO_PORT_DESIGN.md` (in the AI4S workspace, outside this repo). **Not a sandbox** —
 the predictor *is* the ground truth for this task, so there is no surrogate/truth split to
 protect.
 
