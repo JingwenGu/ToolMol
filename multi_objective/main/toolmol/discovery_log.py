@@ -17,9 +17,9 @@ One line per distinct molecule, at first sighting:
 are logged deliberately: a proposal killed by a constraint is exactly what you want to
 count afterwards, and it never reaches the front or the results file.
 
-`origin` is the run's own tag: 'llm' (agent-generated, including the random seed
-population), 'injected' (a beam-search molecule never touched by an agent edit), or
-'injected+llm' (descends from an injected one through at least one agent edit).
+`origin` is always 'llm' in this arm: every molecule is either the seed population or an
+agent edit of one. The field exists because `cmumo_objectives_opfs` also tags 'injected'
+and 'injected+llm', so a reader can compare logs from the two arms without special cases.
 
 Crash-safe by construction: the file is opened in append mode and flushed per generation,
 so a killed run keeps everything up to its last completed generation.
@@ -71,7 +71,7 @@ class DiscoveryLog:
     def record_generation(self, generation, candidates, objectives, front_smis,
                           origins=None, rejected=None):
         """Log every candidate not seen before. `candidates` is the full set that went into
-        front selection this generation: previous front + offspring + injected."""
+        front selection this generation: the previous front plus this generation's offspring."""
         front = set(front_smis)
         origins = origins or {}
         rejected = rejected or set()

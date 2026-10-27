@@ -1,8 +1,8 @@
 # cmumo/cmumo_objectives_base — the GA integration
 
 Written 2026-10-26, reorganized 2026-10-27 to be committable on its own. Sourced from
-`RSI/OPFS_context1/multi_objective` (which carries the `claude` backend and the injection
-spool). Implements sections 2-5 and 7 of `CMUMO_PORT_DESIGN.md` (in the AI4S workspace, outside this repo). **Not a sandbox** —
+`RSI/OPFS_context1/multi_objective` (for the `claude` backend; its beam-search and
+injection machinery is removed here - see below). Implements sections 2-5 and 7 of `CMUMO_PORT_DESIGN.md` (in the AI4S workspace, outside this repo). **Not a sandbox** —
 the predictor *is* the ground truth for this task, so there is no surrogate/truth split to
 protect.
 
@@ -49,8 +49,8 @@ Two foot-guns in the invocation, both inherited:
 | `calibration/` | moved in from `cmumo/`: `calibrate_m.py` and the sweep's two JSON results |
 | `PROPERTIES.md` | moved in from `cmumo/README.md`: the property table, the oracle traps, the calibration |
 | `setup_assets.py`, `.gitignore` | new: link the assets in, keep them and run output out of git |
-| `spool_client.py` | new: agent interface to a `claude` run, plus `beam` and `inject` |
-| `main/toolmol/online_fewshot.py`, `fewshot_gen/*` | objective set from the env; scoring moved from the pool workers to a batched parent-side call per beam level |
+| `spool_client.py` | new: agent interface to a `claude` run (`status`, `next`, `reply`) |
+| `main/toolmol/online_fewshot.py`, `fewshot_gen/*` | **deleted** - no beam search in this arm (see below) |
 | `main/toolmol/objectives.py` | replaced: `ImproveObjective` (linear rescale) + `MaintainObjective` (the hinge), reading the batched `PropertyEvaluator` |
 | `main/toolmol/cmumo_feedback.py` | new: the run's instruction, and the per-episode per-objective breakdown |
 | `main/toolmol/combinations.py` | new: the C-MuMO task codes and the occupancy rule that splits each into improve / maintain |
@@ -117,81 +117,44 @@ python report.py <output_dir> --top 10
 It will not print SR, SR_Th, RI or Sim: those need an input molecule M_x, and the pooled
 design has none. Nothing it prints may be placed beside the GeLLMO-C table.
 
-## Beam search and injection
+## No beam search, no injection
 
-Wired for C-MuMO on 2026-10-27. The brute-force 3-step search and the injection path came
-with the OPFS arm but could not run here: three call sites hardcoded
-`build_objectives(['jnk3', 'qed', 'sa'])`, which raises against this property table.
+**This is the only thing that separates `cmumo_objectives_base` from
+`cmumo_objectives_opfs`.** The branches are otherwise identical. Removed here:
 
-```bash
-export TOOLMOL_CLAUDE_SPOOL=<spool dir>          # only needed for injection
-python spool_client.py beam "CCOc1ccccc1" --beam 5 --inject
-python spool_client.py inject "CCOc1ccccc1"
-python spool_client.py status
-```
+| removed | what it was |
+|---|---|
+| `main/toolmol/online_fewshot.py` | `OnlineFewShotBuffer`, the live 3-step beam search, `drain_injections` |
+| `main/toolmol/fewshot_gen/` | the offline beam-search / few-shot-library pipeline |
+| `_drain_inject_spool()` + the injection block in the loop | folded spooled molecules into the population before front selection |
+| 11 `--online_fewshot*` flags | the timer-driven buffer and its injection switch |
+| `spool_client.py beam` / `inject` | agent-triggered search and queueing |
+| `_molecule_origin` + the per-generation origin printout | tagged molecules 'injected' / 'injected+llm' / 'llm' |
 
-`spool_client.py` is also the agent's interface to a `--llm_backend claude` run (`next`,
-`reply`), written fresh for this arm rather than ported from the surrogate-oracle sandbox,
-whose client carried that experiment's adapter/budget/forecast machinery.
+**Why this arm exists.** With injection, population quality is no longer purely a function
+of the agent's own edits: a brute-force search runs beside it and contributes molecules
+that compete for front slots, which makes a result hard to attribute. Here the population
+changes only through the agent's tool edits, so `avg_top1`/`top10`/`top100` and the front
+are attributable to the agent. The two arms are a matched pair - same objectives, same
+oracles, same GA - differing only in whether a search assists.
 
-Three changes made it work:
+Kept deliberately: `--few_shot_file`, which prepends a fixed message list to every agent
+call. That is a prompt feature rather than a search, though the library the opfs arm's
+pipeline produces is one thing you could point it at. `spool_client.py` keeps `status`,
+`next` and `reply`, which are the agent interface for `--llm_backend claude`.
 
-- **The objective set comes from the environment.** `objectives.configured_objectives()`
-  reads `CMUMO_IMPROVE` / `CMUMO_MAINTAIN`, which `configure()` exports so spawned pool
-  workers inherit them. Applied to `online_fewshot.py` (two sites),
-  `fewshot_gen/beam_search_3step.py` and `fewshot_gen/post_rationalize_3step.py`, whose
-  module-level build made the module unimportable.
-- **Scoring moved out of the pool workers.** They now only apply tools (pure rdkit) and
-  return SMILES; the parent prefetches the whole beam level in one batched oracle call and
-  scores it. Measured: a width-3 search scored **3,321 molecules in 20 ADMET-AI batch
-  calls with zero per-molecule fallbacks**. Before, each candidate was its own round trip
-  and each of N workers built its own evaluator, so N copies of torch.
-- **Searching stays free against the oracle budget.** The beam search scores through
-  `build_objectives` directly, never `ToolMolOracle.score_smi`, so nothing enters
-  `mol_buffer` until a molecule is injected and admitted to the front. Search *volume* is
-  therefore a behavioural difference from a timer-driven arm, not just the trigger. Record
-  it with results.
+### `--population_floor` and a front of one
 
-### A front of one, and why `--population_floor` exists
+A front that collapses to a single molecule leaves the GA able only to cross it with
+itself. Measured over 40 draws of 95 molecules it never happened here, so this is a safety
+valve rather than a routine hazard - in the opfs arm an injected winner, strong by
+construction, makes it much easier to hit.
 
-Injected molecules are strong by construction, and in this arm compliant molecules tie at
-1 on every maintain axis - so dominance is decided by the improve axes alone. An injected
-winner can therefore dominate the whole population, the front collapses to a single
-molecule, and the GA can only cross it with itself.
-
-**How likely that is, measured.** Same code, same molecules, 40 random draws of 95 (one
-generation's candidate set at the real config):
-
-| formulation | mean front | min | max | ever 1? |
-|---|---|---|---|---|
-| 3 continuously-varying axes (jnk3/qed/sa-like) | 11.7 | 6 | 22 | never |
-| C-MuMO: 2 improve + 1 plateaued maintain | 5.7 | 3 | 11 | never |
-
-The plateau halves the front, but **neither formulation reached 1 at the real config**.
-The collapse was observed with `hparams_smoketest.yaml` (population 8, offspring 4): twelve
-candidates, one dropped by the violator pre-filter, and the injected winner dominated the
-remaining seven. Same combination and seed without injection held at 4. So this is a rare
-event needing both a small population and an injected winner - not something to expect at
-60/35.
-
-It is worth understanding anyway, because it says what injection does to the front.
-Ordinary offspring are single-tool edits, better on one axis and worse on another, so they
-join the front rather than displacing anyone - which is why fronts normally grow and the
-other arms never shrank. A beam-search winner is selected to maximize the *sum* of axes, so
-it is high on all of them at once. It is the only thing in the loop that can evict many
-members at a stroke.
-
-Rare or not, it exposed an inherited bug. The improvement/patience check sat inside
-`if len(self.oracle) > 1`, so at a front of one it never ran, while the budget had also
-stopped growing (only front members are charged, and the front was no longer changing).
-**The run span forever** - observed at 4,878 generations with `population=1`. The guard is
-now `>= 1`, so patience fires correctly at any front size.
-
-Correct is not the same as useful, though: a run that stops right after a good injection
-is barely better than one that spins. `--population_floor N` tops a collapsed front back
-up to N with the next-best molecules by Phi. **Off by default**, because it changes the
-inherited survival semantics, and a loud warning fires whenever it would have helped.
-Pass `--population_floor 4` whenever you inject.
+It still matters, because it exposed an inherited bug: the improvement/patience check sat
+inside `if len(self.oracle) > 1`, so at a front of one it never ran while the budget had
+also stopped growing - the run span forever, observed at 4,878 generations. The guard is
+now `>= 1`. `--population_floor N` tops a collapsed front back up with the next-best
+molecules by Phi; off by default, with a warning whenever it would have helped.
 
 ## What the pilot changed  [2026-10-27]
 
@@ -219,15 +182,11 @@ One episode driven by hand through the spool backend, two turns, and it earned i
 Both tool paths were exercised: `crossover_molecules` and `add_atom` each executed and
 returned a correct result message and atom table.
 
-## Two inherited loose ends
+## One inherited loose end
 
-Both came with the OPFS copy and neither affects the C-MuMO path; recorded so they are not
-mistaken for reorganization damage.
+Recorded so it is not mistaken for reorganization damage. (A second one - a dangling link
+in `fewshot_gen/README.md` - went away with that directory.)
 
-- `main/toolmol/fewshot_gen/README.md` points at
-  `../fewshot_examples/regret_gpt54_3step_v1.json`, which does not exist in the source arm
-  either. That whole path is the `--online_fewshot` machinery, which this arm does not use
-  (design section 6).
 - The `molleo_*` methods under `main/` are kept as source but their stale `oracle/`
   downloads were deleted. Nothing in the code refers to those nested paths — tdc resolves
   `./oracle` against the cwd, which is always the arm root — so they were leftovers from

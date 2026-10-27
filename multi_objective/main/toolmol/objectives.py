@@ -3,7 +3,8 @@
 Drop-in replacement for the tdc-backed objectives.py. Same `Objective` surface (name,
 bound_low, bound_high, raw(smi), rescaled(raw)), same `OBJECTIVE_BOUNDS` mapping, same
 `build_objectives(names)` signature - so `ToolMolOracle.assign_evaluator`,
-`select_pareto_front` and `online_fewshot._pool_init` all pick it up unchanged.
+`select_pareto_front` and anything else going through `build_objectives` pick it up
+unchanged.
 
 **Direction lives in the property table, not in the CLI.** `rescaled()` always returns
 1 = best, for lower-is-better properties too, so every property goes in `--max_obj` and
@@ -205,16 +206,17 @@ def _make_evaluator(name):
 def configured_objectives():
     """The objective set this process was configured with, improve axes first.
 
-    The beam search used to hardcode `build_objectives(['jnk3', 'qed', 'sa'])`, which
-    raises against this property table. It needs whatever set the run was configured with,
-    and it runs in pool workers that may be spawned rather than forked - so the split has
-    to come from the environment, which `configure()` writes and children inherit.
+    Exists for callers outside the main loop - and originally for the beam search in
+    `cmumo_objectives_opfs`, which hardcoded `build_objectives(['jnk3', 'qed', 'sa'])` and
+    so raised against this property table. The split comes from the environment, which
+    `configure()` writes and child processes inherit, because such a caller may run in a
+    pool worker that was spawned rather than forked.
     """
     if not ALL_CONFIGURED:
         raise RuntimeError(
             "no objective set configured: CMUMO_IMPROVE / CMUMO_MAINTAIN are both empty. "
             "run.py sets them via objectives.configure(); set them yourself when calling "
-            "the beam search outside a run.")
+            "objectives outside a run.")
     return build_objectives(ALL_CONFIGURED)
 
 

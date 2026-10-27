@@ -159,11 +159,11 @@ def _cut_at_index(mol, idx, rng=random):
 
 def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2, rng=random):
     """rng defaults to the global `random` module, matching every existing caller (the live
-    agent's real tool dispatch, and the offline fewshot_gen scripts) - those depend on
+    agent's real tool dispatch) - those depend on
     main/pareto_optimizer.py's optimize() seeding the global random module via
     random.seed(seed) for run-to-run reproducibility. Pass a private random.Random() instance
     instead when calling this from code that runs concurrently with the live GA loop on the
-    same thread's shared global state (see online_fewshot.py) - otherwise its draws interleave
+    same thread's shared global state - otherwise its draws interleave
     with the live loop's own crossover calls in a wall-clock-dependent, non-reproducible way."""
     mol1, err = _load(mol1_smiles)
     if err:
