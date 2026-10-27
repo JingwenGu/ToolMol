@@ -294,9 +294,33 @@ class BaseOptimizer:
         self.diversity_evaluator = tdc.Evaluator(name = 'Diversity')
         self.filter = tdc.chem_utils.oracle.filter.MolFilter(filters = ['PAINS', 'SureChEMBL', 'Glaxo'], property_filters_flag = False)
 
-    # def load_smiles_from_file(self, file_name):
-    #     with open(file_name) as f:
-    #         return self.pool(delayed(canonicalize)(s.strip()) for s in f)
+    def load_smiles_from_file(self, file_name):
+        """Seed population from a file, one SMILES per line.
+
+        Was commented out upstream, which made --smi_file raise AttributeError - and
+        --smi_file is how the C-MuMO arm seeds from a task-specific pool (see
+        seed_pool.py). Reimplemented without the joblib pool the original used, since
+        canonicalizing a few hundred SMILES is not worth a process pool. Blank lines and
+        anything after whitespace (an id column) are ignored; a header line reading
+        "smiles" is skipped so a tdc-style .tab file works too."""
+        smiles = []
+        with open(file_name) as f:
+            for line in f:
+                tok = line.strip().strip('"').split()
+                if not tok:
+                    continue
+                smi = tok[0].strip('"')
+                if smi.lower() == 'smiles':
+                    continue
+                mol = Chem.MolFromSmiles(smi)
+                if mol is None:
+                    print(f"  skipping unparseable SMILES in {file_name}: {smi}", flush=True)
+                    continue
+                smiles.append(Chem.MolToSmiles(mol))
+        if not smiles:
+            raise ValueError(f"no usable SMILES in {file_name}")
+        print(f"loaded {len(smiles)} seed molecule(s) from {file_name}", flush=True)
+        return smiles
             
     def sanitize(self, mol_list):
         new_mol_list = []

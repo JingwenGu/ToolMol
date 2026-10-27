@@ -16,6 +16,7 @@ from main.toolmol.oracle import ToolMolOracle
 from main.toolmol.agent import ToolMolAgent
 from main.toolmol.sampling import make_mating_pool_phi
 from main.toolmol import cmumo_feedback, objectives as cmumo_objectives
+from main.toolmol.discovery_log import DiscoveryLog
 from main.toolmol.online_fewshot import OnlineFewShotBuffer
 
 SNAPSHOT_EVERY = 10  # record the current Pareto front every k generations
@@ -231,6 +232,13 @@ class GB_GA_Optimizer(BaseOptimizer):
             population_mol = [Chem.MolFromSmiles(s) for s in population_smiles]
             population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
 
+        # Everything the run ever considers, not just what reaches a front - see
+        # discovery_log.py for why that distinction loses almost the whole run.
+        self.discovery_log = DiscoveryLog(
+            os.path.join(self.args.output_dir,
+                         'discovered_' + str(self.oracle.task_label) + '.jsonl'),
+            objectives=self.oracle.objectives)
+
         patience = 0
         generation = 0
 
@@ -317,6 +325,10 @@ class GB_GA_Optimizer(BaseOptimizer):
             # Design section 3: reject hard violators, then cap, then select the whole
             # non-dominated front exactly as before. Both steps run BEFORE the oracle call
             # that charges front admissions.
+            # Snapshot the candidate set BEFORE the pre-filter. Molecules rejected for
+            # violating a constraint are exactly the ones worth analysing afterwards, and
+            # logging only survivors would erase them.
+            all_candidates = [Chem.MolToSmiles(mol) for mol in population_mol]
             population_mol, n_dropped = _prefilter_violators(
                 self.oracle, population_mol, getattr(self.args, "reject_at", None))
             population_mol, n_capped = _cap_front(
@@ -331,6 +343,14 @@ class GB_GA_Optimizer(BaseOptimizer):
             population_mol = _apply_population_floor(
                 self.oracle, population_mol, candidates,
                 getattr(self.args, "population_floor", 0))
+            # Record before anything is discarded. Every raw() here is a cache hit: the
+            # whole candidate set went through prefetch a few lines above.
+            n_new = self.discovery_log.record_generation(
+                generation, all_candidates, self.oracle.objectives,
+                [Chem.MolToSmiles(m) for m in population_mol], self._molecule_origin,
+                rejected=set(all_candidates) - set(candidates))
+            print(f"  discovered {n_new} new molecule(s) this generation "
+                  f"({len(self.discovery_log.seen)} total)", flush=True)
             # stats
             population_scores = self.oracle([Chem.MolToSmiles(mol) for mol in population_mol])
             population_tuples = list(zip(population_scores, population_mol))

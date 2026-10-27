@@ -71,6 +71,49 @@ results/                      run output (gitignored; holds only .gitkeep)
 oracle/ data/                 symlinks into ../assets (gitignored)
 ```
 
+## Before and after a run
+
+Three pieces added 2026-10-27, because without them a run is hard to set up honestly and
+impossible to analyse afterwards.
+
+**Seeding — `seed_pool.py`.** Design section 1 seeds from the combination's own molecules,
+and C-MuMO defines those precisely: every improve property worse than Th_p, every maintain
+property better than Th_p. Random ZINC asks a vaguer question (71% of a random draw is
+already compliant on AMP, 76% on LIV), so a maintain axis would be satisfied by accident.
+
+```bash
+python seed_pool.py --combination BPQ --n 500 --scan 6000 --out seeds/BPQ.smi
+run.py ... --combination BPQ --smi_file seeds/BPQ.smi
+```
+
+For BPQ, 1,952 of 6,000 ZINC molecules match. The output is **shuffled**, because the GA
+takes the first `population_size` lines of a `--smi_file`, not a random sample.
+
+This also needed `BaseOptimizer.load_smiles_from_file`, which was **commented out
+upstream** - so `--smi_file` raised `AttributeError` and the design's seeding path had
+never actually worked in any arm cut from this code.
+
+**Recording — `main/toolmol/discovery_log.py`.** `save_result` writes only molecules that
+reached a front, as `[Phi, index]`. Everything else is scored during front selection and
+dropped, so "what did the agent propose" had no answer and the FA-style metric, defined
+over the whole generated pool, could not be computed. Every run now writes
+`discovered_<label>.jsonl`, one line per distinct molecule at first sighting, with Phi,
+per-objective raw and scaled values, generation, origin, whether it reached the front, and
+whether the pre-filter rejected it. Rejects are logged **before** the pre-filter runs,
+deliberately: a proposal killed by a constraint is exactly what you want to count. A
+sidecar `.meta.json` names which axes were improve and which maintain, with their
+theta/delta/M/C, so nothing downstream has to infer it.
+
+**Reporting — `report.py`.** Front quality, hypervolume, and the FA-style filtered report
+(compliant molecules only, then the improve axes).
+
+```bash
+python report.py <output_dir> --top 10
+```
+
+It will not print SR, SR_Th, RI or Sim: those need an input molecule M_x, and the pooled
+design has none. Nothing it prints may be placed beside the GeLLMO-C table.
+
 ## Beam search and injection
 
 Wired for C-MuMO on 2026-10-27. The brute-force 3-step search and the injection path came
