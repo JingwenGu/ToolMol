@@ -1,0 +1,316 @@
+{
+  "n": 1000,
+  "seed": 0,
+  "draw": 95,
+  "budget": 200,
+  "combinations": {
+    "BPQ": {
+      "improve": [
+        "QED",
+        "PlogP"
+      ],
+      "maintain": [
+        "BBBP"
+      ],
+      "occupancy": {
+        "BBBP": 0.485,
+        "PlogP": 0.244,
+        "QED": 0.066
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "BBBP": 0.1
+          },
+          "shares": {
+            "BBBP": 0.7366972812427746,
+            "PlogP": 0.17150623196673004,
+            "QED": 0.09179648679049549
+          },
+          "maintain_share": 0.7366972812427746,
+          "activity": {
+            "BBBP": {
+              "mean": 0.7085524952580357,
+              "active": 0.4
+            }
+          },
+          "phi_var": 0.2550155369851521,
+          "front_mean": 5.6,
+          "front_std": 1.876166303929372,
+          "gens_to_budget": 35.714285714285715
+        }
+      ]
+    },
+    "ELQ": {
+      "improve": [
+        "QED",
+        "hERG"
+      ],
+      "maintain": [
+        "LIV"
+      ],
+      "occupancy": {
+        "hERG": 0.221,
+        "LIV": 0.745,
+        "QED": 0.066
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "LIV": 0.025
+          },
+          "shares": {
+            "hERG": 0.3890798258080981,
+            "LIV": 0.4003142366817387,
+            "QED": 0.21060593751016324
+          },
+          "maintain_share": 0.4003142366817387,
+          "activity": {
+            "LIV": {
+              "mean": 0.894318154291296,
+              "active": 0.196
+            }
+          },
+          "phi_var": 0.14287247851821544,
+          "front_mean": 7.52,
+          "front_std": 1.9312172327317296,
+          "gens_to_budget": 26.595744680851066
+        }
+      ]
+    },
+    "ACEP": {
+      "improve": [
+        "hERG",
+        "PlogP"
+      ],
+      "maintain": [
+        "AMP",
+        "CARC"
+      ],
+      "occupancy": {
+        "AMP": 0.661,
+        "CARC": 0.684,
+        "hERG": 0.221,
+        "PlogP": 0.244
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "AMP": 0.1,
+            "CARC": 0.05
+          },
+          "shares": {
+            "AMP": 0.5449041220368515,
+            "CARC": 0.12183755153396493,
+            "hERG": 0.192760613562563,
+            "PlogP": 0.1404977128666207
+          },
+          "maintain_share": 0.6667416735708164,
+          "activity": {
+            "AMP": {
+              "mean": 0.7867242022713636,
+              "active": 0.274
+            },
+            "CARC": {
+              "mean": 0.9205434506024532,
+              "active": 0.168
+            }
+          },
+          "phi_var": 0.3494758777010135,
+          "front_mean": 10.02,
+          "front_std": 2.2044500447957533,
+          "gens_to_budget": 19.960079840319363
+        }
+      ]
+    },
+    "BDPQ": {
+      "improve": [
+        "DRD2",
+        "QED"
+      ],
+      "maintain": [
+        "BBBP",
+        "PlogP"
+      ],
+      "occupancy": {
+        "BBBP": 0.485,
+        "DRD2": 0.001,
+        "PlogP": 0.244,
+        "QED": 0.066
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "BBBP": 0.1,
+            "PlogP": 1.0
+          },
+          "shares": {
+            "BBBP": 0.5330449829714703,
+            "DRD2": -0.00036408482911334225,
+            "PlogP": 0.4170039773525719,
+            "QED": 0.05031512450507122
+          },
+          "maintain_share": 0.9500489603240422,
+          "activity": {
+            "BBBP": {
+              "mean": 0.7085524952580357,
+              "active": 0.4
+            },
+            "PlogP": {
+              "mean": 0.7091217317807603,
+              "active": 0.518
+            }
+          },
+          "phi_var": 0.4376769221955903,
+          "front_mean": 8.42,
+          "front_std": 3.8109841248685354,
+          "gens_to_budget": 23.752969121140143
+        }
+      ]
+    },
+    "BCMQ": {
+      "improve": [
+        "QED",
+        "MUT"
+      ],
+      "maintain": [
+        "BBBP",
+        "CARC"
+      ],
+      "occupancy": {
+        "BBBP": 0.485,
+        "CARC": 0.684,
+        "MUT": 0.413,
+        "QED": 0.066
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "BBBP": 0.1,
+            "CARC": 0.05
+          },
+          "shares": {
+            "BBBP": 0.5260518480061888,
+            "CARC": 0.22506794534147076,
+            "MUT": 0.115158440744005,
+            "QED": 0.13372176590833548
+          },
+          "maintain_share": 0.7511197933476595,
+          "activity": {
+            "BBBP": {
+              "mean": 0.7085524952580357,
+              "active": 0.4
+            },
+            "CARC": {
+              "mean": 0.9205434506024532,
+              "active": 0.168
+            }
+          },
+          "phi_var": 0.260270584053094,
+          "front_mean": 7.64,
+          "front_std": 2.9648608736330275,
+          "gens_to_budget": 26.17801047120419
+        }
+      ]
+    },
+    "HLMPQ": {
+      "improve": [
+        "QED",
+        "PlogP"
+      ],
+      "maintain": [
+        "LIV",
+        "MUT"
+      ],
+      "occupancy": {
+        "LIV": 0.745,
+        "MUT": 0.413,
+        "PlogP": 0.244,
+        "QED": 0.066
+      },
+      "rows": [
+        {
+          "alpha": {
+            "BBBP": 1.0,
+            "AMP": 1.0,
+            "MUT": 1.0,
+            "PlogP": 1.0,
+            "CARC": 0.25,
+            "LIV": 0.25
+          },
+          "C": 5.0,
+          "M": {
+            "LIV": 0.025,
+            "MUT": 0.1
+          },
+          "shares": {
+            "LIV": 0.2597443619204487,
+            "MUT": 0.5608120191471132,
+            "PlogP": 0.012230889872014079,
+            "QED": 0.167212729060424
+          },
+          "maintain_share": 0.8205563810675619,
+          "activity": {
+            "LIV": {
+              "mean": 0.894318154291296,
+              "active": 0.196
+            },
+            "MUT": {
+              "mean": 0.7388111170729192,
+              "active": 0.425
+            }
+          },
+          "phi_var": 0.222425794845758,
+          "front_mean": 7.34,
+          "front_std": 3.069918565695188,
+          "gens_to_budget": 27.247956403269754
+        }
+      ]
+    }
+  }
+}

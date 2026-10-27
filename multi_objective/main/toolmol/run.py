@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import os
+from collections import Counter
 
 import numpy as np
 import yaml
@@ -14,17 +15,82 @@ from main.pareto_optimizer import BaseOptimizer
 from main.toolmol.oracle import ToolMolOracle
 from main.toolmol.agent import ToolMolAgent
 from main.toolmol.sampling import make_mating_pool_phi
+from main.toolmol import cmumo_feedback, objectives as cmumo_objectives
+from main.toolmol.online_fewshot import OnlineFewShotBuffer
 
 SNAPSHOT_EVERY = 10  # record the current Pareto front every k generations
 
 
-def _goal_description(args):
+def _drain_inject_spool():
+    """Beam-search molecules the operator has queued for injection, read-and-clear.
+
+    The --llm_backend claude counterpart to OnlineFewShotBuffer.drain_injections(): one SMILES
+    per line in $TOOLMOL_CLAUDE_SPOOL/inject.txt, removed once read so each molecule is folded
+    in exactly once. Returns [] when the spool isn't configured or the file isn't there, so
+    every other configuration is unaffected."""
+    spool = os.environ.get("TOOLMOL_CLAUDE_SPOOL")
+    if not spool:
+        return []
+    path = os.path.join(spool, "inject.txt")
+    if not os.path.exists(path):
+        return []
+    with open(path) as f:
+        smis = [line.strip() for line in f if line.strip()]
+    os.remove(path)
+    return smis
+
+
+def _goal_description(args, objectives=None):
+    """C-MuMO's instruction, built from the objective objects so direction and target come
+    from the property table rather than from which CLI list a name landed in. Constant for
+    a whole run: the pooled design fixes improve-vs-maintain per combination, so there is
+    no per-instance task to restate (see cmumo_feedback)."""
+    if objectives:
+        return cmumo_feedback.goal_text(objectives)
     parts = []
     if args.max_obj:
         parts.append("maximize " + ", ".join(args.max_obj) + " score" + ("s" if len(args.max_obj) > 1 else ""))
     if args.min_obj:
         parts.append("minimize " + ", ".join(args.min_obj) + " score" + ("s" if len(args.min_obj) > 1 else ""))
     return "; ".join(parts)
+
+
+def _prefilter_violators(oracle, mols, reject_at):
+    """Drop offspring whose maintain axes are past reject_at * M before the Pareto front is
+    computed (design section 3, mitigation 2). This is what collapses the effective front
+    dimension to |improve set|: survivors all tie at 1 on the maintain axes, so dominance
+    is decided by the improve axes alone. Keeps whole-front survival untouched."""
+    maintain = [o for o in getattr(oracle, "objectives", []) if getattr(o, "kind", None) == "maintain"]
+    if not maintain or reject_at is None:
+        return mols, 0
+    kept, dropped = [], 0
+    for mol in mols:
+        smi = Chem.MolToSmiles(mol)
+        if any(o.violation(o.raw(smi)) > reject_at for o in maintain):
+            dropped += 1
+        else:
+            kept.append(mol)
+    # Never hand an empty population to select_pareto_front: early generations on a raw
+    # ZINC seed can legitimately have every molecule violating something.
+    if not kept:
+        print(f"  pre-filter would have dropped all {len(mols)} molecules - keeping them "
+              f"all this generation instead", flush=True)
+        return mols, 0
+    return kept, dropped
+
+
+def _cap_front(oracle, mols, cap):
+    """Truncate to the `cap` highest-Phi molecules BEFORE they are scored. Placement is the
+    whole point: oracle(...) is what charges front admissions against the budget, so
+    truncating the already-scored list would save nothing. oracle.evaluate() is free (it
+    recomputes objectives without touching mol_buffer, which is why the sampler can call it
+    every generation), so Phi is available here at no budget cost.
+
+    Calibration put fronts at 6-10 of 95, so this is a safety valve and not a tuning knob."""
+    if cap is None or len(mols) <= cap:
+        return mols, 0
+    scored = sorted(mols, key=lambda m: oracle.evaluate(Chem.MolToSmiles(m)), reverse=True)
+    return scored[:cap], len(mols) - cap
 
 
 class GB_GA_Optimizer(BaseOptimizer):
@@ -37,7 +103,21 @@ class GB_GA_Optimizer(BaseOptimizer):
         self.oracle = ToolMolOracle(args=self.args)
 
         self.mol_lm = None
+        self.online_buffer = None
+        # SMILES -> 'injected' (a beam-search-discovered molecule, never yet touched by an LLM
+        # edit) | 'injected+llm' (descends from an injected molecule via at least one further
+        # LLM edit) | 'llm' (no beam-search ancestry at all - includes both the original random
+        # starting population and every purely LLM-derived molecule). Approximate for crossover:
+        # an offspring is tagged 'injected+llm' if EITHER parent carries injected ancestry, even
+        # if that specific episode never actually called crossover_molecules against parent2 -
+        # agent.py's edit_pair doesn't currently report which tools an episode used, so this
+        # errs toward over-attributing injected ancestry rather than under-attributing it.
+        self._molecule_origin = {}
         if args.mol_lm == "ToolMol":
+            if getattr(args, "few_shot_file", None) and getattr(args, "online_fewshot", False):
+                raise ValueError("--few_shot_file and --online_fewshot are mutually exclusive - "
+                                  "the online buffer drives self.mol_lm.few_shot_messages itself, "
+                                  "so a static file would just be overwritten on the first update.")
             extra_body = json.loads(args.llm_extra_body) if args.llm_extra_body else None
             self.mol_lm = ToolMolAgent(model=args.llm_model, base_url=args.llm_base_url,
                                        api_key_env=args.llm_api_key_env, extra_body=extra_body,
@@ -46,6 +126,24 @@ class GB_GA_Optimizer(BaseOptimizer):
                                        system_prompt_suffix=getattr(args, "llm_system_prompt_suffix", None),
                                        few_shot_file=getattr(args, "few_shot_file", None))
             self.mol_lm.goal_description = _goal_description(args)
+
+            if getattr(args, "online_fewshot", False):
+                self.online_buffer = OnlineFewShotBuffer(
+                    buffer_size=args.online_fewshot_buffer_size,
+                    update_every=args.online_fewshot_update_every,
+                    sample_size=args.online_fewshot_sample_size,
+                    beam_width=args.online_fewshot_beam,
+                    workers=args.online_fewshot_workers,
+                    llm_model=args.llm_model,
+                    api_key_env=args.llm_api_key_env,
+                    goal_description=self.mol_lm.goal_description,
+                    diversity_evaluator=self.oracle.diversity_evaluator,
+                    diversity_floor_frac=args.online_fewshot_diversity_floor,
+                    signature_max_repeats=args.online_fewshot_max_repeats,
+                    seed_examples_file=getattr(args, "online_fewshot_seed_file", None),
+                    state_file=os.path.join(args.output_dir, "online_fewshot_buffer.json"),
+                    load_buffer_file=getattr(args, "online_fewshot_load_buffer", None),
+                )
 
     def reset(self):
         del self.oracle
@@ -118,22 +216,79 @@ class GB_GA_Optimizer(BaseOptimizer):
             population_smi_list = [Chem.MolToSmiles(mol) for mol in population_mol]
             smi_to_score = dict(zip(population_smi_list, population_scores))
 
+            if self.online_buffer is not None:
+                self.online_buffer.update_population_diversity(population_smi_list)
+
             pairs = make_mating_pool_phi(population_mol, population_smi_list, self.oracle,
                                           k=config["k"], offspring_size=config["offspring_size"])
             print(f"generation {generation}: population={len(population_mol)}, "
                   f"oracle_calls={len(self.oracle)}, generating {len(pairs)} offspring...", flush=True)
             offspring_mol = []
             for pair_idx, (m0, m1) in enumerate(pairs):
+                m0_smi, m1_smi = Chem.MolToSmiles(m0), Chem.MolToSmiles(m1)
+                if self.online_buffer is not None:
+                    # record_episode first: at a window boundary it may block until the previous
+                    # beam-search cycle finishes, and this episode should then see the buffer
+                    # that cycle produced. Sync still happens before edit_pair, not during it,
+                    # so an update never lands mid-call.
+                    self.online_buffer.record_episode(m0_smi, m1_smi)
+                    self.mol_lm.few_shot_messages = self.online_buffer.few_shot_messages
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: starting edit_pair", flush=True)
-                offspring_mol.append(self.mol_lm.edit_pair(
-                    m0, smi_to_score[Chem.MolToSmiles(m0)],
-                    m1, smi_to_score[Chem.MolToSmiles(m1)],
-                    config["mutation_rate"]))
+                child_mol = self.mol_lm.edit_pair(
+                    m0, smi_to_score[m0_smi],
+                    m1, smi_to_score[m1_smi],
+                    config["mutation_rate"])
+                offspring_mol.append(child_mol)
                 print(f"  generation {generation} pair {pair_idx + 1}/{len(pairs)}: edit_pair done", flush=True)
+
+                # edit_pair can legitimately return None (no successful tool call and the
+                # Graph-GA fallback also failed) - sanitize() filters these out further down,
+                # but origin-tagging has to guard against it directly since it runs first.
+                child_smi = Chem.MolToSmiles(child_mol) if child_mol is not None else None
+                if child_smi is not None and child_smi != m0_smi:
+                    parent_origins = {self._molecule_origin.get(m0_smi, 'llm'),
+                                       self._molecule_origin.get(m1_smi, 'llm')}
+                    if 'injected' in parent_origins or 'injected+llm' in parent_origins:
+                        self._molecule_origin[child_smi] = 'injected+llm'
+                    else:
+                        self._molecule_origin.setdefault(child_smi, 'llm')
 
             # add new_population
             population_mol += offspring_mol
+            if self.online_buffer is not None and getattr(self.args, "online_fewshot_inject", False):
+                # Fold in whichever beam-search-discovered molecules the background buffer has
+                # found since the last drain, so they compete for a population slot alongside
+                # the LLM's own offspring rather than only ever serving as few-shot text. Since
+                # a cycle can span several generations at beam=30, this drains into whichever
+                # generation happens to be running when the cycle completes, not necessarily
+                # "the next" one in a literal sense.
+                injected_smi = self.online_buffer.drain_injections()
+            else:
+                # Same role, same point in the loop, for --llm_backend claude: there is no
+                # OnlineFewShotBuffer there (its post-rationalization step needs an API model),
+                # so the operator runs the same beam search out of band and queues its winners
+                # in the spool instead. A no-op returning [] for every other configuration.
+                injected_smi = _drain_inject_spool()
+            injected_mol = [m for m in (Chem.MolFromSmiles(s) for s in injected_smi) if m is not None]
+            if injected_mol:
+                print(f"  injecting {len(injected_mol)} beam-search-discovered molecule(s) "
+                      f"into the population", flush=True)
+                for smi in injected_smi:
+                    self._molecule_origin.setdefault(smi, 'injected')
+            population_mol += injected_mol
             population_mol = self.sanitize(population_mol)
+            # Batch every candidate before anything reads a property off it.
+            cmumo_objectives.prefetch([Chem.MolToSmiles(m) for m in population_mol])
+            # Design section 3: reject hard violators, then cap, then select the whole
+            # non-dominated front exactly as before. Both steps run BEFORE the oracle call
+            # that charges front admissions.
+            population_mol, n_dropped = _prefilter_violators(
+                self.oracle, population_mol, getattr(self.args, "reject_at", None))
+            population_mol, n_capped = _cap_front(
+                self.oracle, population_mol, getattr(self.args, "front_cap", None))
+            if n_dropped or n_capped:
+                print(f"  pre-front: dropped {n_dropped} violator(s), capped {n_capped}, "
+                      f"{len(population_mol)} molecule(s) into select_pareto_front", flush=True)
             # Pareto optimal set
             self.oracle.clean_buffer()
             population_mol = self.oracle.select_pareto_front([Chem.MolToSmiles(mol) for mol in population_mol])
@@ -143,6 +298,14 @@ class GB_GA_Optimizer(BaseOptimizer):
             population_tuples = sorted(population_tuples, key=lambda x: x[0], reverse=True)
             population_mol = [t[1] for t in population_tuples]
             population_scores = [t[0] for t in population_tuples]
+
+            if self.online_buffer is not None and getattr(self.args, "online_fewshot_inject", False):
+                origin_counts = Counter(
+                    self._molecule_origin.get(Chem.MolToSmiles(mol), 'llm') for mol in population_mol)
+                print(f"  generation {generation} Pareto front origin: "
+                      f"injected(untouched)={origin_counts['injected']}, "
+                      f"injected+llm={origin_counts['injected+llm']}, "
+                      f"llm-only={origin_counts['llm']}", flush=True)
 
             if generation % SNAPSHOT_EVERY == 0:
                 self.oracle.record_snapshot(generation)

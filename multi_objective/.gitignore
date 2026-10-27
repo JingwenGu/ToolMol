@@ -1,0 +1,36 @@
+# Heavy or regenerable. Everything here lives in the assets directory beside the arm, or
+# is run output. setup_assets.py says how each piece comes back.
+#
+# Patterns are deliberately NOT anchored to the repo root, so this file works whether the
+# arm is the repository root or nested under multi_objective/.
+
+# Linked in by setup_assets.py: tdc resolves these relative to the process cwd
+# (tdc/utils/load.py:546, tdc/chem_utils/oracle/oracle.py:346), so they must exist inside
+# the tree at runtime even though they cannot be committed.
+# Both forms: `oracle/` catches a real directory, the bare name catches the symlink
+# setup_assets.py creates (git sees a symlink as a file, not a directory, so the
+# trailing-slash form alone would let an absolute local path get committed).
+oracle
+oracle/
+data
+data/zinc.tab
+
+# Model weights, wherever they land.
+*.pkl
+*.pt
+*.bin
+*.hdf5
+
+# Run output: results, Pareto snapshots, discovery logs, the agent spool.
+results/*
+!results/.gitkeep
+spool/
+*.log
+
+# Caches
+__pycache__/
+*.py[cod]
+property_cache.jsonl
+
+# Environments
+.venv*/

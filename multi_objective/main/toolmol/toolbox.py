@@ -140,12 +140,12 @@ def remove_substructure(mol_smiles, anchor_idx, branch_idx):
     return ToolResult(True, new_mol, f"removed branch at atom {branch_idx} (kept atom {anchor_idx}): {removed_desc}")
 
 
-def _cut_at_index(mol, idx):
+def _cut_at_index(mol, idx, rng=random):
     if not (0 <= idx < mol.GetNumAtoms()):
         return None
     atom = mol.GetAtomWithIdx(idx)
     acyclic_bonds = [b for b in atom.GetBonds() if not b.IsInRing()]
-    random.shuffle(acyclic_bonds)
+    rng.shuffle(acyclic_bonds)
     for bond in acyclic_bonds:
         fragments_mol = Chem.FragmentOnBonds(mol, [bond.GetIdx()], addDummies=True, dummyLabels=[(1, 1)])
         try:
@@ -157,7 +157,14 @@ def _cut_at_index(mol, idx):
     return None
 
 
-def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2):
+def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2, rng=random):
+    """rng defaults to the global `random` module, matching every existing caller (the live
+    agent's real tool dispatch, and the offline fewshot_gen scripts) - those depend on
+    main/pareto_optimizer.py's optimize() seeding the global random module via
+    random.seed(seed) for run-to-run reproducibility. Pass a private random.Random() instance
+    instead when calling this from code that runs concurrently with the live GA loop on the
+    same thread's shared global state (see online_fewshot.py) - otherwise its draws interleave
+    with the live loop's own crossover calls in a wall-clock-dependent, non-reproducible way."""
     mol1, err = _load(mol1_smiles)
     if err:
         return ToolResult(False, None, err)
@@ -165,17 +172,17 @@ def crossover_molecules(mol1_smiles, idx1, mol2_smiles, idx2):
     if err:
         return ToolResult(False, None, err)
 
-    frags1 = _cut_at_index(mol1, idx1)
+    frags1 = _cut_at_index(mol1, idx1, rng=rng)
     if frags1 is None:
         return ToolResult(False, None, (f"atom {idx1} in molecule 1 does not yield exactly 2 fragments "
                                          f"(likely in a ring or has no acyclic bond)"))
-    frags2 = _cut_at_index(mol2, idx2)
+    frags2 = _cut_at_index(mol2, idx2, rng=rng)
     if frags2 is None:
         return ToolResult(False, None, (f"atom {idx2} in molecule 2 does not yield exactly 2 fragments "
                                          f"(likely in a ring or has no acyclic bond)"))
 
     pairings = [(a, b) for a in frags1 for b in frags2]
-    random.shuffle(pairings)
+    rng.shuffle(pairings)
     rxn = AllChem.ReactionFromSmarts('[*:1]-[1*].[1*]-[*:2]>>[*:1]-[*:2]')
     for fa, fb in pairings:
         try:
