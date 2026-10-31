@@ -54,8 +54,9 @@ TOOLMOL_CLAUDE_SPOOL="$RUN_DIR/spool" nohup "$PYTHON" run.py toolmol \
     --config_default "$CONFIG" \
     --output_dir "$RUN_DIR/out" \
     > "$RUN_DIR/run.log" 2>&1 &
+PID=$!
 
-echo "  pid     $!"
+echo "  pid     $PID"
 echo "  seed    $SEED   budget $MAX_ORACLE_CALLS   patience $PATIENCE   config $CONFIG"
 echo "  spool   $RUN_DIR/spool"
 echo "  out     $RUN_DIR/out"
@@ -68,4 +69,6 @@ echo "  export TOOLMOL_CLAUDE_SPOOL=$RUN_DIR/spool"
 echo "  cd $HERE && $PYTHON spool_client.py status"
 echo
 echo "The first request takes about a minute to appear (oracle loading)."
-echo "Stop with: pkill -f 'run.py toolmol'"
+echo "Stop this run with: kill $PID"
+echo "  (or: pkill -f \"$RUN_DIR\" - do NOT use pkill -f 'run.py toolmol', which would also"
+echo "   kill any other arm's run active on this machine)"

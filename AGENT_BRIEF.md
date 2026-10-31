@@ -110,7 +110,9 @@ Note a trap if you hand-roll the command: `--config_default hparams_smoketest.ya
 with `KeyError: 'max_steps'`. Pass an absolute path to `main/toolmol/hparams_smoketest.yaml`
 instead. `hparams_default.yaml` is fine, since no copy shadows it there.
 
-Stop a run with `pkill -f "run.py toolmol"`.
+To stop your run, kill it by **pid** (the launch script prints it), or match your own run
+directory: `pkill -f "<your run dir>"`. Do **not** use `pkill -f "run.py toolmol"` — another
+arm's run may be active on this machine and that pattern would kill it too.
 
 ## Driving the run
 
@@ -201,5 +203,13 @@ Say plainly what did not work.
 For this arm specifically, also report: how many beam searches you ran and rationalised, how
 many times a library entry actually changed an edit you chose (and which), whether any lesson
 turned out to be wrong when reused, and whether the rationalising step earned its cost. Attach
-the journal path. Note that this arm's numbers are not directly comparable to a run where the
-search output merely sits in the log.
+the journal path.
+
+Comparability caveat to carry into the write-up: this arm differs from the baseline in **two**
+ways, not one. The intended difference is the rationalise-and-reuse loop. The incidental one is
+a fix to episode-boundary detection in `spool_client.py` — the baseline run still has the
+original version, which shows the agent `0 new message(s)` with no molecules whenever an
+episode's only read request was its first turn (the case when turns 1 and 2 are answered
+without an intervening `next`). So a difference in outcome cannot be attributed cleanly to the
+rationalise loop alone. This was a deliberate decision, not an oversight; state it rather than
+claiming a single-factor comparison.
