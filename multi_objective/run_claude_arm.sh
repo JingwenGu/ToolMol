@@ -60,6 +60,8 @@ echo "  seed    $SEED   budget $MAX_ORACLE_CALLS   patience $PATIENCE   config $
 echo "  spool   $RUN_DIR/spool"
 echo "  out     $RUN_DIR/out"
 echo "  log     $RUN_DIR/run.log"
+echo "  journal $RUN_DIR/beam_journal.jsonl   (beam skill library; set TOOLMOL_BEAM_JOURNAL"
+echo "                                         to an earlier run's file to carry it over)"
 echo
 echo "Drive it with:"
 echo "  export TOOLMOL_CLAUDE_SPOOL=$RUN_DIR/spool"

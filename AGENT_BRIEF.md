@@ -24,8 +24,8 @@ artifacts were deleted. Do not go looking for them or for replacements.
    `run_log*`, few-shot library, beam-search dump, or episode log from any earlier run, in this
    repo or anywhere else. If you find one, do not open it — say so and move on.
 2. **Do not use git** in this repo. Not `log`, `show`, `stash`, `checkout`, `diff` of deleted
-   paths — nothing. Earlier results may still exist in history, and reading them would
-   invalidate the run.
+   paths — nothing. This clone has full history, so every prior run's results really are
+   reachable from here by `git show`; reading them would invalidate the run.
 3. **Do not leave this directory.** In particular nothing else under `RSI/`, and not
    `MOLLEO/`, `regret/`, `cmumo/`, `surrogate_oracles/`, `scratch.ipynb`, or `MOLLEO.pdf`.
    `ToolMol.pdf` is the method paper and is fine to read.
@@ -39,9 +39,11 @@ artifacts were deleted. Do not go looking for them or for replacements.
 6. **Do not change the codebase.** The modifications that put you in the agent's seat are
    already in place (below), as is the operator client. Anything further is out of scope — and
    if you think you have found a bug, say so before changing it.
-7. **No persistent artifacts.** Keep your strategy, your read of the landscape and your episode
-   history in your own context, not in files. `--output_dir` points outside the repo so the tree
-   stays clean. Notes-to-self are not wanted.
+7. **One persistent artifact, and it is required: the beam journal.** Every beam search must be
+   closed with a written rationale, which lands in `beam_journal.jsonl` in the run directory (see
+   "The beam search and the skill library" below). That file is the exception; keep everything
+   else - strategy, your read of the landscape, episode history - in your own context rather than
+   in files, and leave `--output_dir` pointing outside the repo so the tree stays clean.
 
 ## Do this first, before anything else
 
@@ -119,6 +121,9 @@ Stop a run with `pkill -f "run.py toolmol"`.
     python spool_client.py reply --content "..." --tool add_atom \
         --args '{"idx":7,"element":"F","bond":"single"}'
     python spool_client.py beam "<smiles>" --beam 5 --inject
+    python spool_client.py rationalize <id> --endpoint "<winning smiles>" \
+        --why "..." --why-optimal "..." --lesson "..."
+    python spool_client.py skills            # the library in full, with reasoning
     python spool_client.py inject "<smiles>"
 
 `next` prints only what is new since the last request, because earlier turns are already in your
@@ -146,17 +151,45 @@ before handing the brief over.
 - If you never land a successful tool call in an episode, the harness silently falls back to
   Graph-GA for that pair and the episode contributes nothing you chose.
 
-## The beam search
+## The beam search and the skill library
 
-`online_fewshot._beam_search_3step`, exposed as `spool_client.py beam`. In the original pipeline
-it runs on a timer during the run, its near-optimal sequences few-shot the following episodes,
-and its molecules are injected into the Pareto front. Use it the same way: run it on molecules
-you have actually encountered, generalize the moves it finds, and `--inject` its winners so they
-compete for a front slot and can serve as parents later. Roughly 15-20s at beam width 5 on 8
-workers. It is **not** a scorer for molecules you invented — see rule 4.
+`online_fewshot._beam_search_3step`, exposed as `spool_client.py beam`. Run it on molecules the
+run has actually reached, and `--inject` its winners so they compete for a front slot and can
+serve as parents later. Roughly 15-20s at beam width 5 on 8 workers. It is **not** a scorer for
+molecules you invented — see rule 4.
+
+**This arm differs from the baseline in one way, and this is it.** A beam search is not allowed
+to just sit in the log. Every `beam` opens a journal entry, and `next` and `reply` are **blocked**
+until you close it:
+
+    python spool_client.py rationalize <id> --endpoint "<the winning SMILES>" \
+        --why "step by step, why each edit moves jnk3 / QED / SA the way it does" \
+        --why-optimal "why this is near-optimal here - what the alternatives gave up" \
+        --lesson "one line you want to see in later episodes"
+
+`--endpoint` has to match the search's winning molecule, so the entry cannot be closed without
+having actually read the result. `--why` and `--why-optimal` have minimum lengths; those floors
+exist to stop a one-word placeholder, not to be hit exactly — write the real explanation. Two
+distinct questions are being asked: *why does this sequence work* (the mechanism, step by step,
+against each objective) and *why is it near-optimal for this molecule* (what a greedier or
+differently-ordered route would have given up). `--lesson` is optional but it is the part that
+gets reused, so write one.
+
+Closed entries become the skill library, and `next` prints a digest of it — one line per entry
+plus its lesson — at the top of **every new episode**. Read it before choosing that episode's
+edits and ask whether any entry transfers: the same move on a similar substructure, or the same
+reason for preferring one edit over another. `spool_client.py skills` prints the full reasoning
+for any entry, and `skills --id <n>` just one.
+
+`--force` on `next`/`reply` overrides the block so a wedged run can always be driven to the end.
+It is recorded on the entry and shows up in `skills`, so say in your report if you used it.
+
+The journal is `beam_journal.jsonl` in the run directory, and it is per-run by default. Set
+`TOOLMOL_BEAM_JOURNAL` to an earlier run's file to carry a library across runs.
 
 Searching is free against the oracle budget, so search *volume* is itself a behavioural
-difference between runs, not just a detail. Record how much you used it with the results.
+difference between runs, not just a detail. Report how much you used it, how often a library
+entry actually changed an edit you made, and whether the rationalising was worth its cost.
 
 ## Reporting
 
@@ -164,3 +197,9 @@ When the run ends (budget exhausted or patience convergence), report: the best m
 Phi, how the Pareto front evolved, how many oracle calls went where, which tool-call strategies
 worked and which wasted episodes, and what the beam search contributed versus your own edits.
 Say plainly what did not work.
+
+For this arm specifically, also report: how many beam searches you ran and rationalised, how
+many times a library entry actually changed an edit you chose (and which), whether any lesson
+turned out to be wrong when reused, and whether the rationalising step earned its cost. Attach
+the journal path. Note that this arm's numbers are not directly comparable to a run where the
+search output merely sits in the log.
