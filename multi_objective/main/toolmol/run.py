@@ -20,6 +20,25 @@ from main.toolmol.online_fewshot import OnlineFewShotBuffer
 SNAPSHOT_EVERY = 10  # record the current Pareto front every k generations
 
 
+def _drain_inject_spool():
+    """Beam-search molecules the operator has queued for injection, read-and-clear.
+
+    The --llm_backend claude counterpart to OnlineFewShotBuffer.drain_injections(): one SMILES
+    per line in $TOOLMOL_CLAUDE_SPOOL/inject.txt, removed once read so each molecule is folded
+    in exactly once. Returns [] when the spool isn't configured or the file isn't there, so
+    every other configuration is unaffected."""
+    spool = os.environ.get("TOOLMOL_CLAUDE_SPOOL")
+    if not spool:
+        return []
+    path = os.path.join(spool, "inject.txt")
+    if not os.path.exists(path):
+        return []
+    with open(path) as f:
+        smis = [line.strip() for line in f if line.strip()]
+    os.remove(path)
+    return smis
+
+
 def _goal_description(args):
     parts = []
     if args.max_obj:
@@ -199,13 +218,19 @@ class GB_GA_Optimizer(BaseOptimizer):
                 # generation happens to be running when the cycle completes, not necessarily
                 # "the next" one in a literal sense.
                 injected_smi = self.online_buffer.drain_injections()
-                injected_mol = [m for m in (Chem.MolFromSmiles(s) for s in injected_smi) if m is not None]
-                if injected_mol:
-                    print(f"  injecting {len(injected_mol)} beam-search-discovered molecule(s) "
-                          f"into the population", flush=True)
-                    for smi in injected_smi:
-                        self._molecule_origin.setdefault(smi, 'injected')
-                population_mol += injected_mol
+            else:
+                # Same role, same point in the loop, for --llm_backend claude: there is no
+                # OnlineFewShotBuffer there (its post-rationalization step needs an API model),
+                # so the operator runs the same beam search out of band and queues its winners
+                # in the spool instead. A no-op returning [] for every other configuration.
+                injected_smi = _drain_inject_spool()
+            injected_mol = [m for m in (Chem.MolFromSmiles(s) for s in injected_smi) if m is not None]
+            if injected_mol:
+                print(f"  injecting {len(injected_mol)} beam-search-discovered molecule(s) "
+                      f"into the population", flush=True)
+                for smi in injected_smi:
+                    self._molecule_origin.setdefault(smi, 'injected')
+            population_mol += injected_mol
             population_mol = self.sanitize(population_mol)
             # Pareto optimal set
             self.oracle.clean_buffer()

@@ -249,6 +249,23 @@ def _parse_local_response(text):
     return _Response(_Message(content=content or None, tool_calls=tool_calls))
 
 
+def _parse_claude_response(payload):
+    """Mirror of _parse_local_response for the "claude" backend, where the operator is the
+    agent in person rather than a model behind an endpoint: a response is a JSON object
+    {"content": ..., "tool_calls": [{"name": ..., "arguments": {...}}, ...]} dropped into the
+    spool directory, and this turns it into the same shape _agentic_edit expects back from an
+    OpenAI ChatCompletion message. `arguments` may be given either as a dict (convenient to
+    write by hand) or as the pre-serialized JSON string a real provider would return."""
+    tool_calls = []
+    for i, tc in enumerate(payload.get("tool_calls") or []):
+        arguments = tc.get("arguments", {})
+        arguments = arguments if isinstance(arguments, str) else json.dumps(arguments)
+        tool_calls.append(_ToolCall(id=tc.get("id") or f"call_{i}", name=tc["name"],
+                                     arguments=arguments))
+    return _Response(_Message(content=payload.get("content"), tool_calls=tool_calls,
+                               reasoning=payload.get("reasoning")))
+
+
 def load_few_shot_messages(path):
     """Load a few-shot conversation history from a JSON file: a flat list of message dicts
     (role: user/assistant/tool) in the exact same shape _agentic_edit builds internally -
@@ -300,6 +317,17 @@ class ToolMolAgent:
         if backend in ("api", "responses"):
             self.client = OpenAI(api_key=os.environ[api_key_env], base_url=base_url,
                                   timeout=REQUEST_TIMEOUT_SECONDS, max_retries=0)
+        elif backend == "claude":
+            # No endpoint and no local weights: the operator acts as the agent directly.
+            # Requests are spooled to TOOLMOL_CLAUDE_SPOOL as JSON and answered out of band
+            # (see _create_claude); nothing else about the episode loop changes.
+            self.spool_dir = os.environ.get("TOOLMOL_CLAUDE_SPOOL")
+            if not self.spool_dir:
+                raise ValueError("--llm_backend claude needs the TOOLMOL_CLAUDE_SPOOL "
+                                  "environment variable set to a directory for the request/"
+                                  "response spool.")
+            os.makedirs(self.spool_dir, exist_ok=True)
+            self._request_counter = 0
         elif backend == "transformers":
             # Imported lazily so the "api" backend (the default) never requires torch/
             # transformers to be importable, let alone a GPU.
@@ -311,7 +339,8 @@ class ToolMolAgent:
             self.hf_model = AutoModelForCausalLM.from_pretrained(
                 model, torch_dtype="auto", device_map=device_map)
         else:
-            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', or 'transformers')")
+            raise ValueError(f"Unknown backend: {backend!r} (expected 'api', 'responses', "
+                              f"'claude', or 'transformers')")
 
     def edit_pair(self, mol1, score1, mol2, score2, mutation_rate=0.0):
         try:
@@ -355,6 +384,31 @@ class ToolMolAgent:
         print(f"    <- local LLM call returned in {time.time() - t0:.1f}s", flush=True)
         return _parse_local_response(generated)
 
+    def _create_claude(self, messages):
+        """Spool one request to disk and block until the matching response file appears.
+
+        None of the API-backend machinery around it applies: there is no provider to rate-limit
+        or time out, so there is no retry, and the wait is deliberately unbounded (the operator
+        answering it is slower than any wall-clock deadline worth enforcing). Both sides write
+        through a .tmp file + os.replace so neither can ever read a half-written JSON file."""
+        self._request_counter += 1
+        n = self._request_counter
+        req_path = os.path.join(self.spool_dir, f"req_{n:05d}.json")
+        resp_path = os.path.join(self.spool_dir, f"resp_{n:05d}.json")
+        tmp = req_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"request": n, "messages": messages}, f, indent=1, ensure_ascii=False)
+        os.replace(tmp, req_path)
+        print(f"    -> spooled request {n} ({len(messages)} messages), waiting for response...",
+              flush=True)
+        t0 = time.time()
+        while not os.path.exists(resp_path):
+            time.sleep(1.0)
+        with open(resp_path, encoding="utf-8") as f:
+            payload = json.load(f)
+        print(f"    <- response {n} read after {time.time() - t0:.0f}s", flush=True)
+        return _parse_claude_response(payload)
+
     def _call_with_deadline(self, request_fn):
         """Run request_fn() (a client.*.create(...) call) in a daemon thread and enforce a
         hard wall-clock deadline via Thread.join(timeout=...), independent of whatever the
@@ -382,6 +436,8 @@ class ToolMolAgent:
     def _create_with_retry(self, messages):
         if self.backend == "transformers":
             return self._create_local(messages)
+        if self.backend == "claude":
+            return self._create_claude(messages)
         if self.backend == "responses":
             return self._call_with_rate_limit_retry(
                 messages, lambda: self.client.responses.create(
