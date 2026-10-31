@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.out
+_vllm_server*.log
+multi_objective/_scratch_artifact/
+
+# Run output never belongs in the repo: a committed results file is exactly the
+# knowledge-contamination reservoir AGENT_BRIEF.md exists to prevent. run_claude_arm.sh
+# points --output_dir and the spool outside the tree; these patterns are the backstop for
+# a hand-rolled run that forgets to.
+results_*.yaml
+pareto_snapshots_*.yaml
+run_log*.txt
+run_config.txt
+online_fewshot_buffer.json
+spool_client_state.json
+req_[0-9]*.json
+resp_[0-9]*.json
+inject.txt
